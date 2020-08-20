@@ -1,0 +1,989 @@
+﻿@page "/NewClaimPage"
+
+@using Syncfusion.Blazor.Navigations;
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Layouts;
+@using Syncfusion.Blazor.Cards;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Popups;
+@using Syncfusion.Blazor.DropDowns;
+@using Syncfusion.Blazor.Data;
+@inject HttpClient Http;
+@inject NavigationManager NavigationManager
+@using CCM_New.Shared;
+@using Newtonsoft.Json;
+
+
+<div class="containerClaim">
+
+    <div class="containerNaglowek" style="height: 100px !important">
+
+
+        <div class="row">
+            <div class="col-3">
+                <SfTextBox @bind-Value="@DeliveryNumber" Placeholder='Delivery number' @onfocus='@(e=>keyReadDataDelivery=false)' FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                <SfButton @onclick="@DisplayDataDelivery" Disabled="keyReadDataDelivery">Read data </SfButton>
+            </div>
+            <div class="col-3">
+                <SfTextBox @bind-Value="@zmASN" Placeholder='ASN'  @onfocus='@(e=>keyReadDataAsn=false)'  FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                <SfButton @onclick="@DisplayASNData" Disabled="keyReadDataAsn">Read data </SfButton>
+            </div>
+            <div class="col-3">
+                <div class="row">
+
+                </div>
+                <div class="row">
+                    <SfCheckBox Label="Mainstream" LabelPosition="LabelPosition.After" @bind-Checked="isMainstream" CssClass="e-large"></SfCheckBox>
+                </div>
+
+                <hr />
+            </div>
+        </div>
+
+
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <SfAccordion @ref="AcrdnObj">
+                <AccordionItems>
+                    <AccordionItem Expanded="false">
+                        <HeaderTemplate>
+                            <div>Delivery note selection  </div>
+                        </HeaderTemplate>
+                        <ContentTemplate>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    @if (indicatorDelivery)
+                                    {
+                                        <label>Delivery notes</label>
+                                        <SfGrid DataSource="@listDeliverySapForGrid" Height="100%" Width="100%" RowHeight="22">
+                                            <GridColumns>
+                                                <GridColumn HeaderText="Add" TextAlign="TextAlign.Center" Width="60">
+                                                    <Template>
+                                                        @{ var dn = (context as TblSapData);
+                                                            <a style="text-underline-position:below; cursor:pointer" @onclick="(() => ZalozClaimPoDn(dn))">+</a>
+                                                        }
+                                                    </Template>
+                                                </GridColumn>
+                                                <GridColumn Field=@nameof(TblSapData.Posnr) HeaderText="Pos" TextAlign="TextAlign.Left" Width="40"></GridColumn>
+                                                <GridColumn Field=@nameof(TblSapData.Matnr) HeaderText="CTV" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+                                                <GridColumn Field=@nameof(TblSapData.Artkx) HeaderText="11Nc" TextAlign="TextAlign.Left" Width="100"></GridColumn>
+                                                <GridColumn Field=@nameof(TblSapData.Lgmng) HeaderText="Qty" TextAlign="TextAlign.Left" Width="30"></GridColumn>
+                                                <GridColumn Field=@nameof(TblSapData.IcValue) HeaderText="Value" TextAlign="TextAlign.Left" Width="50"></GridColumn>
+
+                                            </GridColumns>
+                                        </SfGrid>
+                                    }
+
+                                    @if (indicatorASN)
+                                    {
+                                        <label>ASN</label>
+                                        <SfGrid DataSource="@listASNForGrid" Height="100%" Width="100%" RowHeight="22">
+                                            <GridColumns>
+                                                <GridColumn HeaderText="Add" TextAlign="TextAlign.Center" Width="60">
+                                                    <Template>
+                                                        @{ var dn = (context as TblAsnData);
+                                                            <a style="text-underline-position:below; cursor:pointer" @onclick="(() => ZalozClaimPoAsn(dn))">+</a>
+                                                        }
+                                                    </Template>
+                                                </GridColumn>
+                                                <GridColumn Field=@nameof(TblAsnData.Asnline) HeaderText="Line" TextAlign="TextAlign.Left" Width="50"></GridColumn>
+                                                <GridColumn Field=@nameof(TblAsnData.Material) HeaderText="Material" TextAlign="TextAlign.Left" Width="70"></GridColumn>
+                                                <GridColumn Field=@nameof(TblAsnData.Matdesc) HeaderText="Desc" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+                                                <GridColumn Field=@nameof(TblAsnData.ShipQty) HeaderText="Qty" TextAlign="TextAlign.Left" Width="30"></GridColumn>
+                                                <GridColumn Field=@nameof(TblAsnData.Shippedstockvalue) HeaderText="Value" TextAlign="TextAlign.Left" Width="50"></GridColumn>
+
+                                            </GridColumns>
+                                        </SfGrid>
+                                    }
+
+                                </div>
+                                <div class="col-6">
+                                    <label>Complains</label>
+                                    <SfGrid DataSource="@listDeliveryForGrid" Height="100%" Width="100%" RowHeight="22">
+                                        <GridColumns>
+                                            <GridColumn HeaderText="Add" TextAlign="TextAlign.Center" Width="60">
+                                                <Template>
+                                                    @{ var dn = (context as TblDeliveries);
+                                                        <a style="text-underline-position:below; cursor:pointer" @onclick="(() => EdycjaComplain(dn))">+</a>
+                                                    }
+                                                </Template>
+                                            </GridColumn>
+                                            <GridColumn HeaderText="Complain number" TextAlign="TextAlign.Center" Width="160">
+                                                <Template>
+                                                    @{ var dn = (context as TblDeliveries);
+                                                        <a style="text-underline-position:below">@dn.Comp.ComplaintIduf</a>
+                                                    }
+                                                </Template>
+                                            </GridColumn>
+                                            <GridColumn HeaderText="Reason code" TextAlign="TextAlign.Center" Width="60">
+                                                <Template>
+                                                    @{ var dn = (context as TblDeliveries);
+                                                        <a style="text-underline-position:below">@dn.Comp.Reasoncode</a>
+                                                    }
+                                                </Template>
+                                            </GridColumn>
+                                            <GridColumn HeaderText="Date claim" TextAlign="TextAlign.Center" Width="120">
+                                                <Template>
+                                                    @{ var dn = (context as TblDeliveries);
+                                                        <a style="text-underline-position:below">@dn.Comp.DeliveryDate</a>
+                                                    }
+                                                </Template>
+                                            </GridColumn>
+                                            <GridColumn HeaderText="BillOfLading" TextAlign="TextAlign.Center" Width="120">
+                                                <Template>
+                                                    @{ var dn = (context as TblDeliveries);
+                                                        <a style="text-underline-position:below">@dn.Comp.BillOfLading</a>
+                                                    }
+                                                </Template>
+                                            </GridColumn>
+
+
+                                        </GridColumns>
+                                    </SfGrid>
+
+                                </div>
+
+                            </div>
+                        </ContentTemplate>
+                    </AccordionItem>
+                    <AccordionItem Disabled="false" Expanded="false">
+                        <HeaderTemplate>
+                            <div>Complain header</div>
+                        </HeaderTemplate>
+                        <ContentTemplate>
+                            <div class="row">
+                                @if (indicatorComplain)
+                                {
+                                    <div class="col-2">
+                                        <div class="row">
+                                            <label>Complain ID</label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <hr />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label>Reason code</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="row">
+                                            <SfTextBox @bind-Value="@zmNrClaim" Readonly="true"></SfTextBox>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <hr />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <SfComboBox TValue="int" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes" @bind-Value="ZmComplainReasonCode">
+                                                <ComboBoxEvents TValue="string" ValueChange="onChange"></ComboBoxEvents>
+                                                <ComboBoxFieldSettings Value="ReasoncodeId" Text="ReasoncodeName"></ComboBoxFieldSettings>
+                                            </SfComboBox>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="row">
+                                            <label>Comments</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="multiline">
+                                                <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zmComplianCustomerComments"></SfTextBox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (!indicatorComplain)
+                                {
+                                    <div class="col-2">
+                                        <div class="row">
+                                            <label>Complain ID</label>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <hr />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <label>Reason code</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="row">
+                                            <SfTextBox @bind-Value="@zmNrClaim" Readonly="true"></SfTextBox>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <hr />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <SfComboBox TValue="string" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes">
+                                                <ComboBoxEvents TValue="string" ValueChange="onChange"></ComboBoxEvents>
+                                                <ComboBoxFieldSettings Value="ReasoncodeId" Text="ReasoncodeName"></ComboBoxFieldSettings>
+                                            </SfComboBox>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="row">
+                                            <label>Comments</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="multiline">
+                                                <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zmComplianCustomerComments"></SfTextBox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <hr />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
+                                        <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
+                                    </SfUploader>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <hr />
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </AccordionItem>
+                    <AccordionItem>
+                        <HeaderTemplate>
+                            <div>Details</div>
+                        </HeaderTemplate>
+                        <ContentTemplate>
+
+
+                            <div class="row">
+                                <div class="col-12">
+                                    @if (indicatorComplain)
+                                    {
+
+                                    }
+
+                                    @if (indicatorASN)
+                                    {
+                                        <table class="paleBlueRows">
+                                            <thead>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <th>Line</th>
+                                                    <th>Material</th>
+                                                    <th>Description</th>
+                                                    <th>Ordered qty</th>
+                                                    <th>Complain qty</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @foreach (var fasn in zmtblDeliveryLines)
+                                                {
+
+                                                    <tr>
+                                                        <td> <SfButton @onclick="() => DeleteItemfromTable(fasn.DeliveryLine)">Delete</SfButton></td>
+                                                        <td>@fasn.DeliveryLine</td>
+                                                        <td>@fasn.MaterialOrd11cn</td>
+                                                        <td>@fasn.MaterialOrdCtv</td>
+                                                        <td>@fasn.OrderQty</td>
+                                                        <td><SfNumericTextBox @bind-Value="@fasn.ComplaintQty"></SfNumericTextBox></td>
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+
+                                    @if (indicatorDelivery)
+                                    {
+                                        <table class="paleBlueRows">
+                                            <thead>
+                                                <tr>
+                                                    <th>Delete</th>
+                                                    <th>Line</th>
+                                                    <th>Material</th>
+                                                    <th>Description</th>
+                                                    <th>Ordered qty</th>
+                                                    <th>Complain qty</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @foreach (var fasn in zmtblDeliveryLines)
+                                                {
+
+                                                    <tr>
+                                                        <td> <SfButton @onclick="() => DeleteItemfromTable(fasn.DeliveryLine)">Delete</SfButton></td>
+                                                        <td>@fasn.DeliveryLine</td>
+                                                        <td>@fasn.MaterialOrd11cn</td>
+                                                        <td>@fasn.MaterialOrdCtv</td>
+                                                        <td>@fasn.OrderQty</td>
+                                                        <td><SfNumericTextBox @bind-Value="@fasn.ComplaintQty"></SfNumericTextBox></td>
+
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <hr />
+                                    <SfButton @onclick="questionAboutSave">Save claim  </SfButton>
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                        <HeaderTemplate>
+                            <div>Complian Status </div>
+                        </HeaderTemplate>
+                        <ContentTemplate>
+                            <div class='container'>
+                                <div class='content'>
+                                    <p>Pola </p>
+                                </div>
+                            </div>
+                        </ContentTemplate>
+                    </AccordionItem>
+
+                </AccordionItems>
+            </SfAccordion>
+
+        </div>
+    </div>
+
+</div>
+
+
+<SfDialog Width="400px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisible">
+    <DialogTemplates>
+        <Header> Confirmation ? </Header>
+        <Content> Are You sure save chages  </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="OK" IsPrimary="true" OnClick="@SaveClaimAsn" />
+        <DialogButton Content="Cancel" OnClick="@CloseDialog" />
+    </DialogButtons>
+</SfDialog>
+
+
+
+<style>
+    .e-btn.e-flat.e-primary, .e-btn.e-flat.e-primary:focus {
+        background-color: #317ab9;
+        border-color: #265f91;
+        color: #fff;
+    }
+
+    table.paleBlueRows {
+        font-family: "Times New Roman",Times,serif;
+        border: 1px solid #FFFFFF;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        border-collapse: collapse;
+    }
+
+        table.paleBlueRows td, table.paleBlueRows th {
+            border: 1px solid #FFFFFF;
+            padding: 3px 2px;
+        }
+
+        table.paleBlueRows tbody td {
+            font-size: 13px;
+        }
+
+        table.paleBlueRows tr:nth-child(even) {
+            background: #D0E4F5;
+        }
+
+        table.paleBlueRows thead {
+            background: #0B6FA4;
+            border-bottom: 5px solid #FFFFFF;
+        }
+
+            table.paleBlueRows thead th {
+                font-size: 17px;
+                font-weight: bold;
+                color: #FFFFFF;
+                text-align: center;
+                border-left: 2px solid #FFFFFF;
+            }
+
+                table.paleBlueRows thead th:first-child {
+                    border-left: none;
+                }
+
+        table.paleBlueRows tfoot td {
+            font-size: 14px;
+        }
+
+    .multiline {
+        width: 350px;
+        resize: none;
+    }
+
+    .e-checkbox-wrapper {
+        margin-top: 30px;
+        margin-right: 200px;
+    }
+
+    .e-grid .e-headercelldiv {
+        font-size: 12px;
+    }
+
+    .e-grid .e-rowcell {
+        font-size: 12px;
+        body
+
+    {
+        font: normal small/1 sans-serif;
+    }
+
+
+    tbody tr:nth-child(odd) {
+        background: #eee;
+    }
+
+
+    .containerClaim {
+        width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+
+@code {
+
+    public bool keyReadDataDelivery = true;
+    public bool keyReadDataAsn = true;
+
+    private bool IsVisible { get; set; } = false;
+
+    public int zmComplainQty = 0;
+    public string zmNrClaim = "";
+
+    public string maxIDNowyCaim;
+
+    SfAccordion AcrdnObj;
+    public bool isMainstream = false;
+    public bool indicatorASN = false;
+    public bool indicatorDelivery = false;
+    public bool indicatorComplain = false;
+
+    public int zmlicznikDodaniaAsn = 0;
+
+
+    public string zmSzuk = "";
+
+
+    public string DeliveryNumber { get; set; } = "";
+    public string zmASN { get; set; } = "";
+
+    public TblDeliveries[] DeliveryList = { };
+    List<TblDeliveries> listDeliveryForGrid = new List<TblDeliveries>();
+
+    public TblAsnData[] ASNList = { };
+    List<TblAsnData> listASNForGrid = new List<TblAsnData>();
+
+    public TblDeliveryLines[] deliveryLinesjson = { };
+    List<TblDeliveryLines> zmtblDeliveryLines = new List<TblDeliveryLines>();
+
+    TblComplaints saveComplain = new TblComplaints();
+    TblDeliveries saveDelivery = new TblDeliveries();
+
+    //------------------------
+    public string zmASNForComplainCreation;
+    public string zmASNLineComplainCreation;
+    public string zmASNMaterialComplainCreation;
+    public int zmASNOrderedQtyComplainCreation;
+    public int zmASNComplainQtyComplainCreation;
+
+    public double zmDNLine;
+    public DateTime? zmDNDate;
+    public string zmDNCTV;
+    public string zmDN11CN;
+    public double? zmDnQty;
+
+
+    public int zmComplainID;
+    public string zmComplianCustomerComments;
+    public int ZmComplainReasonCode;
+
+    // public string zmReazonCodeDoEdycji;
+
+    //------------------------
+
+    public TblSapData[] DeliveryListSap = { };
+    List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
+
+
+    public TblReasoncodes[] comboReasonCodes = { };
+    string RecNo;
+
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    // await DisplayClaimsByDn();
+    //    //  await LoadDataForDN();
+    //    StateHasChanged();
+    //}
+
+
+    async Task EdycjaComplain(TblDeliveries DuComplain)
+    {
+        //await AcrdnObj.EnableItem(0, true);
+        //await AcrdnObj.ExpandItem(false, 0);
+        await AcrdnObj.EnableItem(1, true);
+        await AcrdnObj.ExpandItem(true, 1);
+        await AcrdnObj.EnableItem(2, true);
+        await AcrdnObj.ExpandItem(true, 2);
+
+        indicatorComplain = true;
+
+        string linkRC = "/api/TblReasoncodes/";
+        comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+
+        zmComplainID = DuComplain.ComplaintId;
+        zmNrClaim = DuComplain.Comp.ComplaintIduf;
+        zmComplianCustomerComments = DuComplain.Comp.CustomerComments;
+
+        ZmComplainReasonCode = DuComplain.Comp.Reasoncode;
+        //  zmReazonCodeDoEdycji = "Too late";
+
+        // zaladuj tablice complainow po complain id przeszukaj complain lines
+
+        string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + DuComplain.ComplaintId.ToString();
+
+        deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
+        zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
+
+        StateHasChanged();
+    }
+
+    async Task DisplayClaimsByDnAndAsn()
+    {
+        if (DeliveryNumber.Length > 0 | zmASN.Length > 0)
+        {
+
+            if (indicatorDelivery)
+            { zmSzuk = DeliveryNumber.Trim(); }
+
+            if (indicatorASN)
+            { zmSzuk = zmASN.Trim(); }
+
+            string linktmp = "/api/TblDeliveries/GetByDeliveries/" + zmSzuk.Trim();
+
+            Console.WriteLine("-------------:" + linktmp);
+
+            DeliveryList = await Http.GetFromJsonAsync<TblDeliveries[]>(linktmp);
+            listDeliveryForGrid = new List<TblDeliveries>(DeliveryList);
+
+
+            StateHasChanged();
+        }
+    }
+
+    async Task DisplayASNData()
+    {
+        indicatorASN = true;
+        indicatorDelivery = false;
+        await DisplayClaimsByDnAndAsn();
+        await LoadDataForASN();
+        StateHasChanged();
+    }
+
+    async Task LoadDataForASN()
+    {
+
+        await AcrdnObj.EnableItem(0, true);
+        await AcrdnObj.ExpandItem(true, 0);
+
+        listASNForGrid = new List<TblAsnData>();
+       
+
+        string linktmpDnSAP = "/api/TblAsnDatas/GetTblAsnDatabyAsnNr/" + "0" + zmASN.Trim();
+        ASNList = await Http.GetFromJsonAsync<TblAsnData[]>(linktmpDnSAP);
+        Console.WriteLine("Asn ilosc " + ASNList.Count().ToString());
+        listASNForGrid = new List<TblAsnData>(ASNList);
+
+    }
+
+    async Task LoadDataForDN()
+    {
+
+        listDeliverySapForGrid = new List<TblSapData>();
+        StateHasChanged();
+
+        await AcrdnObj.EnableItem(0, true);
+        await AcrdnObj.ExpandItem(true, 0);
+
+
+
+        string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + DeliveryNumber.Trim();
+        DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
+        listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
+
+        Console.WriteLine("Ilosc rekordow DN SAp :" + listDeliverySapForGrid.Count.ToString());
+
+        if (listDeliverySapForGrid.Count > 0)
+        {
+            await AcrdnObj.EnableItem(0, true);
+            await AcrdnObj.ExpandItem(true, 0);
+        }
+        StateHasChanged();
+    }
+
+    async Task DisplayDataDelivery()
+    {
+        indicatorDelivery = true;
+        indicatorASN = false;
+        await DisplayClaimsByDnAndAsn();
+        await LoadDataForDN();
+        StateHasChanged();
+    }
+
+
+    async Task ZalozClaimPoDn(TblSapData strVbeln)
+    {
+        //await AcrdnObj.EnableItem(0, true);
+        //await AcrdnObj.ExpandItem(false, 0);
+        await AcrdnObj.EnableItem(1, true);
+        await AcrdnObj.ExpandItem(true, 1);
+        await AcrdnObj.EnableItem(2, true);
+        await AcrdnObj.ExpandItem(true, 2);
+
+        string linkRC = "/api/TblReasoncodes/";
+        comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+        maxIDNowyCaim = await Http.GetStringAsync("/api/TblComplaints/MaxIdComplain");
+
+        zmNrClaim = DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM") + DateTime.Now.ToString("dd") + strVbeln.Vkorg.Trim() + maxIDNowyCaim;
+
+        zmtblDeliveryLines.Add(new TblDeliveryLines()
+        {
+            DeliveryLine = Convert.ToInt32(strVbeln.Posnr),
+            MaterialOrd11cn = strVbeln.Matnr
+      ,
+            MaterialOrdCtv = strVbeln.Artkx,
+            OrderQty = Convert.ToInt32(strVbeln.Lgmng),
+
+        });
+
+        StateHasChanged();
+
+    }
+
+
+    async Task ZalozClaimPoAsn(TblAsnData zmAsnJson)
+    {
+        zmlicznikDodaniaAsn = zmlicznikDodaniaAsn + 1;
+        //await AcrdnObj.EnableItem(0, true);
+        //await AcrdnObj.ExpandItem(false, 0);
+        await AcrdnObj.EnableItem(1, true);
+        await AcrdnObj.ExpandItem(true, 1);
+        await AcrdnObj.EnableItem(2, true);
+        await AcrdnObj.ExpandItem(true, 2);
+
+
+        string linkRC = "/api/TblReasoncodes/";
+        comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+
+        maxIDNowyCaim = await Http.GetStringAsync("/api/TblComplaints/MaxIdComplain");
+
+        zmNrClaim = DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM") + DateTime.Now.ToString("dd") + zmAsnJson.Plant.Trim() + maxIDNowyCaim;
+
+        zmtblDeliveryLines.Add(new TblDeliveryLines()
+        {
+            DeliveryLine = Int32.Parse(zmAsnJson.Asnline),
+            MaterialOrd11cn = zmAsnJson.Material
+        ,
+            MaterialOrdCtv = zmAsnJson.Matdesc,
+            OrderQty = zmAsnJson.RecvdQty,
+
+        });
+
+
+        StateHasChanged();
+    }
+
+    private void DeleteItemfromTable(int zmDelLine)
+    {
+        Console.WriteLine("ilosc przed delete " + zmtblDeliveryLines.Count.ToString());
+        zmtblDeliveryLines.RemoveAll(r => r.DeliveryLine == zmDelLine);
+        // zmtblDeliveryLines.RemoveAt(2);
+        Console.WriteLine("ilosc PO delete " + zmtblDeliveryLines.Count.ToString());
+        StateHasChanged();
+    }
+
+    private void UpdatedClaimPoDn(string strVbeln)
+    {
+        Console.WriteLine("Zaloz dnke " + strVbeln.ToString());
+    }
+
+
+
+    private async void OnChange1(UploadChangeEventArgs args)
+    {
+        const string idpliku = "1000001";
+        foreach (var f in args.Files)
+        {
+            Console.WriteLine($" Message z komponentu :  {f.FileInfo.Name}");
+            var dane = f.Stream.ToArray();
+
+            var DaneForupload = new UploadRequestClass { id = idpliku, file = dane, filename = f.FileInfo.Name };
+            var rep = await this.Http.PostAsJsonAsync<UploadRequestClass>("api/upload/file", DaneForupload);
+            var rep1 = await rep.Content.ReadAsStringAsync();
+            Console.WriteLine(rep1);
+        }
+    }
+
+
+    private void questionAboutSave()
+    {
+        this.IsVisible = true;
+    }
+
+    private async void SaveClaimAsn()
+    {
+
+
+
+        if (indicatorComplain)
+        {
+            //zmComplainID
+            string Linkfordel = "/api/TblDeliveryLines/" + zmComplainID.ToString();
+            var response0 = await Http.DeleteAsync(Linkfordel);
+            string Linkfordel1 = "/api/TblDeliveries/DeleteTblDeliveriesIdComp/" + zmComplainID.ToString();
+            var response1 = await Http.DeleteAsync(Linkfordel1);
+            string Linkfordel2 = "/api/TblComplaints/" + zmComplainID.ToString();
+            var response2 = await Http.DeleteAsync(Linkfordel2);
+
+            saveComplain.Reasoncode = ZmComplainReasonCode;
+        }
+
+
+        #region zerowanie zmiennych przed zapisem do dopracowania TblCompains
+
+        DateTime dal = DateTime.Now;
+
+        saveComplain.BillOfLading = "";
+        saveComplain.ShippingPoint = "";
+        saveComplain.SalesOrganization = "";
+        saveComplain.DeliveryType = 0;
+        saveComplain.DeliveryDate = dal;
+        saveComplain.ShiptoCustomerNumber = "";
+        saveComplain.SoldToCustomerNumber = "";
+        saveComplain.BillOfLading = "";
+        saveComplain.ExtDelRef = "";
+
+        saveComplain.ComplaintType = 0;
+        // saveComplain.RegisteredBy =
+        saveComplain.CreateCnDn = false;
+        saveComplain.TotalCnDnValue = 0;
+        saveComplain.CnDnCurrency = "";
+        //  saveComplain.CustomerComments = zmComplianCustomerComments;
+        saveComplain.CnDnNumber = "";
+        saveComplain.InvoiceNumber = "";
+        saveComplain.SendToOriginDc = false;
+        saveComplain.SendingDateOriginDc = dal;
+        saveComplain.DcComments = "";
+        saveComplain.SendPodRequest = false;
+        saveComplain.SendingDatePodRequest = dal;
+        saveComplain.CarrierFeedback = false;
+        saveComplain.CarrierFeedbackDate = dal;
+        saveComplain.RemarksOnPod = false;
+        saveComplain.PodComments = "";
+        saveComplain.CarrierFunloc = "";
+        saveComplain.CarrierName = "";
+        saveComplain.BelowThreshold = false;
+        saveComplain.CnCreated = false;
+        saveComplain.CnCreatedDate = dal;
+        saveComplain.ClosureRemarks = "";
+        saveComplain.ResearchRemarks = "";
+        saveComplain.LiabilityNoteSent = false;
+        saveComplain.LiabilityNoteAccept = false;
+        saveComplain.CustomerFax = "";
+        saveComplain.CustomerContact = "";
+        saveComplain.CustomerEmail = "";
+        saveComplain.CustomerPhone = "";
+        saveComplain.PoliceReport = false;
+        saveComplain.DcfeedbackReceiveDate = dal;
+        saveComplain.RemarksLsprequest = "";
+        saveComplain.Rootcause = 0;
+        saveComplain.ClaimCreatedDate = dal;
+        saveComplain.ClaimParty = 0;
+        saveComplain.RadarRef = "";
+        saveComplain.ClaimAmount = 0;
+        saveComplain.ClaimCurrency = 0;
+        saveComplain.CreateCnRemarks = "";
+        saveComplain.LiabilityRemarks = "";
+        saveComplain.PrAvailable = false;
+        saveComplain.AmountReceived = 0;
+        saveComplain.AmountInvoiced = 0;
+        saveComplain.InvoicedCurrency = 0;
+        saveComplain.RemarksFinance = "";
+        saveComplain.Status = 0;
+        saveComplain.CustomerCnnumber = "";
+        saveComplain.CustomerCnvalue = 0;
+        saveComplain.CustomerCncurrency = 0;
+        saveComplain.CustomerCnremarks = "";
+        saveComplain.CarrierClaimRemarks = "";
+        saveComplain.InsuranceClaimRemarks = "";
+        saveComplain.InvoiceCreatedDate = dal;
+        saveComplain.AmountReceivedInvoice = 0;
+        saveComplain.LiableParty = 0;
+        saveComplain.CncustCreatedDate = dal;
+        saveComplain.FinalRootcause = 0;
+        saveComplain.CreateCncust = false;
+        saveComplain.VendorFunloc = "";
+        saveComplain.VendorName = "";
+        saveComplain.CarrierPodremarks = "";
+        saveComplain.CncustCreated = false;
+        saveComplain.RemarksPodnotReceived = "";
+        saveComplain.CreateCncustRemarks = "";
+        saveComplain.BillOfLading = "";
+
+
+        saveComplain.CustomerComments = zmComplianCustomerComments;
+        saveComplain.ComplaintIduf = zmNrClaim;
+
+
+
+        saveComplain.Cust = null;
+
+        #endregion zerowanie zmiennych przed zapisem do dopracowania TblCompains
+
+        string postclaimLink = "/api/TblComplaints/";
+
+
+        var response = await Http.PostAsJsonAsync<TblComplaints>(postclaimLink, saveComplain);
+        var jsonString = await response.Content.ReadAsStringAsync();
+        TblComplaints obj = JsonConvert.DeserializeObject<TblComplaints>(jsonString);
+
+
+        saveDelivery.ComplaintId = obj.ComplaintId;
+        if (indicatorASN) saveDelivery.DeliveryNumber = zmASN;
+        if (indicatorDelivery) saveDelivery.DeliveryNumber = DeliveryNumber;
+        saveDelivery.SalesOrder = "SO";
+        string postDelink = "/api/TblDeliveries";
+        var responseDel = await Http.PostAsJsonAsync<TblDeliveries>(postDelink, saveDelivery);
+
+        DateTime dt = DateTime.Now;
+
+        @foreach (var dl in zmtblDeliveryLines)
+        {
+            string postDellinelink = "/api/TblDeliveryLines";
+
+            #region zerowanie zmiennych delivery lines
+
+            dl.DeliveryLineId = 0;
+
+            dl.ComplaintId = obj.ComplaintId;
+            dl.CurrencyComplaintValue = "PLN";
+            dl.DeliveryNumber = zmASN;
+
+
+            dl.ActualGoodsIssueDate = dt;
+            dl.PlannedGoodsIssueDate = dt;
+            //dl.DeliveryLine =
+            ///dl.MaterialOrdCtv =
+            // MaterialOrd11cn
+            // OrderQty
+            dl.MaterialRec = "";
+            // dl.ComplaintQty = dl.ComplaintQty;
+            dl.SalesOrder = "Sort";
+            dl.SalesOrderLine = "SL";
+            dl.Rootcause = 0;
+            dl.LiableParty = 0;
+            dl.TotalComplaintValueCurrentCurrency = 0;
+            dl.CurrencyComplaintValue = "";
+            dl.FinalRootcause = 0;
+            dl.FinalLiableParty = 0;
+            dl.FinalRcRemarks = "";
+            dl.FinalRcRemarksComplaintsTeam = "";
+            dl.SerialNumbers = "";
+
+            #endregion zerowanie zmiennych delivery lines
+
+
+            var responseDelLine = await Http.PostAsJsonAsync<TblDeliveryLines>(postDellinelink, dl);
+        }
+
+        CloseDialog();
+
+    }
+
+
+    private void onChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+
+        saveComplain.Reasoncode = Convert.ToInt32(args.Value);
+    }
+
+
+    private async void CloseDialog()
+    {
+
+        this.IsVisible = false;
+
+        // Pozamykaj programowo akordeon 
+        NavigationManager.NavigateTo("NewClaimPage",true);
+
+        await AcrdnObj.EnableItem(0, false);
+        await AcrdnObj.ExpandItem(false, 0);
+        await AcrdnObj.EnableItem(1, false);
+        await AcrdnObj.ExpandItem(false, 1);
+        await AcrdnObj.EnableItem(2, false);
+        await AcrdnObj.ExpandItem(false, 2);
+
+
+        StateHasChanged();
+
+    }
+
+
+    //public void ValidationDeliveryNumber(KeyboardEventArgs args)
+    //{
+    //    keyReadDataDelivery = false;
+
+
+    //}
+
+    public class UploadRequestClass
+    {
+        public string id { get; set; }
+        public string filename { get; set; }
+        public byte[] file { get; set; }
+    }
+
+
+
+}

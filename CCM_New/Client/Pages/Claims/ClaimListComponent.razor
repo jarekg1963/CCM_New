@@ -1,0 +1,93 @@
+﻿@page "/ClaimListPage"
+@inject HttpClient Http;
+@using CCM_New.Shared;
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Buttons
+
+
+<div class="containerClaim">
+    <div class="row">
+        <div class="col-4">
+            <SfDateRangePicker Placeholder="Choose a Range" @bind-StartDate="@StartValue" EndDate="@EndValue">
+                <DateRangePickerEvents ValueChange="ValueChangeHandler"></DateRangePickerEvents>
+            </SfDateRangePicker>
+        </div>
+        <div class="col-4">
+        
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-12">
+            <SfGrid DataSource="@listComplainForGrid" Height="100%" Width="100%" RowHeight="22" AllowSorting="true" AllowPaging="true">
+                <GridPageSettings PageSizes="true"></GridPageSettings>
+                <GridColumns>
+                    <GridColumn HeaderText="Select" TextAlign="TextAlign.Center" Width="60">
+                        <Template>
+                            @{ var dn = (context as TblComplaints);
+                                <a style="text-underline-position:below; cursor:pointer" @onclick="(() => SelectClaim(dn))">Select</a>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(TblComplaints.ComplaintIduf) HeaderText="Complain nr" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+                    <GridColumn Field=@nameof(TblComplaints.DeliveryDate) HeaderText="Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+                    <GridColumn Field=@nameof(TblComplaints.ShiptoCustomerNumber) HeaderText="Customer nr" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+                    <GridColumn Field=@nameof(TblComplaints.Status) HeaderText="Status" TextAlign="TextAlign.Left" Width="20"></GridColumn>
+
+                    <GridColumn HeaderText="Reason code" TextAlign="TextAlign.Center" Width="100">
+                        <Template>
+                            @{ var dn = (context as TblComplaints);
+                                <a style="text-underline-position:below">@dn.ReasonCd.ReasoncodeName</a>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(TblComplaints.CustomerComments) HeaderText="Comments" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public TblComplaints[] ComplainList = { };
+    List<TblComplaints> listComplainForGrid = new List<TblComplaints>();
+
+    public DateTime? StartValue { get; set; } = DateTime.Now;
+    public DateTime? EndValue { get; set; } = DateTime.Now;
+    DateTime tera = DateTime.Now;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        DateTime terazMcWczesniej = tera.AddDays(-60);
+
+        string Start = terazMcWczesniej.ToString("yyyy-MM-dd");
+        string End = tera.ToString("yyyy-MM-dd");
+
+        string linktmpDnSAP = "/api/TblComplaints/GetComByDate/startDate=" + Start + "&endDate=" + End;
+        ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmpDnSAP);
+
+        listComplainForGrid = new List<TblComplaints>(ComplainList);
+    }
+
+    public async void ValueChangeHandler(RangeEventArgs args)
+    {
+
+
+        string linktmpDnSAP = "/api/TblComplaints/GetComByDate/startDate=" + StartValue.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValue.Value.ToString("yyyy-MM-dd");
+
+        ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmpDnSAP);
+
+        Console.WriteLine("link do wyboru =>" + linktmpDnSAP);
+        listComplainForGrid = new List<TblComplaints>(ComplainList);
+        StateHasChanged();
+    }
+
+    public void SelectClaim(TblComplaints cl)
+    {
+
+    }
+}

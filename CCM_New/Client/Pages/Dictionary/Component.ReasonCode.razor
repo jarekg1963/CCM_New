@@ -1,0 +1,70 @@
+﻿@using CCM_New.Shared;
+@inject HttpClient Http
+@page "/ReasonCode"
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Buttons;
+
+<div class="alert alert-secondary" role="alert">
+    <h3 class="h2Naglowek">Reason code : @recno </h3>
+</div>
+
+
+
+@if (ReasoncodesForGrid.Count() == 0)
+{
+    <p>Loading....</p>
+}
+else
+{
+    <div id="containerGrid">
+        <SfGrid DataSource="@ReasoncodesForGrid" @ref="DefaultGrid" AllowSorting="true" AllowExcelExport="true" AllowPaging="true" AllowFiltering="true">
+            <GridPageSettings PageSizes="true"></GridPageSettings>
+
+            <GridColumns>
+
+
+                <GridColumn Field=@nameof(TblReasoncodes.ReasoncodeId) HeaderText="Id" TextAlign="TextAlign.Left" Width="40"></GridColumn>
+                <GridColumn Field=@nameof(TblReasoncodes.ReasoncodeName) HeaderText="Name" TextAlign="TextAlign.Left" Width="220"></GridColumn>
+                <GridColumn Field=@nameof(TblReasoncodes.ComplaintType) HeaderText="Compl. type" Format="d" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+                <GridColumn Field=@nameof(TblReasoncodes.FlowType) HeaderText="Flow type" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+                <GridColumn Field=@nameof(TblReasoncodes.Active) HeaderText="Active" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+
+            </GridColumns>
+        </SfGrid>
+        <SfButton OnClick="ExcelExport" Content="Excel Export"></SfButton>
+    </div>
+}
+
+
+@code {
+    public TblReasoncodes[] ReasoncodesList = { };
+    List<TblReasoncodes> ReasoncodesForGrid = new List<TblReasoncodes>();
+    public string recno = "0";
+    public SfGrid<TblReasoncodes> DefaultGrid;
+
+    async Task loadData()
+    {
+
+
+        string linktmp = "/api/TblReasoncodes";
+        ReasoncodesList = await Http.GetFromJsonAsync<TblReasoncodes[]>(linktmp);
+        ReasoncodesForGrid = new List<TblReasoncodes>(ReasoncodesList);
+        recno = ReasoncodesList.Count().ToString();
+
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await loadData();
+        StateHasChanged();
+    }
+
+    public async Task ExcelExport()
+    {
+        ExcelExportProperties ExportProperties = new ExcelExportProperties();
+        ExportProperties.ExportType = ExportType.AllPages;
+
+        await this.DefaultGrid.ExcelExport(ExportProperties);
+    }
+}

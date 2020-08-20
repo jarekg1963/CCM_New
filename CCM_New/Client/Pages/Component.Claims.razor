@@ -1,0 +1,201 @@
+﻿@page "/PageClaims"
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Buttons
+
+<h3>Component.Claims</h3>
+
+<SfButton IsPrimary="true" @onclick="zwinItem2" >Aktuwuj</SfButton>
+<SfButton IsPrimary="true" @onclick="RozwinItem2" >Dezaktywuj</SfButton>
+
+<div class="containerAC">
+<SfAccordion>
+    <AccordionItems>
+        <AccordionItem Expanded="true" >
+            <HeaderTemplate>
+                <div>Claim list </div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <div class="row">
+                            <h3> Grid lista claimow </h3>
+                        </div>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem Disabled=@HideDetale Expanded=@ExpandItem2zm>
+            <HeaderTemplate>
+                <div>Complain details</div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>Detale po wybraniu claima </p>
+                    </div>
+                </div>
+
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>Albert Dend POD request</div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>POD request</p>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>Send LSP request</div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>LSP request</p>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>LSP feedback </div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>LSP feedback</p>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>POD feedback </div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>POD feedback</p>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>Final rootcause </div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>Final rootcause</p>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>Logistic disclouse </div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>Logistic disclouse</p>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>Recording of info on CN towards NSO / DC  </div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>Recording of info on CN towards NSO / DC </p>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>Start recording task CN towards customer  </div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>Start recording task CN towards customer</p>
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+        <AccordionItem>
+            <HeaderTemplate>
+                <div>Claim carrier details </div>
+            </HeaderTemplate>
+            <ContentTemplate>
+                <div class='container'>
+                    <div class='content'>
+                        <p>Claim carrier details</p>
+                       
+                    </div>
+                </div>
+            </ContentTemplate>
+        </AccordionItem>
+    </AccordionItems>
+</SfAccordion>
+
+    </div>
+
+<style>
+    .e-input-group-icon:before {
+        font-family: e-icons;
+    }
+
+    .e-input-group .e-input-group-icon.e-input-calendar {
+        font-size: 16px;
+    }
+
+    .e-input-group-icon.e-input-calendar:before {
+        content: "";
+    }
+</style>
+
+@code {
+
+
+
+    public string ButtonContent { get; set; } = "Disable First Item";
+
+    public bool HideDetale = true;
+    public bool ExpandItem2zm = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        HideDetale = true;
+        ExpandItem2zm = false;
+    }
+
+    public void RozwinItem2()
+    {
+        HideDetale = true;
+        ExpandItem2zm = false;
+    }
+
+
+
+    public void zwinItem2()
+    {
+
+        HideDetale = false;
+        ExpandItem2zm = true;
+    }
+
+}

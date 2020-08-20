@@ -1,0 +1,318 @@
+﻿@page "/CarriersPage"
+@using CCM_New.Shared;
+@inject HttpClient Http
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Spinner;
+@using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Popups;
+@using Syncfusion.Blazor.Inputs;
+
+<div class="alert alert-secondary" role="alert">
+    <h3 class="h2Naglowek">Carriers : @recno </h3>
+</div>
+
+
+@if (listCerriersForGrid.Count() == 0)
+{
+    <p>Loading....</p>
+}
+else
+{
+    <div id="containerGrid">
+        <SfGrid Width="1200px" DataSource="@listCerriersForGrid" @ref="DefaultGrid" AllowSorting="true" AllowExcelExport="true" AllowPaging="true" AllowFiltering="true">
+            <GridPageSettings PageSizes="true"></GridPageSettings>
+
+            <GridColumns>
+                <GridColumn HeaderText="User profile" TextAlign="TextAlign.Center" Width="80">
+                    <Template>
+                        @{
+                            var currier = (context as TblCarriers);
+
+                            <SfButton OnClick="@(() => OpenEdit(currier))">Edit</SfButton>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="User profile" TextAlign="TextAlign.Center" Width="100">
+                    <Template>
+                        @{
+                            var currier = (context as TblCarriers);
+
+                            <SfButton OnClick="@(() => OpenDelete(currier))">Delete</SfButton>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierId) HeaderText="Id" TextAlign="TextAlign.Left" Width="140"></GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierId2) HeaderText="Id2" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierName) HeaderText="Carrier name" Format="d" TextAlign="TextAlign.Left" Width="180"></GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierAddress1) HeaderText="Address" TextAlign="TextAlign.Left" Width="180"></GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierAddress2) HeaderText="Address 2" TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierCountry) HeaderText="Country" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierContact) HeaderText="Contact " TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierEmail) HeaderText="Mail" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(TblCarriers.CarrierActive) HeaderText="Active" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+            </GridColumns>
+        </SfGrid>
+        <SfButton OnClick="ExcelExport" Content="Excel Export"></SfButton>
+    </div>
+}
+
+<SfDialog Width="800px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleEdit">
+    <DialogTemplates>
+        <Header> Edit </Header>
+        <Content>
+            <div class="container">
+                <div class="row" style="height: 80px">
+                    <div class="col-3">
+                        <p> Id 2</p>
+                        <SfTextBox @bind-Value="@sCarrierID2" Readonly="true"></SfTextBox>
+                    </div>
+                    <div class="col-3">
+                        <p> NSO</p>
+                        <SfTextBox @bind-Value="@sNSO"></SfTextBox>
+                    </div>
+                    <div class="col-3">
+                        <p> Id </p>
+                        <SfTextBox @bind-Value="@sCarrierID"></SfTextBox>
+                    </div>
+                    <div class="col-3">
+                        <p> Country</p>
+                        <SfTextBox @bind-Value="@sCarrierCountry"></SfTextBox>
+                    </div>
+                </div>
+                <div class="row" style="height: 80px">
+                    <div class="col-12">
+                        <p> Name</p>
+                        <SfTextBox @bind-Value="@sCarrierName"></SfTextBox>
+                    </div>
+                </div>
+                <div class="row" style="height: 80px">
+                    <div class="col-6">
+                        <p> Address</p>
+                        <SfTextBox @bind-Value="@sCarrierAddress1"></SfTextBox>
+                    </div>
+                    <div class="col-6">
+                        <p> Address</p>
+                        <SfTextBox @bind-Value="@sCarrierAddress2"></SfTextBox>
+                    </div>
+                </div>
+                <div class="row" style="height: 80px">
+                    <div class="col-4">
+                        <p> Contact</p>
+                        <SfTextBox @bind-Value="@sCarrierContact"></SfTextBox>
+                    </div>
+                    <div class="col-4">
+                        <p> Email</p>
+                        <SfTextBox @bind-Value="@sCarrierEmail"></SfTextBox>
+                    </div>
+                    <div class="col-4">
+                        <p> Active</p>
+                        <SfTextBox @bind-Value="@sCarrierActive"></SfTextBox>
+                    </div>
+                </div>
+            </div>
+        </Content>
+    </DialogTemplates>
+
+    <DialogButtons>
+        <DialogButton Content="Save" IsPrimary="true" OnClick="@SaveEdit" />
+        <DialogButton Content="Close" IsPrimary="true" OnClick="@CloseDialog" />
+    </DialogButtons>
+</SfDialog>
+
+<SfDialog Width="400px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleDelete">
+    <DialogTemplates>
+        <Header> Delete  </Header>
+        <Content>
+         
+   
+        </Content>
+    </DialogTemplates>
+
+    <DialogButtons>
+        <DialogButton Content="Save" IsPrimary="true" OnClick="@SaveEdit" />
+        <DialogButton Content="Close" IsPrimary="true" OnClick="@CloseDialog" />
+    </DialogButtons>
+</SfDialog>
+
+
+@code {
+
+
+
+    private bool IsVisibleEdit { get; set; } = false;
+    private bool IsVisibleDelete { get; set; } = false;
+    public TblCarriers[] CariersList = { };
+    List<TblCarriers> listCerriersForGrid = new List<TblCarriers>();
+    public string recno = "0";
+
+    public string sCarrierID2;
+    public string sNSO;
+    public string sCarrierID;
+    public string sCarrierName;
+    public string sCarrierAddress1;
+    public string sCarrierAddress2;
+    public string sCarrierCountry;
+    public string sCarrierContact;
+    public string sCarrierEmail;
+    public string sCarrierActive;
+
+
+    public SfGrid<TblCarriers> DefaultGrid;
+
+
+    async Task loadData()
+    {
+
+
+        string linktmp = "/api/TblCarriers";
+        CariersList = await Http.GetFromJsonAsync<TblCarriers[]>(linktmp);
+        listCerriersForGrid = new List<TblCarriers>(CariersList);
+        recno = listCerriersForGrid.Count().ToString();
+
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await loadData();
+        StateHasChanged();
+    }
+
+
+    public async Task ExcelExport()
+    {
+        ExcelExportProperties ExportProperties = new ExcelExportProperties();
+        ExportProperties.ExportType = ExportType.AllPages;
+
+        await this.DefaultGrid.ExcelExport(ExportProperties);
+    }
+
+
+    private void CloseEdit()
+    {
+        this.IsVisibleEdit = false;
+    }
+
+    private void SaveEdit()
+    {
+        // updated do bazy
+
+        this.IsVisibleEdit = false;
+    }
+
+    private void OpenEdit(TblCarriers cur)
+    {
+        this.IsVisibleEdit = true;
+
+        sCarrierID2 = cur.CarrierId2;
+        sNSO = cur.Nso;
+        sCarrierID = cur.CarrierId;
+        sCarrierCountry = cur.CarrierCountry;
+        sCarrierName = cur.CarrierName;
+        sCarrierAddress1 = cur.CarrierAddress1;
+        sCarrierAddress2 = cur.CarrierAddress2;
+        sCarrierContact = cur.CarrierContact;
+        sCarrierEmail = cur.CarrierEmail;
+        sCarrierActive = cur.CarrierActive.ToString();
+    }
+
+    private void OpenDelete(TblCarriers cur)
+    {
+        this.IsVisibleDelete = true;
+    }
+
+
+    private void CloseDialog()
+    {
+        this.IsVisibleEdit = false;
+    }
+
+}
+
+<style>
+
+
+    .e-input-group.e-corner {
+        border-radius: 10px !important;
+    }
+
+    .e-input-group {
+        background: #d1d8e6 !important;
+        color: blue !important;
+    }
+
+    .h2Naglowek {
+        margin-left: 500px;
+    }
+
+    .e-btn.e-flat.e-primary, .e-btn.e-flat.e-primary:focus {
+        background-color: #317ab9;
+        border-color: #265f91;
+        color: #fff;
+    }
+
+        .e-btn.e-flat.e-primary:hover, .e-btn.e-flat.e-primary:active {
+            background-color: #21527d;
+            border-color: #163854;
+            color: #fff;
+        }
+
+    .close-icon {
+        width: 24px;
+        height: 24px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .error-msg {
+        color: #66afe9;
+        display: inline-block;
+        position: relative;
+        top: -20px;
+        left: 10px;
+    }
+
+    .error-detail {
+        position: relative;
+        left: 56px;
+        margin: 0 0 21px;
+    }
+
+    .e-icons.close-icon.col-lg-2:before {
+        content: '\e7e9';
+        font-size: 26px;
+        color: #d9534f;
+        position: relative;
+        left: 1px;
+        bottom: 18px;
+    }
+
+    .e-dialog .e-footer-content {
+        background-color: #f8f8f8;
+    }
+
+    .e-dialog.e-control.e-popup, .e-dialog.e-control.e-popup .e-dlg-header-content {
+        background-color: #f8f8f8;
+    }
+
+    .e-dialog.e-control.e-popup {
+        padding: 3px;
+    }
+
+    .e-dialog.e-control .e-dlg-header-content {
+        padding: 10px;
+    }
+
+    .e-dialog.e-control .e-footer-content {
+        padding: 8px 12px;
+    }
+
+    .e-dialog.e-control .e-dlg-content {
+        padding: 15px 0 0;
+    }
+
+    .msg-wrapper.col-lg-12 {
+        margin-top: 20px;
+    }
+</style>

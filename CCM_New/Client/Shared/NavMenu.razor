@@ -1,0 +1,84 @@
+﻿@using Syncfusion.Blazor.Buttons;
+
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">CCM </a>
+        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+    
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="()=>expandSubNavCCM = !expandSubNavCCM">
+                <span class="oi oi-plus" aria-hidden="true"></span> CCM
+            </NavLink>
+            @if (expandSubNavCCM)
+            {
+                <NavLink class="nav-link" href="NewClaimPage" style="margin-left: 15px">
+                    <span class="oi oi-medical-cross" aria-hidden="true" style="align-self"></span> New Claim
+                </NavLink>
+                <NavLink class="nav-link" href="ClaimListPage" style="margin-left: 15px">
+                    <span class="oi oi-list" aria-hidden="true" style="align-self"></span> Claim list
+                </NavLink>
+            }
+        </li>
+        <li class="nav-item px-3">
+
+            <NavLink class="nav-link" @onclick="()=>expandSubNavDictionary = !expandSubNavDictionary">
+                <span class="oi oi-menu" aria-hidden="true"></span> Dictionary
+            </NavLink>
+            @if (expandSubNavDictionary)
+            {
+                <NavLink class="nav-link" href="CarriersPage" style="margin-left: 15px">
+                    <span class="oi oi-globe" aria-hidden="true" style="align-self"></span> Couriers
+                </NavLink>
+                <NavLink class="nav-link" href="ReasonCode" style="margin-left: 15px">
+                    <span class="oi oi-badge" aria-hidden="true" style="align-self"></span> Reson code
+                </NavLink>
+                <NavLink class="nav-link" href="ReasonCode" style="margin-left: 15px">
+                    <span class="oi oi-people" aria-hidden="true" style="align-self"></span> Customers
+                </NavLink>
+                <NavLink class="nav-link" href="ReasonCode" style="margin-left: 15px">
+                    <span class="oi oi-box" aria-hidden="true" style="align-self"></span> DC
+                </NavLink>
+                <NavLink class="nav-link" href="ReasonCode" style="margin-left: 15px">
+                    <span class="oi oi-file" aria-hidden="true" style="align-self"></span> ASN
+                </NavLink>
+                <NavLink class="nav-link" href="ReasonCode" style="margin-left: 15px">
+                    <span class="oi oi-wrench" aria-hidden="true" style="align-self"></span> Root causes
+                </NavLink>
+                <NavLink class="nav-link" href="ReasonCode" style="margin-left: 15px">
+                    <span class="oi oi-spreadsheet" aria-hidden="true" style="align-self"></span> SAP data
+                </NavLink>
+                <NavLink class="nav-link" href="ForTestingPurpose" style="margin-left: 15px">
+                    <span class="oi oi-spreadsheet" aria-hidden="true" style="align-self"></span> Test
+                </NavLink>
+
+              
+            }
+
+        </li>
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private bool expandSubNavDictionary;
+    private bool expandSubNavCCM;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+}
