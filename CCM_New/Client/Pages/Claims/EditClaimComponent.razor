@@ -1,0 +1,121 @@
+﻿@page "/EditClaimPage/{idCompain}";
+@using Syncfusion.Blazor.Inputs;
+@inject HttpClient Http;
+@using CCM_New.Shared;
+@using Newtonsoft.Json;
+@using Syncfusion.Blazor.Buttons;
+
+
+<h3>EditClaimComponent + @idCompain</h3>
+<div class="row">
+    <div class="col-12">
+        <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
+            <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
+        </SfUploader>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <table class="paleBlueRows">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fasn in attachmentListForGrid)
+                {
+                    <tr>
+                        <td> <SfButton @onclick="() => OpenItemfromTable(fasn)">Open</SfButton></td>
+                        <td> <SfButton @onclick="() => DeleteItemfromTable(fasn)">Delete</SfButton></td>
+                        <td>
+                            @fasn.Filename
+                            <a href="@fasn.Location">@fasn.Location" </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@code {
+    [Parameter]
+    public string idCompain { get; set; }
+    TblAttachments tblatt = new TblAttachments();
+
+    public TblAttachments[] attachmentList = { };
+    List<TblAttachments> attachmentListForGrid = new List<TblAttachments>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        string linktmpAttach = "/api/TblAttachments/GetTblAttachmentsbyId/" + idCompain;
+        attachmentList = await Http.GetFromJsonAsync<TblAttachments[]>(linktmpAttach);
+        attachmentListForGrid = new List<TblAttachments>(attachmentList);
+
+        Console.WriteLine(" Iloas rekordow " + attachmentListForGrid.Count.ToString());
+        StateHasChanged();
+    }
+
+    private async void OnChange1(UploadChangeEventArgs args)
+    {
+        const string idpliku = "1000001";
+
+        foreach (var f in args.Files)
+        {
+            Console.WriteLine($" Message z komponentu :  {f.FileInfo.Name}");
+            var dane = f.Stream.ToArray();
+
+            var DaneForupload = new UploadRequestClass { id = idpliku, file = dane, filename = f.FileInfo.Name };
+            var rep = await this.Http.PostAsJsonAsync<UploadRequestClass>("api/upload/file", DaneForupload);
+            var rep1 = await rep.Content.ReadAsStringAsync();
+
+
+            // var result = JsonConvert.DeserializeObject<Class>(responseString);
+
+            var jsonOb = JsonConvert.DeserializeObject<jsonPlik>(rep1);
+
+            Console.WriteLine("Resposse z kontrolera " + jsonOb.responseMessage);
+
+            // post do tabeli z plikami
+
+
+            tblatt.ComplaintId = Convert.ToInt32(idCompain);
+            tblatt.Filename = DaneForupload.filename;
+            tblatt.Location = jsonOb.responseMessage;
+
+            var r = await Http.PostAsJsonAsync<TblAttachments>("api/TblAttachments", tblatt);
+
+        }
+    }
+
+
+    private void OpenItemfromTable(TblAttachments fasn)
+    {
+        Console.WriteLine("Plik do obejrzenia " + fasn.Filename);
+
+        var rep =  this.Http.PostAsJsonAsync("api/upload/file", fasn.Filename);
+
+    }
+
+
+    private void DeleteItemfromTable(TblAttachments ff)
+    {
+
+    }
+
+
+    public class UploadRequestClass
+    {
+        public string id { get; set; }
+        public string filename { get; set; }
+        public byte[] file { get; set; }
+    }
+
+    public class jsonPlik
+    {
+        public string responseMessage { get; set; }
+    }
+}

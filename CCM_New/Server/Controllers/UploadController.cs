@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Syncfusion.Blazor.CircularGauge;
 
 namespace CCM_New.Server.Controllers
@@ -25,17 +26,34 @@ namespace CCM_New.Server.Controllers
         public UploadResponse uploadFile([FromBody] UploadRequest req)
         {
             var pl = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", $"{req.id} {req.filename}");
-
+            var plzwrot = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", $"{ req.filename}");
             System.IO.File.WriteAllBytes(pl, req.file);
-            
+
             return new UploadResponse
             {
-                responseMessage = $"plik: {req.id} miał {req.file.Count()} bajtów i zostął zapisany w: {pl} Pawel jest genialny"
+                // responseMessage = $"plik: {req.id} miał {req.file.Count()} bajtów i zostął zapisany w: {pl} Pawel jest genialny"
+                responseMessage = plzwrot
             };
         }
 
+        [HttpPost]
+        [Route("api/download/file")]
+        public ActionResult DownloadFile(String fileName)
+        {
 
-       public class UploadRequest
+            var pl = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", fileName);
+           
+            //byte[] stream = System.IO.File.ReadAllBytes(pl);
+            //return File(stream, "application/octet-stream");
+
+          //  var path = "<Get the file path using the ID>";
+            var stream = System.IO.File.OpenRead(pl);
+            return new FileStreamResult(stream, "application/octet-stream");
+
+        }
+
+
+        public class UploadRequest
         {
             public string id { get; set; }
             public string filename { get; set; }

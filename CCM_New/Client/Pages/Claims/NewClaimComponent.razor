@@ -753,6 +753,7 @@
     private async void OnChange1(UploadChangeEventArgs args)
     {
         const string idpliku = "1000001";
+
         foreach (var f in args.Files)
         {
             Console.WriteLine($" Message z komponentu :  {f.FileInfo.Name}");
@@ -761,7 +762,11 @@
             var DaneForupload = new UploadRequestClass { id = idpliku, file = dane, filename = f.FileInfo.Name };
             var rep = await this.Http.PostAsJsonAsync<UploadRequestClass>("api/upload/file", DaneForupload);
             var rep1 = await rep.Content.ReadAsStringAsync();
-            Console.WriteLine(rep1);
+           
+            Console.WriteLine("Resposse z kontrolera " + rep1);
+
+
+            // post do tabeli z plikami 
         }
     }
 

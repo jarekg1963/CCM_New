@@ -1,8 +1,11 @@
 ﻿@page "/ClaimListPage"
 @inject HttpClient Http;
+@inject NavigationManager NavigationManager
 @using CCM_New.Shared;
 @using Syncfusion.Blazor.Grids;
-@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Inputs;
+
 
 
 <div class="containerClaim">
@@ -12,8 +15,11 @@
                 <DateRangePickerEvents ValueChange="ValueChangeHandler"></DateRangePickerEvents>
             </SfDateRangePicker>
         </div>
-        <div class="col-4">
-        
+        <div class="col-2">
+            <SfTextBox @bind-Value="@ComplainDuId" Placeholder='Complain number' @onfocus='@(e=>keyReadDataDelivery=false)'></SfTextBox>
+        </div>
+        <div class="col-2">
+            <SfButton @onclick="@DisplayDataDelivery" Disabled="keyReadDataDelivery">Read data </SfButton>
         </div>
     </div>
 
@@ -58,6 +64,8 @@
     public DateTime? StartValue { get; set; } = DateTime.Now;
     public DateTime? EndValue { get; set; } = DateTime.Now;
     DateTime tera = DateTime.Now;
+    public string ComplainDuId = "";
+    public bool keyReadDataDelivery = true;
 
 
     protected override async Task OnInitializedAsync()
@@ -88,6 +96,17 @@
 
     public void SelectClaim(TblComplaints cl)
     {
+        NavigationManager.NavigateTo("/EditClaimPage/" + cl.ComplaintId.ToString());
+    }
 
+    public async void DisplayDataDelivery()
+    {
+        string linktmpDnSAP = "/api/TblComplaints/GetComNr/" + ComplainDuId.Trim();
+        listComplainForGrid = new List<TblComplaints>();
+        ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmpDnSAP);
+
+        Console.WriteLine("link do wyboru =>" + linktmpDnSAP);
+        listComplainForGrid = new List<TblComplaints>(ComplainList);
+        StateHasChanged();
     }
 }

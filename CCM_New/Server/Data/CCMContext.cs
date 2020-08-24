@@ -24,12 +24,38 @@ namespace CCM_New.Server.Data
         public virtual DbSet<TblSapData> TblSapData { get; set; }
         public virtual DbSet<TblCustomers> TblCustomers { get; set; }
         public virtual DbSet<TblDeliveryLines> TblDeliveryLines { get; set; }
+        public virtual DbSet<TblAttachments> TblAttachments { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+            modelBuilder.Entity<TblAttachments>(entity =>
+            {
+                entity.HasKey(e => e.UploadId);
 
-           
+                entity.ToTable("Tbl_Attachments");
+
+                entity.Property(e => e.UploadId).HasColumnName("uploadID");
+
+                entity.Property(e => e.ComplaintId).HasColumnName("ComplaintID");
+
+                entity.Property(e => e.Filename)
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Location)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+
+
             modelBuilder.Entity<TblCustomers>(entity =>
             {
                 entity.HasKey(e => e.CustomerId);

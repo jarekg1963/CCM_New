@@ -37,6 +37,15 @@ namespace CCM_New.Server.Controllers
 
 
         // get list base on date 
+        [HttpGet("GetComNr/{nr}")]
+
+
+        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDate(string nr)
+        {
+            return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.ComplaintIduf.Contains(nr)).ToListAsync();
+        }
+
+        // get list base on date 
         [HttpGet("GetComByDate/startDate={startDate}&endDate={endDate}")]
 
 
