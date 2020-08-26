@@ -1,5 +1,0 @@
-ss_comugroupmedical&param1=123&param2=334
-
-
-Grupa medyczna z Polski 
-https://gitlab.ivoice.online/ivoice-apps/compugroupmedical

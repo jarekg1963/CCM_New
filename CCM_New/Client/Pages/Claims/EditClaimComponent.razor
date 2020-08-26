@@ -4,56 +4,336 @@
 @using CCM_New.Shared;
 @using Newtonsoft.Json;
 @using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.DropDowns;
+@inject NavigationManager NavigationManager
 
 
-<h3>EditClaimComponent + @idCompain</h3>
+<h5>Complain nr: @zComplaintIDUF</h5>
+
+
+
 <div class="row">
     <div class="col-12">
-        <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
-            <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
-        </SfUploader>
-    </div>
-</div>
-<div class="row">
-    <div class="col-6">
-        <table class="paleBlueRows">
-            <thead>
-                <tr>
-                    <th>Filename</th>
-                    <th>Location</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var fasn in attachmentListForGrid)
-                {
-                    <tr>
-                        <td> <SfButton @onclick="() => OpenItemfromTable(fasn)">Open</SfButton></td>
-                        <td> <SfButton @onclick="() => DeleteItemfromTable(fasn)">Delete</SfButton></td>
-                        <td>
-                            @fasn.Filename
-                            <a href="@fasn.Location">@fasn.Location" </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+        <SfAccordion @ref="AcrdnObj">
+            <AccordionItems>
 
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Documents  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
+                                    <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
+                                </SfUploader>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <table class="paleBlueRows">
+                                    <thead>
+                                        <tr>
+                                            <th>Delete</th>
+                                            <th>Id </th>
+                                            <th>Attached document</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var fasn in attachmentListForGrid)
+                                        {
+                                            <tr>
+
+                                                <td> <SfButton @onclick="() => DeleteItemfromTable(fasn)">Delete</SfButton></td>
+                                                <td> @fasn.UploadId</td>
+                                                <td>
+                                                    <a href="./api/download/file?fileName=@fasn.Location&idKatalog=@idCompain">@fasn.Filename </a>
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </ContentTemplate>
+                </AccordionItem>
+
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Complain   </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        <div class="row">
+                            <div class="col-1">
+                                <div class="row" style="height:25px">
+                                    <label>Shipment</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Shipping point</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Sales or.</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Pl. deliv. date</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Act. GR date</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Cust.name</label>
+                                </div>
+
+                            </div>
+                            <div class="col-2">
+                                <div class="row" style="height:25px">
+                                    <SfTextBox Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zShipping_Point" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zSalesOrganization" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfDatePicker @bind-Value="@zDeliveryDate" Readonly="true"></SfDatePicker>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfDatePicker @bind-Value="@zDeliveryDate" Readonly="true"></SfDatePicker>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zCustomerName" Readonly="true"></SfTextBox>
+                                </div>
+
+                            </div>
+                            <div class="col-1" style="margin-left: 10px">
+                                <div class="row" style="height:25px">
+                                    <label>Complain id</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Contact name</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Contact Email</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Contact phone</label>
+                                </div>
+
+                                <div class="row" style="height:25px">
+                                    <label>Comment</label>
+                                </div>
+
+                            </div>
+                            <div class="col-2">
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@idCompain" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zCustomerContact" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zCustomerEmail" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zCustomerPhone" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zCustomerFax" Readonly="true"></SfTextBox>
+                                </div>
+
+                            </div>
+                            <div class="col-1" style="margin-left: 10px">
+                                <div class="row" style="height:25px">
+                                    <label>Cust Sh. to</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Cust So. to</label>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Bill of lad.</label>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zShiptoCustomerNumber" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zSoldToCustomerNumber" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zBillOfLading" Readonly="true"></SfTextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px">
+                            <div class="col-2">
+                                <label>Reason code</label>
+                            </div>
+                            <div class="col-4">
+                                <SfComboBox TValue="int" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes" @bind-Value="zReasoncode">
+                                    <ComboBoxEvents TValue="string" ValueChange="onChange"></ComboBoxEvents>
+                                    <ComboBoxFieldSettings Value="ReasoncodeId" Text="ReasoncodeName"></ComboBoxFieldSettings>
+                                </SfComboBox>
+                            </div>
+                            <div class="col-4">
+                                <div class="multiline">
+                                    <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zCustomerComments"></SfTextBox>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Complain details  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        <table class="paleBlueRows">
+                            <thead>
+                                <tr>
+                                    <th>Delete</th>
+                                    <th>Line</th>
+                                    <th>Material</th>
+                                    <th>Description</th>
+                                    <th>Ordered qty</th>
+                                    <th>Complain qty</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var fasn in zmtblDeliveryLines)
+                                {
+
+                                    <tr>
+                                        <td> <SfButton @onclick="() => DeleteItemfromTable(fasn.DeliveryLine)">Delete</SfButton></td>
+                                        <td>@fasn.DeliveryLine</td>
+                                        <td>@fasn.MaterialOrd11cn</td>
+                                        <td>@fasn.MaterialOrdCtv</td>
+                                        <td>@fasn.OrderQty</td>
+                                        <td><SfNumericTextBox @bind-Value="@fasn.ComplaintQty"></SfNumericTextBox></td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Send POD request  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>LSP feedback  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>POD details feedback  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+
+                    </ContentTemplate>
+                </AccordionItem>
+            </AccordionItems>
+        </SfAccordion>
+    </div>
 </div>
+
+
 
 @code {
     [Parameter]
     public string idCompain { get; set; }
     TblAttachments tblatt = new TblAttachments();
+    TblComplaints complain = new TblComplaints();
+
+    public string zComplaintIDUF;
+    public string zShipping_Point;
+    public string zSalesOrganization;
+    public DateTime zDeliveryDate;
+    public string zCustomerName;
+    public string zShiptoCustomerNumber;
+    public string zSoldToCustomerNumber;
+    public string zBillOfLading;
+    public string zCustomerContact;
+    public string zCustomerEmail;
+    public string zCustomerPhone;
+    public string zCustomerFax;
+    public string zCustomerComments;
+    public int zReasoncode;
+    public string zResonCodeName;
+
 
     public TblAttachments[] attachmentList = { };
     List<TblAttachments> attachmentListForGrid = new List<TblAttachments>();
+    SfAccordion AcrdnObj;
 
-    protected override async Task OnInitializedAsync()
+    public TblReasoncodes[] comboReasonCodes = { };
+
+    public TblDeliveryLines[] deliveryLinesjson = { };
+    List<TblDeliveryLines> zmtblDeliveryLines = new List<TblDeliveryLines>();
+
+    private async Task LoadData()
     {
         string linktmpAttach = "/api/TblAttachments/GetTblAttachmentsbyId/" + idCompain;
         attachmentList = await Http.GetFromJsonAsync<TblAttachments[]>(linktmpAttach);
         attachmentListForGrid = new List<TblAttachments>(attachmentList);
+
+        string linkRC = "/api/TblReasoncodes/";
+        comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+        string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + idCompain;
+
+        deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
+        zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
+
+        string linktmpComp = "/api/TblComplaints/" + idCompain;
+        complain = await Http.GetFromJsonAsync<TblComplaints>(linktmpComp);
+
+
+        zComplaintIDUF = complain.ComplaintIduf;
+        zShipping_Point = complain.ShippingPoint;
+        zSalesOrganization = complain.SalesOrganization;
+        zDeliveryDate = complain.DeliveryDate;
+        zCustomerName = "YYYYYYYYYYYYY";
+        zShiptoCustomerNumber = complain.ShiptoCustomerNumber;
+        zSoldToCustomerNumber = complain.SoldToCustomerNumber;
+        zBillOfLading = complain.BillOfLading;
+        zCustomerContact = complain.CustomerContact;
+        zCustomerEmail = complain.CustomerEmail;
+        zCustomerPhone = complain.CustomerPhone;
+        zCustomerFax = complain.CustomerFax;
+        zCustomerComments = complain.CustomerComments;
+        zReasoncode = complain.Reasoncode;
+        // zResonCodeName = complain.ReasonCd.ReasoncodeName;
+
+        
+
+
+
+        Console.WriteLine("ilosc rekordow line" + zmtblDeliveryLines.Count.ToString());
+        Console.WriteLine("Link do wywolania" + linkDoComplineLine);
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
 
         Console.WriteLine(" Iloas rekordow " + attachmentListForGrid.Count.ToString());
         StateHasChanged();
@@ -61,7 +341,7 @@
 
     private async void OnChange1(UploadChangeEventArgs args)
     {
-        const string idpliku = "1000001";
+        string idpliku = idCompain;
 
         foreach (var f in args.Files)
         {
@@ -88,21 +368,23 @@
 
             var r = await Http.PostAsJsonAsync<TblAttachments>("api/TblAttachments", tblatt);
 
+            await LoadData();
+
         }
     }
 
-
-    private void OpenItemfromTable(TblAttachments fasn)
+    private async void DeleteItemfromTable(TblAttachments ff)
     {
-        Console.WriteLine("Plik do obejrzenia " + fasn.Filename);
+        string linkKasowania = "api/TblAttachments/" + ff.UploadId.ToString();
+        var d = await Http.DeleteAsync(linkKasowania);
 
-        var rep =  this.Http.PostAsJsonAsync("api/upload/file", fasn.Filename);
+        // skasowanie pliku z dysku
 
-    }
+        string linkKasowaniazDysku = "/api/Delete/file?fileName=" + ff.Filename + "&idKatalog=" + idCompain;
+        var dd = await Http.GetAsync(linkKasowaniazDysku);
 
-
-    private void DeleteItemfromTable(TblAttachments ff)
-    {
+        await LoadData();
+        StateHasChanged();
 
     }
 
@@ -118,4 +400,67 @@
     {
         public string responseMessage { get; set; }
     }
+
+    private void onChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+
+        //   saveComplain.Reasoncode = Convert.ToInt32(args.Value);
+    }
+
+
+    private void DeleteItemfromTable(int zmDelLine)
+    {
+        Console.WriteLine("ilosc przed delete " + zmtblDeliveryLines.Count.ToString());
+        zmtblDeliveryLines.RemoveAll(r => r.DeliveryLine == zmDelLine);
+        // zmtblDeliveryLines.RemoveAt(2);
+        Console.WriteLine("ilosc PO delete " + zmtblDeliveryLines.Count.ToString());
+        StateHasChanged();
+    }
+
 }
+
+
+<style>
+    table.paleBlueRows {
+        font-family: "Times New Roman",Times,serif;
+        border: 1px solid #FFFFFF;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        border-collapse: collapse;
+    }
+
+        table.paleBlueRows td, table.paleBlueRows th {
+            border: 1px solid #FFFFFF;
+            padding: 3px 2px;
+        }
+
+        table.paleBlueRows tbody td {
+            font-size: 13px;
+        }
+
+        table.paleBlueRows tr:nth-child(even) {
+            background: #D0E4F5;
+        }
+
+        table.paleBlueRows thead {
+            background: #0B6FA4;
+            border-bottom: 5px solid #FFFFFF;
+        }
+
+            table.paleBlueRows thead th {
+                font-size: 17px;
+                font-weight: bold;
+                color: #FFFFFF;
+                text-align: center;
+                border-left: 2px solid #FFFFFF;
+            }
+
+                table.paleBlueRows thead th:first-child {
+                    border-left: none;
+                }
+
+        table.paleBlueRows tfoot td {
+            font-size: 14px;
+        }
+</style>

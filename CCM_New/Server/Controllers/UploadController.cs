@@ -25,8 +25,16 @@ namespace CCM_New.Server.Controllers
         [HttpPost][Route("api/upload/file")]
         public UploadResponse uploadFile([FromBody] UploadRequest req)
         {
-            var pl = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", $"{req.id} {req.filename}");
-            var plzwrot = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", $"{ req.filename}");
+
+            string sciezkaDoZapisu = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", req.id);
+
+
+
+           if ( !System.IO.Directory.Exists(sciezkaDoZapisu))
+                 System.IO.Directory.CreateDirectory(sciezkaDoZapisu); 
+
+            var pl = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents",req.id, $"{req.filename}");
+            var plzwrot = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", req.id,  $"{ req.filename}");
             System.IO.File.WriteAllBytes(pl, req.file);
 
             return new UploadResponse
@@ -36,21 +44,32 @@ namespace CCM_New.Server.Controllers
             };
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("api/download/file")]
-        public ActionResult DownloadFile(String fileName)
+        public ActionResult DownloadFile(String fileName, string idKatalog)
         {
 
-            var pl = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", fileName);
-           
-            //byte[] stream = System.IO.File.ReadAllBytes(pl);
-            //return File(stream, "application/octet-stream");
 
-          //  var path = "<Get the file path using the ID>";
+
+            var pl = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents",idKatalog , fileName);
+           
             var stream = System.IO.File.OpenRead(pl);
-            return new FileStreamResult(stream, "application/octet-stream");
+            return File(stream, "application/octet-stream", fileName);
+         
+        }
+
+        [HttpGet]
+        [Route("api/Delete/file")]
+        public ActionResult DeleteFile(String fileName, string idKatalog)
+        {
+
+            var pl = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", idKatalog, fileName);
+
+            System.IO.File.Delete(pl);
+            return new EmptyResult();
 
         }
+
 
 
         public class UploadRequest

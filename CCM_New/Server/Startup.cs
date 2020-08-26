@@ -8,6 +8,10 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using CCM_New.Server.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+
+
+
 
 namespace CCM_New.Server
 {
@@ -28,7 +32,12 @@ namespace CCM_New.Server
                options.UseSqlServer(
                    Configuration.GetConnectionString("DefaultConnection")));
 
+          
+
             services.AddSwaggerGen();
+
+            services.AddAuthentication();
+            services.AddAuthorization();
 
             services.AddControllersWithViews();
             services.AddControllersWithViews();
