@@ -3,9 +3,11 @@
 @inject HttpClient Http;
 @using CCM_New.Shared;
 @using Newtonsoft.Json;
+@using Syncfusion.Blazor.Data
 @using Syncfusion.Blazor.Buttons;
 @using Syncfusion.Blazor.Navigations
 @using Syncfusion.Blazor.DropDowns;
+@using Syncfusion.Blazor.Popups;
 @inject NavigationManager NavigationManager
 
 
@@ -17,7 +19,6 @@
     <div class="col-12">
         <SfAccordion @ref="AcrdnObj">
             <AccordionItems>
-
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
                         <div>Documents  </div>
@@ -46,7 +47,9 @@
                                         {
                                             <tr>
 
-                                                <td> <SfButton @onclick="() => DeleteItemfromTable(fasn)">Delete</SfButton></td>
+                                                <td>
+                                                    <SfButton @onclick="() => DeleteItemfromTable(fasn)">Delete</SfButton>
+                                                </td>
                                                 <td> @fasn.UploadId</td>
                                                 <td>
                                                     <a href="./api/download/file?fileName=@fasn.Location&idKatalog=@idCompain">@fasn.Filename </a>
@@ -184,9 +187,7 @@
                                     <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zCustomerComments"></SfTextBox>
                                 </div>
                             </div>
-
                         </div>
-
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
@@ -197,27 +198,26 @@
                         <table class="paleBlueRows">
                             <thead>
                                 <tr>
-                                    <th>Delete</th>
+
                                     <th>Line</th>
                                     <th>Material</th>
                                     <th>Description</th>
                                     <th>Ordered qty</th>
                                     <th>Complain qty</th>
-
                                 </tr>
                             </thead>
                             <tbody>
-
                                 @foreach (var fasn in zmtblDeliveryLines)
                                 {
-
                                     <tr>
-                                        <td> <SfButton @onclick="() => DeleteItemfromTable(fasn.DeliveryLine)">Delete</SfButton></td>
+
                                         <td>@fasn.DeliveryLine</td>
                                         <td>@fasn.MaterialOrd11cn</td>
                                         <td>@fasn.MaterialOrdCtv</td>
                                         <td>@fasn.OrderQty</td>
-                                        <td><SfNumericTextBox @bind-Value="@fasn.ComplaintQty"></SfNumericTextBox></td>
+                                        <td>
+                                            <SfNumericTextBox @bind-Value="@fasn.ComplaintQty" Readonly="true"></SfNumericTextBox>
+                                        </td>
 
                                     </tr>
                                 }
@@ -227,9 +227,36 @@
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Send POD request  </div>
+                        <div>Sent LSP request  </div>
                     </HeaderTemplate>
                     <ContentTemplate>
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Send to DC</label>
+                            </div>
+                            <div class="col-4">
+                                <SfRadioButton Label="Yes" Name="options" Value="PodYes" @bind-Checked="stringChecked"></SfRadioButton>
+                                <SfRadioButton Label="No" Name="options" Value="PodNo" @bind-Checked="stringChecked"></SfRadioButton>
+                            </div>
+                            <div class="col-2">
+                                <label>Sent date</label>
+                            </div>
+                            <div class="col-2">
+                                <SfTextBox Readonly="true"></SfTextBox>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Remarks </label>
+                            </div>
+                            <div class="col-6">
+                                <div class="multiline">
+                                    <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zCustomer_Comments"></SfTextBox>
+                                </div>
+                            </div>
+                        </div>
+
 
                     </ContentTemplate>
                 </AccordionItem>
@@ -238,12 +265,210 @@
                         <div>LSP feedback  </div>
                     </HeaderTemplate>
                     <ContentTemplate>
+                        <div class="row">
+                            <table class="paleBlueRows">
+                                <thead>
+                                    <tr>
 
+                                        <th>Line</th>
+                                        <th>Material</th>
+                                        <th>Description</th>
+                                        <th>Ordered qty</th>
+                                        <th>Complain qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var fasn in zmtblDeliveryLines)
+                                    {
+                                        <tr>
+
+                                            <td>@fasn.DeliveryLine</td>
+                                            <td>@fasn.MaterialOrd11cn</td>
+                                            <td>@fasn.MaterialOrdCtv</td>
+                                            <td>@fasn.OrderQty</td>
+                                            <td>
+                                                <SfNumericTextBox @bind-Value="@fasn.ComplaintQty" Readonly="true"></SfNumericTextBox>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+
+                            </div>
+                            <div class="col-1">
+                                <SfButton>Save </SfButton>
+                            </div>
+                        </div>
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Send POD request  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Carrier funl.</label>
+                            </div>
+                            <div class="col-3">
+                                <SfTextBox @bind-Value="@zCarrier_Funloc" Readonly="true"></SfTextBox>
+                            </div>
+                            <div class="col-2">
+                                <SfCheckBox Label="Send POD request" @onchange="onClickSendPODRequest" @bind-Checked="zsendPOD_Request"></SfCheckBox>
+                            </div>
+                            <div class="col-1">
+                                <label>Comments</label>
+                            </div>
+                            <div class="col-4">
+                                <div class="multiline">
+                                    <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zCustomer_Comments"></SfTextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top:10px">
+                            <div class="col-2">
+                                <label>Change carrier </label>
+                            </div>
+                            <div class="col-3">
+                                <SfCheckBox Label="Carrier update" @onchange="unBlockCurrierUpdate" @bind-Checked="BlockedChangeCarrier"></SfCheckBox>
+
+                                <SfComboBox TValue="string" TItem="TblCarriers" Placeholder="Select carrier" DataSource="@comboCarriers" @bind-Value="@zmWartoscPolaCombiCarrier" Readonly="@BlockedChangeCarrier">
+                                    <ComboBoxEvents TValue="string" ValueChange="onChangeCarrier"></ComboBoxEvents>
+                                    <ComboBoxFieldSettings Text="FullComboName" Value="Id"></ComboBoxFieldSettings>
+                                </SfComboBox>
+
+                            </div>
+                            <div class="col-3">
+                                <div class="row" style="margin-top: 20px">
+                                    <SfTextBox @bind-Value="@zCarrier_Funloc" Readonly="true" Placeholder="Date sent"></SfTextBox>
+                                </div>
+                            </div>
+                            <div class="col-2">
+
+                            </div>
+                            <div class="col-1">
+                                <div class="row" style="margin-top: 20px">
+                                    <SfButton>Save </SfButton>
+                                </div>
+                            </div>
+                        </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
                         <div>POD details feedback  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        <div class="row">
+                            <div class="col-2">
+                                POD received:
+                            </div>
+                            <div class="col-2">
+                                <SfRadioButton Label="Yes" Name="options" Value="PodYes" @bind-Checked="stringChecked"></SfRadioButton>
+                                <SfRadioButton Label="No" Name="options" Value="PodNo" @bind-Checked="stringChecked"></SfRadioButton>
+                            </div>
+                            <div class="col-2">
+                                <label>Remarks</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+
+                            </div>
+                            <div class="col-2">
+                                <SfDatePicker TValue="DateTime?" Value='@DateValue' Min='@MinDate' Max='@MaxDate'></SfDatePicker>
+                            </div>
+                            <div class="col-6">
+                                <div class="multiline">
+                                    <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zCustomer_Comments"></SfTextBox>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Final rootcause  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        <div class="row">
+                            <table class="paleBlueRows">
+                                <thead>
+                                    <tr>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                        <th>Line</th>
+                                        <th>Material</th>
+                                        <th>Description</th>
+                                        <th>Ordered qty</th>
+                                        <th>Complain qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var fasn in zmtblDeliveryLines)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <SfButton OnClick="() => EditFinalRootcause(fasn)">Edit</SfButton>
+                                            </td>
+                                            <td>
+                                                <SfButton OnClick="() => DeleteFinalRootcause(fasn)">Delete </SfButton>
+                                            </td>
+                                            <td>@fasn.DeliveryLine</td>
+                                            <td>@fasn.MaterialOrd11cn</td>
+                                            <td>@fasn.MaterialOrdCtv</td>
+                                            <td>@fasn.OrderQty</td>
+                                            <td>
+                                                <SfNumericTextBox @bind-Value="@fasn.ComplaintQty" Readonly="true"></SfNumericTextBox>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-9"></div>
+                           
+                            <div class="col-1">
+                                <SfButton>Save </SfButton>
+                            </div>
+                        </div>
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Logistic disclouse  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Recording info on CN towards NSO / DC  </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Start recording task CN towards customer </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Claims currier details  </div>
                     </HeaderTemplate>
                     <ContentTemplate>
 
@@ -255,13 +480,75 @@
 </div>
 
 
+<SfDialog Width="800px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLine">
+    <DialogTemplates>
+        <Header> Edit / New </Header>
+        <Content>
+            <div class="row">
+                <div class="col-2">
+                    <label>@newTblDeliveryLine.DeliveryLine</label>
+                </div>
+
+                <div class="col-6">
+                    <label>@newTblDeliveryLine.MaterialOrd11cn</label>
+                </div>
+                <div class="col-2">
+                    <label>@newTblDeliveryLine.MaterialOrdCtv</label>
+                </div>
+                <div class="col-2">
+                    <label>@newTblDeliveryLine.ComplaintQty</label>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+
+                <div class="col-2">
+                    <label>New quantity</label>
+                </div>
+                <div class="col-10">
+                    <label>New reason code</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <SfNumericTextBox @bind-Value="@zmQuatityForSplitedCoplain"></SfNumericTextBox>
+                </div>
+                <div class="col-10">
+                    <SfComboBox TValue="string" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes">
+                        <ComboBoxEvents TValue="string" ValueChange="onChangeSplited"></ComboBoxEvents>
+                        <ComboBoxFieldSettings Value="ReasoncodeId" Text="ReasoncodeName"></ComboBoxFieldSettings>
+                    </SfComboBox>
+                </div>
+            </div>
+
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="OK" IsPrimary="true" OnClick="@SaveLine" />
+        <DialogButton Content="Cancel" OnClick="@CloseDialogLine" />
+    </DialogButtons>
+</SfDialog>
+
+
 
 @code {
+
+
+
     [Parameter]
     public string idCompain { get; set; }
+
+    public bool IsVisibleNewLine = false;
+
+    public int zmQuatityForSplitedCoplain = 0;
+    public int zmReasonCodeForSplitedComplain = 0;
+
+    public bool zmDelindicator = true;
+    public string zmWartoscPolaCombiCarrier;
+    private string stringChecked = "Yes";
+    public bool BlockedChangeCarrier = true;
     TblAttachments tblatt = new TblAttachments();
     TblComplaints complain = new TblComplaints();
-
     public string zComplaintIDUF;
     public string zShipping_Point;
     public string zSalesOrganization;
@@ -277,7 +564,21 @@
     public string zCustomerComments;
     public int zReasoncode;
     public string zResonCodeName;
+    public string zCarrier_Funloc;
+    public string zCustomer_Comments;
+    public bool? zsendPOD_Request;
 
+    public string zCarrierID = "";
+
+    public DateTime? DateValue { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10);
+    public DateTime MinDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 05);
+    public DateTime MaxDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 27);
+
+
+    TblDeliveryLines newTblDeliveryLine = new TblDeliveryLines();
+
+
+    public TblDeliveries[] tblDeliverieslist = { };
 
     public TblAttachments[] attachmentList = { };
     List<TblAttachments> attachmentListForGrid = new List<TblAttachments>();
@@ -285,8 +586,18 @@
 
     public TblReasoncodes[] comboReasonCodes = { };
 
+
     public TblDeliveryLines[] deliveryLinesjson = { };
     List<TblDeliveryLines> zmtblDeliveryLines = new List<TblDeliveryLines>();
+
+    public TblCarriers[] comboCarriers = { };
+    // List<TblCarriers> comboCarriersList = new List<TblCarriers>();
+
+    public TblAsnData[] ASNList = { };
+    List<TblAsnData> listASNForGrid = new List<TblAsnData>();
+
+    public TblSapData[] DeliveryListSap = { };
+    List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
 
     private async Task LoadData()
     {
@@ -296,6 +607,12 @@
 
         string linkRC = "/api/TblReasoncodes/";
         comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+        string linkCar = "/api/TblCarriers/";
+
+        comboCarriers = await Http.GetFromJsonAsync<TblCarriers[]>(linkCar);
+        // comboCarriersList = new List<TblCarriers>(comboCarriers);
+
 
         string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + idCompain;
 
@@ -320,10 +637,14 @@
         zCustomerFax = complain.CustomerFax;
         zCustomerComments = complain.CustomerComments;
         zReasoncode = complain.Reasoncode;
+        zCarrierID = complain.CarrierFunloc;
+        zCarrier_Funloc = complain.CarrierFunloc;
+        zsendPOD_Request = complain.SendPodRequest;
+
+
+        Console.WriteLine("Cuuuuuuurier Id" + zCarrierID);
+
         // zResonCodeName = complain.ReasonCd.ReasoncodeName;
-
-        
-
 
 
         Console.WriteLine("ilosc rekordow line" + zmtblDeliveryLines.Count.ToString());
@@ -331,9 +652,59 @@
 
     }
 
-    protected override async Task OnInitializedAsync()
+    //protected override async Task OnInitializedAsync()
+
+    private async Task ReadDnAsNFromComplain()
+    {
+        string tmpDn;
+        string strLinkforDNAsn = "/api/TblDeliveries/GetByComplainId/" + idCompain.ToString();
+        tblDeliverieslist = await Http.GetFromJsonAsync<TblDeliveries[]>(strLinkforDNAsn);
+        if (tblDeliverieslist.Length > 0)
+        {
+            tmpDn = tblDeliverieslist[0].DeliveryNumber;
+
+            if (tmpDn.Substring(0, 1) == "1")
+            {
+                // Asn
+                zmDelindicator = false;
+
+                listASNForGrid = new List<TblAsnData>();
+
+
+                string linktmpDnSAP = "/api/TblAsnDatas/GetTblAsnDatabyAsnNr/" + "0" + tmpDn.Trim();
+                ASNList = await Http.GetFromJsonAsync<TblAsnData[]>(linktmpDnSAP);
+                Console.WriteLine("Asn ilosc ------------------- " + ASNList.Count().ToString());
+                listASNForGrid = new List<TblAsnData>(ASNList);
+
+            }
+            else
+            {
+                //DN
+
+                zmDelindicator = true;
+
+
+                string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + tmpDn.Trim();
+                DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
+                listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
+
+                Console.WriteLine("Ilosc rekordow DN SAp ---------------------:" + listDeliverySapForGrid.Count.ToString());
+            }
+
+
+        }
+
+
+
+
+
+    }
+
+    protected override async Task OnParametersSetAsync()
     {
         await LoadData();
+
+        //  await ReadDnAsNFromComplain();
 
         Console.WriteLine(" Iloas rekordow " + attachmentListForGrid.Count.ToString());
         StateHasChanged();
@@ -385,7 +756,6 @@
 
         await LoadData();
         StateHasChanged();
-
     }
 
 
@@ -408,6 +778,14 @@
     }
 
 
+    private void onChangeCarrier(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        Console.WriteLine("Combi currier " + args.Value);
+        zCarrierID = args.Value;
+        StateHasChanged();
+    }
+
+
     private void DeleteItemfromTable(int zmDelLine)
     {
         Console.WriteLine("ilosc przed delete " + zmtblDeliveryLines.Count.ToString());
@@ -417,6 +795,70 @@
         StateHasChanged();
     }
 
+    private void onClick()
+    {
+    }
+
+    private void unBlockCurrierUpdate()
+    {
+
+    }
+
+    private void onClickSendPODRequest()
+    {
+        // wyslanie mala do POD request
+        // zapisanie do Tbl_compains
+        BlockedChangeCarrier = false;
+
+    }
+
+ 
+
+    private void DeleteFinalRootcause(TblDeliveryLines tt)
+    {
+        zmtblDeliveryLines.Remove(tt);
+        StateHasChanged();
+    }
+
+    private void CloseDialogLine()
+    {
+        IsVisibleNewLine = false;
+    }
+
+    private void SaveLine()
+    {
+        IsVisibleNewLine = false;
+        newTblDeliveryLine.DeliveryLine = 99;
+        newTblDeliveryLine.MaterialOrd11cn = zmtblDeliveryLines[0].MaterialOrd11cn;
+        newTblDeliveryLine.MaterialOrdCtv = zmtblDeliveryLines[0].MaterialOrdCtv;
+        newTblDeliveryLine.OrderQty = zmtblDeliveryLines[0].OrderQty;
+
+
+        newTblDeliveryLine.ComplaintQty = zmQuatityForSplitedCoplain;
+
+
+
+        zmtblDeliveryLines.Add(newTblDeliveryLine);
+
+        StateHasChanged();
+
+    }
+
+    private void EditFinalRootcause(TblDeliveryLines tt)
+    {
+
+        IsVisibleNewLine = true;
+
+        newTblDeliveryLine.DeliveryLine = tt.DeliveryLine;
+        newTblDeliveryLine.MaterialOrd11cn = tt.MaterialOrd11cn;
+        newTblDeliveryLine.MaterialOrdCtv = tt.MaterialOrdCtv;
+        newTblDeliveryLine.ComplaintQty = tt.ComplaintQty;
+    }
+
+    private void onChangeSplited(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        zmReasonCodeForSplitedComplain = Convert.ToInt32(args.Value);
+    }
 }
 
 

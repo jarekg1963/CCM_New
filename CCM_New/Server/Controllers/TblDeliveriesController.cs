@@ -28,6 +28,22 @@ namespace CCM_New.Server.Controllers
             return await _context.Tbl_Deliveries.ToListAsync();
         }
 
+
+        // GET: api/TblDeliveries/5
+        [HttpGet("GetByComplainId/{sCid}")]
+
+        public async Task<ActionResult<IEnumerable<TblDeliveries>>> GetByDeliveries(int sCid)
+        {
+            var tblDeliveries = await _context.Tbl_Deliveries.Where(d => d.ComplaintId == sCid).ToListAsync();
+
+            if (tblDeliveries == null)
+            {
+                return NotFound();
+            }
+
+            return tblDeliveries;
+        }
+
         // GET: api/TblDeliveries/5
         [HttpGet("GetByDeliveries/{sDn}")]
        

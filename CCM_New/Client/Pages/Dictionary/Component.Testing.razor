@@ -1,74 +1,54 @@
 ﻿@page "/ForTestingPurpose"
 @using System.IO
 @inject HttpClient http;
-@using Syncfusion.Blazor.Layouts
+
+@using Syncfusion.Blazor.DropDowns;
+@using CCM_New.Shared;
 
 @using Syncfusion.Blazor.Inputs
 
-@*<SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
-        <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
-    </SfUploader>*@
-    <div id="containerGrid">
-        <SfDashboardLayout CellSpacing="@(new double[]{5 ,5 })" Columns="2" CellAspectRatio="4">
-            <DashboardLayoutPanels>
-                <DashboardLayoutPanel SizeX=2 SizeY=1>
-                    <ContentTemplate>
+@if (comboCarriers.Length == 0)
+{<p>Loading..</p> }
+else
+{
 
-                        <div class="alert alert-secondary" role="alert">
-                            <h4 class="h2Naglowek" style="margin-left:400px">New claim </h4>
+    @*<SfComboBox TValue="int" TItem="TblCarriers" AllowFiltering=true Placeholder="Select a carrier" DataSource="@comboCarriers" @bind-Value="@zmWartoscPola">
+                <ComboBoxEvents TValue="string" ValueChange="onChangeCarrier"></ComboBoxEvents>
+                <ComboBoxFieldSettings Value="Id" Text="FullComboName"></ComboBoxFieldSettings>
+        </SfComboBox>*@
 
-                        </div>
-                    </ContentTemplate>
-                </DashboardLayoutPanel>
-                <DashboardLayoutPanel Row=1 SizeY=2>
-                    <ContentTemplate><div>2</div></ContentTemplate>
-                </DashboardLayoutPanel>
-                <DashboardLayoutPanel Row=1 Col=1 SizeY=2>
-                    <ContentTemplate><div>3</div></ContentTemplate>
-                </DashboardLayoutPanel>
-                <DashboardLayoutPanel Row=3  Col=0 SizeX=2 SizeY=4>
-                    <ContentTemplate><div>De</div></ContentTemplate>
-                </DashboardLayoutPanel>
+<SfComboBox TValue="string" TItem="TblCarriers" Placeholder="Select a game" DataSource="@comboCarriers" @bind-Value="@zmWartoscPola">
+    <ComboBoxEvents TValue="string" ValueChange="onChangeCarrier"></ComboBoxEvents>
+    <ComboBoxFieldSettings Text="FullComboName" Value="Id"></ComboBoxFieldSettings>
+</SfComboBox>
 
-            </DashboardLayoutPanels>
-        </SfDashboardLayout>
-    </div>
-    <style>
-        .e-panel-content {
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
+}
+<style>
+</style>
 
 
-    @code {
+@code {
 
-        const string idpliku = "1000001";
 
-        private async void OnChange1(UploadChangeEventArgs args)
-        {
-            foreach (var f in args.Files)
-            {
-                Console.WriteLine($" Message z komponentu :  {f.FileInfo.Name}");
-                var dane = f.Stream.ToArray();
+    public TblCarriers[] comboCarriers = { };
+    // List<TblCarriers> comboCarriersList = new List<TblCarriers>();
+    public string zCarrierID = "";
+    public string zmWartoscPola = "112";
 
-                var DaneForupload = new UploadRequestClass { id = idpliku, file = dane, filename = f.FileInfo.Name };
-                var rep = await this.http.PostAsJsonAsync<UploadRequestClass>("api/upload/file", DaneForupload);
-                var rep1 = await rep.Content.ReadAsStringAsync();
-                Console.WriteLine(rep1);
-            }
-        }
-
-        public class UploadRequestClass
-        {
-            public string id { get; set; }
-            public string filename { get; set; }
-            public byte[] file { get; set; }
-        }
-
-        //    public class UploadResponseClass
-        //    {
-        //        public string responseMessage { get; set; }
-        //    }
+    protected override async Task OnParametersSetAsync()
+    {
+        string linkCar = "/api/TblCarriers/";
+        comboCarriers = await http.GetFromJsonAsync<TblCarriers[]>(linkCar);
+        // comboCarriersList = new List<TblCarriers>(comboCarriers);
 
     }
+
+    private void onChangeCarrier(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        Console.WriteLine("Combi currier " + args.Value);
+        Console.WriteLine("Combi currier " + zmWartoscPola.ToString());
+        zCarrierID = args.Value;
+        StateHasChanged();
+    }
+
+}

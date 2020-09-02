@@ -163,7 +163,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                                <hr />
+                                            
                                             </div>
                                         </div>
                                         <div class="row">
@@ -176,7 +176,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                                <hr />
+                                        
                                             </div>
                                         </div>
                                         <div class="row">
@@ -209,7 +209,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                                <hr />
+                                           
                                             </div>
                                         </div>
                                         <div class="row">
@@ -222,7 +222,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                                <hr />
+                                           
                                             </div>
                                         </div>
                                         <div class="row">
@@ -247,25 +247,52 @@
                                     </div>
                                 }
                             </div>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <hr />
+                            <div class="row" style=" margin-top: 10px">
+                                <div class="col-1">
+                                    <label>Customer</label>
+                                </div>
+                                <div class="col-2">
+                                    <SfTextBox @bind-Value="@zCustomerContact" Readonly="false"></SfTextBox>
+                                </div>
+                                <div class="col-1">
+                                    <label>Phone</label>
+                                </div>
+                                <div class="col-2">
+                                    <SfTextBox @bind-Value="@zCustomerPhone" Readonly="false"></SfTextBox>
+                                </div>
+                                <div class="col-1">
+                                    <label>Email</label>
+                                </div>
+                                <div class="col-2">
+                                    <SfTextBox @bind-Value="@zCustomerEmail" Readonly="false"></SfTextBox>
+                                </div>
+                                <div class="col-1">
+                                    <label>Fax</label>
+                                </div>
+                                <div class="col-2">
+                                    <SfTextBox @bind-Value="@zCustomerFax" Readonly="false"></SfTextBox>
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-12">
-                                    <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
-                                        <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
-                                    </SfUploader>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                  
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <hr />
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
+                                            <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
+                                        </SfUploader>
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                     
+                                    </div>
+                                </div>
                         </ContentTemplate>
                     </AccordionItem>
                     <AccordionItem>
@@ -498,6 +525,12 @@
 
     public int zmlicznikDodaniaAsn = 0;
 
+    public string zCustomerFax = "";
+    public string zCustomerContact = "";
+    public string zCustomerEmail = "";
+    public string zCustomerPhone = "";
+
+
 
     public string zmSzuk = "";
 
@@ -574,6 +607,13 @@
         zmNrClaim = DuComplain.Comp.ComplaintIduf;
         zmComplianCustomerComments = DuComplain.Comp.CustomerComments;
 
+
+        zCustomerFax = DuComplain.Comp.CustomerFax;
+        zCustomerContact = DuComplain.Comp.CustomerContact;
+        zCustomerEmail = DuComplain.Comp.CustomerEmail;
+        zCustomerPhone = DuComplain.Comp.CustomerPhone;
+
+
         ZmComplainReasonCode = DuComplain.Comp.Reasoncode;
         //  zmReazonCodeDoEdycji = "Too late";
 
@@ -583,6 +623,8 @@
 
         deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
         zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
+
+
 
         StateHasChanged();
     }
@@ -626,7 +668,7 @@
         await AcrdnObj.ExpandItem(true, 0);
 
         listASNForGrid = new List<TblAsnData>();
-       
+
 
         string linktmpDnSAP = "/api/TblAsnDatas/GetTblAsnDatabyAsnNr/" + "0" + zmASN.Trim();
         ASNList = await Http.GetFromJsonAsync<TblAsnData[]>(linktmpDnSAP);
@@ -762,7 +804,7 @@
             var DaneForupload = new UploadRequestClass { id = idpliku, file = dane, filename = f.FileInfo.Name };
             var rep = await this.Http.PostAsJsonAsync<UploadRequestClass>("api/upload/file", DaneForupload);
             var rep1 = await rep.Content.ReadAsStringAsync();
-           
+
             Console.WriteLine("Resposse z kontrolera " + rep1);
 
 
@@ -835,10 +877,10 @@
         saveComplain.ResearchRemarks = "";
         saveComplain.LiabilityNoteSent = false;
         saveComplain.LiabilityNoteAccept = false;
-        saveComplain.CustomerFax = "";
-        saveComplain.CustomerContact = "";
-        saveComplain.CustomerEmail = "";
-        saveComplain.CustomerPhone = "";
+        saveComplain.CustomerFax = zCustomerFax;
+        saveComplain.CustomerContact = zCustomerContact;
+        saveComplain.CustomerEmail = zCustomerEmail;
+        saveComplain.CustomerPhone = zCustomerPhone;
         saveComplain.PoliceReport = false;
         saveComplain.DcfeedbackReceiveDate = dal;
         saveComplain.RemarksLsprequest = "";
