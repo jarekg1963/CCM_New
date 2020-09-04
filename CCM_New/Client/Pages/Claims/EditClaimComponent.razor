@@ -269,23 +269,49 @@
                             <table class="paleBlueRows">
                                 <thead>
                                     <tr>
-
+                                        <td>Add</td>
+                                        <th>Edit</th>
+                                        <th>Delete</th>                         
                                         <th>Line</th>
                                         <th>Material</th>
                                         <th>Description</th>
                                         <th>Ordered qty</th>
-                                        <th>Complain qty</th>
+                                        <th>Liability</th>
+                                        <th>Rootcause</th>
+                                        <th>Quantity</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (var fasn in zmtblDeliveryLines)
                                     {
                                         <tr>
-
+                                            <td>
+                                                <SfButton OnClick="() => AddLspFeedBack(fasn)">Add</SfButton>
+                                            </td>
+                                            <td>
+                                                <SfButton OnClick="() => EditLspFinalRootcause(fasn)">Edit</SfButton>
+                                            </td>
+                                            <td>
+                                                <SfButton OnClick="() => DeleteFinalRootcause(fasn)">Delete </SfButton>
+                                            </td>                                         
                                             <td>@fasn.DeliveryLine</td>
                                             <td>@fasn.MaterialOrd11cn</td>
                                             <td>@fasn.MaterialOrdCtv</td>
                                             <td>@fasn.OrderQty</td>
+                                            <td>
+                                                @if (fasn.Liable is null)
+                                                {<p> - </p>}
+                                                else
+                                                { <label> @fasn.Liable.LiablePartyName </label>}
+                                            </td>
+
+                                            <td>
+                                                @if (fasn.Rootca is null)
+                                                {<p> - </p>}
+                                                else
+                                                { <label> @fasn.Rootca.RootCauseName </label>}
+                                            </td>
+
                                             <td>
                                                 <SfNumericTextBox @bind-Value="@fasn.ComplaintQty" Readonly="true"></SfNumericTextBox>
                                             </td>
@@ -294,16 +320,15 @@
                                     }
                                 </tbody>
                             </table>
-
                         </div>
                         <div class="row">
-                            <div class="col-10">
+                            <div class="col-9"></div>
 
-                            </div>
                             <div class="col-1">
-                                <SfButton>Save </SfButton>
+                                <SfButton OnClick="() => SaveTabeleLSPFeedback()">Save </SfButton>
                             </div>
                         </div>
+
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
@@ -415,7 +440,7 @@
                                     {
                                         <tr>
                                             <td>
-                                                <SfButton OnClick="() => EditFinalRootcause(fasn)">Edit</SfButton>
+                                                <SfButton OnClick="() => EditLspFinalRootcause(fasn)">Edit</SfButton>
                                             </td>
                                             <td>
                                                 <SfButton OnClick="() => DeleteFinalRootcause(fasn)">Delete </SfButton>
@@ -435,7 +460,7 @@
                         </div>
                         <div class="row">
                             <div class="col-9"></div>
-                           
+
                             <div class="col-1">
                                 <SfButton>Save </SfButton>
                             </div>
@@ -480,43 +505,51 @@
 </div>
 
 
-<SfDialog Width="800px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLine">
+<SfDialog Width="800px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLineLSPFeedback">
     <DialogTemplates>
         <Header> Edit / New </Header>
         <Content>
             <div class="row">
-                <div class="col-2">
-                    <label>@newTblDeliveryLine.DeliveryLine</label>
+                <div class="col-1">
+                    <label>@zmDeliveryLine</label>
                 </div>
 
-                <div class="col-6">
-                    <label>@newTblDeliveryLine.MaterialOrd11cn</label>
+                <div class="col-5">
+                    <label>@zmMaterialOrd11cn</label>
                 </div>
-                <div class="col-2">
-                    <label>@newTblDeliveryLine.MaterialOrdCtv</label>
+                <div class="col-5">
+                    <label>@zmMaterialOrdCtv</label>
                 </div>
-                <div class="col-2">
-                    <label>@newTblDeliveryLine.ComplaintQty</label>
+                <div class="col-1">
+                    <label>@zmComplaintQty</label>
                 </div>
             </div>
             <hr />
             <div class="row">
-
                 <div class="col-2">
                     <label>New quantity</label>
                 </div>
-                <div class="col-10">
-                    <label>New reason code</label>
+                <div class="col-5">
+                    <label>Root cause</label>
+                </div>
+                <div class="col-5">
+                    <label>Liability</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-2">
                     <SfNumericTextBox @bind-Value="@zmQuatityForSplitedCoplain"></SfNumericTextBox>
                 </div>
-                <div class="col-10">
-                    <SfComboBox TValue="string" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes">
-                        <ComboBoxEvents TValue="string" ValueChange="onChangeSplited"></ComboBoxEvents>
-                        <ComboBoxFieldSettings Value="ReasoncodeId" Text="ReasoncodeName"></ComboBoxFieldSettings>
+                <div class="col-5">
+                    <SfComboBox TValue="int" TItem="TblRootCauses" Placeholder="Select rootcause" DataSource="@comboRootCause" @bind-Value="zReasoncode">
+                        <ComboBoxEvents TValue="string" ValueChange="ComboRootCauseLSPFeedBack"></ComboBoxEvents>
+                        <ComboBoxFieldSettings Value="RootCauseId" Text="RootCauseName"></ComboBoxFieldSettings>
+                    </SfComboBox>
+                </div>
+                <div class="col-5">
+                    <SfComboBox TValue="int" TItem="TblLiableParties" Placeholder="Select liable" DataSource="@comboTblParties" @bind-Value="zLiableParty">
+                        <ComboBoxEvents TValue="string" ValueChange="ComboLiabilityLSPFeedBack"></ComboBoxEvents>
+                        <ComboBoxFieldSettings Value="LiablePartyId" Text="LiablePartyName"></ComboBoxFieldSettings>
                     </SfComboBox>
                 </div>
             </div>
@@ -524,7 +557,7 @@
         </Content>
     </DialogTemplates>
     <DialogButtons>
-        <DialogButton Content="OK" IsPrimary="true" OnClick="@SaveLine" />
+        <DialogButton Content="OK" IsPrimary="true" OnClick="@SaveLineLSPFeedback" />
         <DialogButton Content="Cancel" OnClick="@CloseDialogLine" />
     </DialogButtons>
 </SfDialog>
@@ -532,13 +565,30 @@
 
 
 @code {
-
-
-
     [Parameter]
     public string idCompain { get; set; }
 
-    public bool IsVisibleNewLine = false;
+    public int? zmIdCombiRootcauseLSPfeedback { get; set; }
+    public int? zmIdCombiLSPLiabilityLSPFeedback { get; set; }
+    public bool newLinLSPfeedback = false;
+
+    public int zmDeliveryLine;
+    public string zmMaterialOrd11cn;
+    public string zmMaterialOrdCtv;
+    public int zmOrderQty;
+    public int zmComplaintQty;
+    public int zmDeliveryLineId;
+    public int zmComplaintID;
+    public string zmDeliveryNumber;
+    public DateTime zmActualGoodsIssueDate;
+    public DateTime zmPlannedGoodsIssueDate;
+    public string zmSalesOrder;
+    public string zmSalesOrderLine;
+    public decimal zmTotalComplaintValueCurrentCurrency;
+    public string zmCurrencyComplaintValue;
+
+
+    public bool IsVisibleNewLineLSPFeedback = false;
 
     public int zmQuatityForSplitedCoplain = 0;
     public int zmReasonCodeForSplitedComplain = 0;
@@ -567,6 +617,8 @@
     public string zCarrier_Funloc;
     public string zCustomer_Comments;
     public bool? zsendPOD_Request;
+    public int? zFinalRootcause;
+    public int zLiableParty = 0;
 
     public string zCarrierID = "";
 
@@ -575,7 +627,11 @@
     public DateTime MaxDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 27);
 
 
-    TblDeliveryLines newTblDeliveryLine = new TblDeliveryLines();
+    // TblDeliveryLines newTblDeliveryLine = new TblDeliveryLines();
+
+
+    public TblDeliveryLines[] deliveryLinesjson = { };
+    List<TblDeliveryLines> zmtblDeliveryLines = new List<TblDeliveryLines>();
 
 
     public TblDeliveries[] tblDeliverieslist = { };
@@ -586,9 +642,12 @@
 
     public TblReasoncodes[] comboReasonCodes = { };
 
+    public TblRootCauses[] comboRootCause = { };
+    public TblRootCauses[] comboRootCauseForSFP = { };
 
-    public TblDeliveryLines[] deliveryLinesjson = { };
-    List<TblDeliveryLines> zmtblDeliveryLines = new List<TblDeliveryLines>();
+    public TblLiableParties[] comboTblParties = { };
+
+
 
     public TblCarriers[] comboCarriers = { };
     // List<TblCarriers> comboCarriersList = new List<TblCarriers>();
@@ -599,14 +658,28 @@
     public TblSapData[] DeliveryListSap = { };
     List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
 
+
+
     private async Task LoadData()
     {
         string linktmpAttach = "/api/TblAttachments/GetTblAttachmentsbyId/" + idCompain;
         attachmentList = await Http.GetFromJsonAsync<TblAttachments[]>(linktmpAttach);
         attachmentListForGrid = new List<TblAttachments>(attachmentList);
 
+
+
+
+
         string linkRC = "/api/TblReasoncodes/";
         comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+        string linkRcu = "/api/TblRootCauses/";
+        comboRootCause = await Http.GetFromJsonAsync<TblRootCauses[]>(linkRcu);
+
+        string linkRp = "/api/TblLiableParties/";
+
+        comboTblParties = await Http.GetFromJsonAsync<TblLiableParties[]>(linkRp);
+
 
         string linkCar = "/api/TblCarriers/";
 
@@ -618,6 +691,7 @@
 
         deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
         zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
+
 
         string linktmpComp = "/api/TblComplaints/" + idCompain;
         complain = await Http.GetFromJsonAsync<TblComplaints>(linktmpComp);
@@ -812,7 +886,7 @@
 
     }
 
- 
+
 
     private void DeleteFinalRootcause(TblDeliveryLines tt)
     {
@@ -822,42 +896,183 @@
 
     private void CloseDialogLine()
     {
-        IsVisibleNewLine = false;
+
     }
 
-    private void SaveLine()
+    private async void SaveLineLSPFeedback()
     {
-        IsVisibleNewLine = false;
-        newTblDeliveryLine.DeliveryLine = 99;
-        newTblDeliveryLine.MaterialOrd11cn = zmtblDeliveryLines[0].MaterialOrd11cn;
-        newTblDeliveryLine.MaterialOrdCtv = zmtblDeliveryLines[0].MaterialOrdCtv;
-        newTblDeliveryLine.OrderQty = zmtblDeliveryLines[0].OrderQty;
 
+        TblDeliveryLines newTblDeliveryLine = new TblDeliveryLines();
+
+        IsVisibleNewLineLSPFeedback = false;
+        newTblDeliveryLine.DeliveryLine = 99;
 
         newTblDeliveryLine.ComplaintQty = zmQuatityForSplitedCoplain;
+        newTblDeliveryLine.Rootcause = zmIdCombiRootcauseLSPfeedback;
+        newTblDeliveryLine.LiableParty = zmIdCombiLSPLiabilityLSPFeedback;
+        newTblDeliveryLine.DeliveryLine = zmDeliveryLine;
+        newTblDeliveryLine.MaterialOrd11cn = zmMaterialOrd11cn;
+        newTblDeliveryLine.MaterialOrdCtv = zmMaterialOrdCtv;
+        newTblDeliveryLine.OrderQty = zmOrderQty;
+        newTblDeliveryLine.DeliveryLineId = zmDeliveryLineId;
+        newTblDeliveryLine.ComplaintId = Convert.ToInt32(idCompain);
+
+
+
+        newTblDeliveryLine.DeliveryNumber = zmDeliveryNumber;
+        newTblDeliveryLine.ActualGoodsIssueDate = zmActualGoodsIssueDate;
+        newTblDeliveryLine.PlannedGoodsIssueDate = zmPlannedGoodsIssueDate;
+        newTblDeliveryLine.SalesOrder = zmSalesOrder;
+        newTblDeliveryLine.SalesOrderLine = zmSalesOrderLine;
+        newTblDeliveryLine.TotalComplaintValueCurrentCurrency = zmTotalComplaintValueCurrentCurrency;
+        newTblDeliveryLine.CurrencyComplaintValue = zmCurrencyComplaintValue;
+
+
+        //---------------------------- rootcause Combi wyswietlanie w gridzie
+        TblRootCauses rc = new TblRootCauses();
+        string linkrc = "/api/TblRootCauses/" + zmIdCombiRootcauseLSPfeedback.ToString();
+        rc = await Http.GetFromJsonAsync<TblRootCauses>(linkrc);
+        newTblDeliveryLine.Rootca = rc;
+        //---------------------------- Liability Combi wyswietlanie w gridzie
+
+        TblLiableParties li = new TblLiableParties();
+        string linkli = "api/TblLiableParties/" + zmIdCombiLSPLiabilityLSPFeedback.ToString();
+        li = await Http.GetFromJsonAsync<TblLiableParties>(linkli);
+
+        newTblDeliveryLine.Liable = li;
+        //--------------------------------------------------
 
 
 
         zmtblDeliveryLines.Add(newTblDeliveryLine);
 
+        Console.WriteLine(zmtblDeliveryLines.Count());
+
+
+        newLinLSPfeedback = false;
         StateHasChanged();
 
     }
 
-    private void EditFinalRootcause(TblDeliveryLines tt)
+    private void EditLspFinalRootcause(TblDeliveryLines far)
     {
 
-        IsVisibleNewLine = true;
 
-        newTblDeliveryLine.DeliveryLine = tt.DeliveryLine;
-        newTblDeliveryLine.MaterialOrd11cn = tt.MaterialOrd11cn;
-        newTblDeliveryLine.MaterialOrdCtv = tt.MaterialOrdCtv;
-        newTblDeliveryLine.ComplaintQty = tt.ComplaintQty;
+        IsVisibleNewLineLSPFeedback = true;
+
+        zmDeliveryLineId = far.DeliveryLineId;
+        zmDeliveryLine = far.DeliveryLine;
+        zmMaterialOrd11cn = far.MaterialOrd11cn;
+        zmMaterialOrdCtv = far.MaterialOrdCtv;
+        zmOrderQty = far.OrderQty;
+
+
+
+
+        zmDeliveryNumber = far.DeliveryNumber;
+        zmActualGoodsIssueDate = far.ActualGoodsIssueDate;
+        zmPlannedGoodsIssueDate = far.PlannedGoodsIssueDate;
+        zmSalesOrder = far.SalesOrder;
+        zmSalesOrderLine = far.SalesOrderLine;
+        zmTotalComplaintValueCurrentCurrency = far.TotalComplaintValueCurrentCurrency;
+        zmCurrencyComplaintValue = far.CurrencyComplaintValue;
+
+
+        zmComplaintQty = far.ComplaintQty;
+
+        zReasoncode = Convert.ToInt32(far.Rootcause);
+        zmIdCombiRootcauseLSPfeedback = far.Rootcause;
+        zmIdCombiLSPLiabilityLSPFeedback = far.LiableParty;
+
+
+        zmtblDeliveryLines.Remove(far);
+
+
+
     }
 
     private void onChangeSplited(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
     {
-        zmReasonCodeForSplitedComplain = Convert.ToInt32(args.Value);
+        zFinalRootcause = Convert.ToInt32(args.Value);
+    }
+
+    private void onChangeLiable(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        zLiableParty = Convert.ToInt32(args.Value);
+    }
+
+    private void AddLspFeedBack(TblDeliveryLines fa)
+    {
+
+        IsVisibleNewLineLSPFeedback = true;
+        zmDeliveryLine = fa.DeliveryLine;
+        zmMaterialOrd11cn = fa.MaterialOrd11cn;
+        zmMaterialOrdCtv = fa.MaterialOrdCtv;
+        zmComplaintQty = fa.ComplaintQty;
+        zmOrderQty = fa.OrderQty;
+        zmDeliveryLineId = 0;
+
+
+        zmDeliveryNumber = fa.DeliveryNumber;
+        zmActualGoodsIssueDate = fa.ActualGoodsIssueDate;
+        zmPlannedGoodsIssueDate = fa.PlannedGoodsIssueDate;
+        zmSalesOrder = fa.SalesOrder;
+        zmSalesOrderLine = fa.SalesOrderLine;
+        zmTotalComplaintValueCurrentCurrency = fa.TotalComplaintValueCurrentCurrency;
+        zmCurrencyComplaintValue = fa.CurrencyComplaintValue;
+
+        zReasoncode = Convert.ToInt32(fa.Rootcause);
+        zmIdCombiRootcauseLSPfeedback = fa.Rootcause;
+        zmIdCombiLSPLiabilityLSPFeedback = fa.LiableParty;
+
+
+    }
+
+    private void ComboRootCauseLSPFeedBack(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        zmIdCombiRootcauseLSPfeedback = Convert.ToInt32(args.Value);
+    }
+
+    private void ComboLiabilityLSPFeedBack(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        zmIdCombiLSPLiabilityLSPFeedback = Convert.ToInt32(args.Value);
+    }
+
+
+    private async void SaveTabeleLSPFeedback()
+    {
+
+        foreach ( var zz in zmtblDeliveryLines)
+        {
+            if (zz.DeliveryLineId == 0)
+            {
+                // post
+                zz.DeliveryLineId = 0;
+                zz.Rootca = null;
+                zz.Liable = null;
+
+                string linkpost = "/api/TblDeliveryLines/";
+                var response = await Http.PostAsJsonAsync<TblDeliveryLines>(linkpost, zz);
+
+                Console.WriteLine("z POST do zapisu ID " + zz.DeliveryLineId);
+                Console.WriteLine("z POST do zapisu Liable ID" + zz.LiableParty);
+                Console.WriteLine("z POST do zapisu Ilosc " + zz.ComplaintQty);
+
+            } else
+            {
+                // put
+
+
+                string linkpost = "/api/TblDeliveryLines/" + zz.DeliveryLineId.ToString();
+                var response = await Http.PutAsJsonAsync<TblDeliveryLines>(linkpost, zz);
+
+
+                Console.WriteLine("z pentli do zapisu ID " + zz.DeliveryLineId);
+                Console.WriteLine("z pentli do zapisu Liable ID" + zz.LiableParty);
+                Console.WriteLine("z pentli do zapisu Ilosc " + zz.ComplaintQty);
+            }
+
+        }
     }
 }
 

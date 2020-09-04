@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CCM_New.Server.Data;
 using CCM_New.Shared;
+using Syncfusion.Blazor.Schedule;
 
 namespace CCM_New.Server.Controllers
 {
@@ -28,10 +29,54 @@ namespace CCM_New.Server.Controllers
             return await _context.TblDeliveryLines.ToListAsync();
         }
 
+
+        [HttpGet]
+        [Route("api/GetTblDeliveryLinesTables")]
+        public async Task<List<TblDeliveryLines>> GetTblDeliveryLinesTables()
+        {
+            return await _context.TblDeliveryLines.Include(c => c.Liable).Include(r => r.Rootca).ToListAsync();
+        }
+
+        //[HttpGet("GetTblDeliveryLinesTables")]
+        //public  Task  GetTblDeliveryLinesTables()
+        //{
+        //        var qry = from dl in _context.TblDeliveryLines join lia in _context.TblLiableParties
+        //                  on dl.LiableParty equals lia.LiablePartyId into tmpTabela
+        //                 from tmp in tmpTabela.DefaultIfEmpty()
+        //                  select new
+        //                  {
+        //                      DeliveryLine = dl.DeliveryLineId,
+        //                      Material_Ord_CTV = dl.MaterialOrdCtv,
+        //                      liab = tmp.LiablePartyName
+        //                  };
+        //    return  qry.ToListAsync();
+
+        //}
+
+        //[HttpGet][Route("api/test")]
+        //public async Task<List<TblDeliveryLines>> test()
+        //{
+
+        //    var ii = _context.TblLiableParties.ToList();
+        //    var t = _context.TblDeliveryLines.ToList();
+
+        //    foreach(var i in ii)
+        //    {
+        //        foreach(var t1 in t.Where(_ => _.LiableParty == i.LiablePartyId))
+        //        {
+        //            t1.Liable = i;
+        //        }
+        //    }
+        //    return  t;
+        //}
+
+
+    
+
         [HttpGet("GetTblDeliveryLinesByCid/{id}")]
         public async Task<ActionResult<IEnumerable<TblDeliveryLines>>> GetTblDeliveryLinesByCid(int id)
         {
-            var tblDeliveryLines = await _context.TblDeliveryLines.Where(c => c.ComplaintId == id).ToListAsync();
+            var tblDeliveryLines = await _context.TblDeliveryLines.Where(c => c.ComplaintId == id).Include(r => r.Rootca).Include(d => d.Liable).ToListAsync();
 
             if (tblDeliveryLines == null)
             {

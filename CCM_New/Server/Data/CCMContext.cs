@@ -25,10 +25,45 @@ namespace CCM_New.Server.Data
         public virtual DbSet<TblCustomers> TblCustomers { get; set; }
         public virtual DbSet<TblDeliveryLines> TblDeliveryLines { get; set; }
         public virtual DbSet<TblAttachments> TblAttachments { get; set; }
-
+        public virtual DbSet<TblRootCauses> TblRootCauses { get; set; }
+        public virtual DbSet<TblLiableParties> TblLiableParties { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<TblLiableParties>(entity =>
+            {
+                entity.HasKey(e => e.LiablePartyId);
+
+                entity.ToTable("Tbl_LiableParties");
+
+                entity.Property(e => e.LiablePartyId).HasColumnName("LiableParty_ID");
+
+                entity.Property(e => e.LiablePartyName)
+                    .IsRequired()
+                    .HasColumnName("LiableParty_Name")
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+            });
+            modelBuilder.Entity<TblRootCauses>(entity =>
+            {
+                entity.HasKey(e => e.RootCauseId);
+
+                entity.ToTable("Tbl_RootCauses");
+
+                entity.Property(e => e.RootCauseId).HasColumnName("RootCause_ID");
+
+                entity.Property(e => e.Active)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.ComplaintType).HasColumnName("Complaint_Type");
+
+                entity.Property(e => e.RootCauseName)
+                    .IsRequired()
+                    .HasColumnName("RootCause_Name")
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<TblAttachments>(entity =>
             {
