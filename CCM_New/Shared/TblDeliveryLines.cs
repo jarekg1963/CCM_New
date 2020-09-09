@@ -35,9 +35,9 @@ namespace CCM_New.Shared
         public string SerialNumbers { get; set; }
 
 
-
         public TblLiableParties Liable { get; set; }        
         public TblRootCauses Rootca { get; set; }
+
         public TblLiableParties FLiable { get; set; }
         public TblRootCauses FRoot { get; set; }
 

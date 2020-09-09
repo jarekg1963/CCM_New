@@ -26,7 +26,7 @@
                 <SfButton @onclick="@DisplayDataDelivery" Disabled="keyReadDataDelivery">Read data </SfButton>
             </div>
             <div class="col-3">
-                <SfTextBox @bind-Value="@zmASN" Placeholder='ASN'  @onfocus='@(e=>keyReadDataAsn=false)'  FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
+                <SfTextBox @bind-Value="@zmASN" Placeholder='ASN' @onfocus='@(e=>keyReadDataAsn=false)' FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
                 <SfButton @onclick="@DisplayASNData" Disabled="keyReadDataAsn">Read data </SfButton>
             </div>
             <div class="col-3">
@@ -163,7 +163,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                            
+
                                             </div>
                                         </div>
                                         <div class="row">
@@ -176,7 +176,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                        
+
                                             </div>
                                         </div>
                                         <div class="row">
@@ -190,6 +190,9 @@
                                     <div class="col-2">
                                         <div class="row">
                                             <label>Comments</label>
+                                        </div>
+                                        <div class="row">
+                                            <SfButton OnClick="()=>OpenDialogGhostLine()" Disabled="@ghostlinebuttonDisable">Ghost Line</SfButton>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -209,7 +212,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                           
+
                                             </div>
                                         </div>
                                         <div class="row">
@@ -220,11 +223,7 @@
                                         <div class="row">
                                             <SfTextBox @bind-Value="@zmNrClaim" Readonly="true"></SfTextBox>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-12">
-                                           
-                                            </div>
-                                        </div>
+
                                         <div class="row">
                                             <SfComboBox TValue="string" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes">
                                                 <ComboBoxEvents TValue="string" ValueChange="onChange"></ComboBoxEvents>
@@ -236,6 +235,9 @@
                                     <div class="col-2">
                                         <div class="row">
                                             <label>Comments</label>
+                                        </div>
+                                        <div class="row">
+                                            <SfButton OnClick="()=>OpenDialogGhostLine()"  Disabled="@ghostlinebuttonDisable">Ghost Line</SfButton>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -275,24 +277,24 @@
                             </div>
 
 
-                                <div class="row">
-                                    <div class="col-12">
-                                  
-                                    </div>
-                                </div>
+                            <div class="row">
+                                <div class="col-12">
 
-                                <div class="row">
-                                    <div class="col-12">
-                                        <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
-                                            <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
-                                        </SfUploader>
-                                    </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                     
-                                    </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
+                                        <UploaderEvents ValueChange="OnChange1"></UploaderEvents>
+                                    </SfUploader>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+
+                                </div>
+                            </div>
                         </ContentTemplate>
                     </AccordionItem>
                     <AccordionItem>
@@ -324,10 +326,8 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-
                                                 @foreach (var fasn in zmtblDeliveryLines)
                                                 {
-
                                                     <tr>
                                                         <td> <SfButton @onclick="() => DeleteItemfromTable(fasn.DeliveryLine)">Delete</SfButton></td>
                                                         <td>@fasn.DeliveryLine</td>
@@ -335,7 +335,6 @@
                                                         <td>@fasn.MaterialOrdCtv</td>
                                                         <td>@fasn.OrderQty</td>
                                                         <td><SfNumericTextBox @bind-Value="@fasn.ComplaintQty"></SfNumericTextBox></td>
-
                                                     </tr>
                                                 }
                                             </tbody>
@@ -353,14 +352,11 @@
                                                     <th>Description</th>
                                                     <th>Ordered qty</th>
                                                     <th>Complain qty</th>
-
                                                 </tr>
                                             </thead>
                                             <tbody>
-
                                                 @foreach (var fasn in zmtblDeliveryLines)
                                                 {
-
                                                     <tr>
                                                         <td> <SfButton @onclick="() => DeleteItemfromTable(fasn.DeliveryLine)">Delete</SfButton></td>
                                                         <td>@fasn.DeliveryLine</td>
@@ -368,7 +364,6 @@
                                                         <td>@fasn.MaterialOrdCtv</td>
                                                         <td>@fasn.OrderQty</td>
                                                         <td><SfNumericTextBox @bind-Value="@fasn.ComplaintQty"></SfNumericTextBox></td>
-
                                                     </tr>
                                                 }
                                             </tbody>
@@ -406,6 +401,46 @@
 
 </div>
 
+
+
+<SfDialog Width="1200px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@ghostlinevisible">
+    <DialogTemplates>
+        <Header> Ghost lines </Header>
+        <Content>
+            <table class="paleBlueRows">
+                <thead>
+                    <tr>
+                        <th>Dn</th>
+                        <th>Line</th>
+                        <th>Material</th>
+                        <th>Ordered qty</th>
+                        <th>Complain qty</th>
+                        <th>Value</th>
+                        <th>Currency</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fasnrc in ghostLines)
+                    {
+                    <tr>
+                        <td><SfTextBox @bind-Value="@fasnrc.DeliveryNumber"></SfTextBox></td>
+                        <td><SfNumericTextBox @bind-Value="@fasnrc.DeliveryLine" ShowSpinButton=false></SfNumericTextBox></td>
+                        <td><SfTextBox @bind-Value="@fasnrc.MaterialOrd11cn"></SfTextBox></td>
+                        <td><SfNumericTextBox @bind-Value="@fasnrc.OrderQty" ShowSpinButton=false></SfNumericTextBox></td>
+                        <td><SfNumericTextBox @bind-Value="@fasnrc.ComplaintQty" ShowSpinButton=false></SfNumericTextBox></td>
+                        <td><SfNumericTextBox @bind-Value="@fasnrc.TotalComplaintValueCurrentCurrency" ShowSpinButton=false></SfNumericTextBox></td>
+                        <td><SfTextBox @bind-Value="@fasnrc.CurrencyComplaintValue"></SfTextBox></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Save"  OnClick="@SaveGhostLine" IsPrimary="true" />
+        <DialogButton Content="Cancel" OnClick="@CloseDialogGhostLine" />
+    </DialogButtons>
+</SfDialog>
 
 <SfDialog Width="400px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisible">
     <DialogTemplates>
@@ -507,6 +542,9 @@
 
 @code {
 
+    public bool ghostlinebuttonDisable = true;
+
+    public bool ghostlinevisible = false;
     public bool keyReadDataDelivery = true;
     public bool keyReadDataAsn = true;
 
@@ -537,6 +575,8 @@
 
     public string DeliveryNumber { get; set; } = "";
     public string zmASN { get; set; } = "";
+
+    List<TblDeliveryLines> ghostLines = new List<TblDeliveryLines>();
 
     public TblDeliveries[] DeliveryList = { };
     List<TblDeliveries> listDeliveryForGrid = new List<TblDeliveries>();
@@ -580,14 +620,7 @@
     string RecNo;
 
 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    // await DisplayClaimsByDn();
-    //    //  await LoadDataForDN();
-    //    StateHasChanged();
-    //}
-    // first commit 
-    // second commit 
+  
     async Task EdycjaComplain(TblDeliveries DuComplain)
     {
         //await AcrdnObj.EnableItem(0, true);
@@ -686,13 +719,9 @@
         await AcrdnObj.EnableItem(0, true);
         await AcrdnObj.ExpandItem(true, 0);
 
-
-
         string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + DeliveryNumber.Trim();
         DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
         listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
-
-        Console.WriteLine("Ilosc rekordow DN SAp :" + listDeliverySapForGrid.Count.ToString());
 
         if (listDeliverySapForGrid.Count > 0)
         {
@@ -808,7 +837,7 @@
             Console.WriteLine("Resposse z kontrolera " + rep1);
 
 
-            // post do tabeli z plikami 
+            // post do tabeli z plikami
         }
     }
 
@@ -822,11 +851,10 @@
     {
 
 
-
         if (indicatorComplain)
         {
             //zmComplainID
-            string Linkfordel = "/api/TblDeliveryLines/" + zmComplainID.ToString();
+            string Linkfordel = "/api/TblDeliveryLines/DeleteTblDeliveryLinesByComplain/" + zmComplainID.ToString();
             var response0 = await Http.DeleteAsync(Linkfordel);
             string Linkfordel1 = "/api/TblDeliveries/DeleteTblDeliveriesIdComp/" + zmComplainID.ToString();
             var response1 = await Http.DeleteAsync(Linkfordel1);
@@ -993,6 +1021,21 @@
     {
 
         saveComplain.Reasoncode = Convert.ToInt32(args.Value);
+        switch (saveComplain.Reasoncode)
+        {
+            case 17:
+                ghostlinebuttonDisable = false;
+
+                break;
+            case 8:
+                ghostlinebuttonDisable = false;
+                break;
+            default:
+                ghostlinebuttonDisable = true;
+                break;
+
+        }
+
     }
 
 
@@ -1001,8 +1044,8 @@
 
         this.IsVisible = false;
 
-        // Pozamykaj programowo akordeon 
-        NavigationManager.NavigateTo("NewClaimPage",true);
+        // Pozamykaj programowo akordeon
+        NavigationManager.NavigateTo("NewClaimPage", true);
 
         await AcrdnObj.EnableItem(0, false);
         await AcrdnObj.ExpandItem(false, 0);
@@ -1017,12 +1060,7 @@
     }
 
 
-    //public void ValidationDeliveryNumber(KeyboardEventArgs args)
-    //{
-    //    keyReadDataDelivery = false;
 
-
-    //}
 
     public class UploadRequestClass
     {
@@ -1031,6 +1069,40 @@
         public byte[] file { get; set; }
     }
 
+    public void CloseDialogGhostLine()
+    {
+        ghostlinevisible = false;
+    }
+
+    public void OpenDialogGhostLine()
+    {
+        ghostLines.Clear();
+        ghostlinevisible = true;
+        if (indicatorDelivery)
+        { zmSzuk = DeliveryNumber.Trim(); }
+        if (indicatorASN)
+        { zmSzuk = zmASN.Trim(); }
+        ghostLines.Add(new TblDeliveryLines { DeliveryNumber = zmSzuk} );
+    }
+
+    public async void SaveGhostLine()
+    {
+        string postDelink = "/api/TblDeliveryLines";
+        foreach (var dd in ghostLines)
+        {
+            DateTime teraz = DateTime.Now;
+            dd.ComplaintId = Convert.ToInt32(maxIDNowyCaim);
+            dd.ActualGoodsIssueDate = teraz;
+            dd.PlannedGoodsIssueDate = teraz;
+            dd.SalesOrder = "SO";
+            dd.SalesOrderLine = "SOL";
+            dd.MaterialOrdCtv = dd.MaterialOrd11cn;
+            var responseDel = await Http.PostAsJsonAsync<TblDeliveryLines>(postDelink, dd);
+            ghostlinevisible = false;
+        }
+        StateHasChanged();
+    }
 
 
-}
+
+    }

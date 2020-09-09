@@ -76,7 +76,9 @@ namespace CCM_New.Server.Controllers
         [HttpGet("GetTblDeliveryLinesByCid/{id}")]
         public async Task<ActionResult<IEnumerable<TblDeliveryLines>>> GetTblDeliveryLinesByCid(int id)
         {
-            var tblDeliveryLines = await _context.TblDeliveryLines.Where(c => c.ComplaintId == id).Include(r => r.Rootca).Include(d => d.Liable).ToListAsync();
+          //  var tblDeliveryLines = await _context.TblDeliveryLines.Where(c => c.ComplaintId == id).Include(r => r.Rootca).Include(d => d.Liable).ToListAsync();
+
+            var tblDeliveryLines =  await _context.TblDeliveryLines.Include(r => r.Rootca).Include(l => l.Liable).Include(dd => dd.FRoot).Include(cc => cc.FLiable).Where(z => z.ComplaintId == id).ToListAsync();
 
             if (tblDeliveryLines == null)
             {
@@ -149,6 +151,23 @@ namespace CCM_New.Server.Controllers
         public async Task<ActionResult<TblDeliveryLines>> DeleteTblDeliveryLines(int id)
         {
             var tblDeliveryLines = await _context.TblDeliveryLines.FindAsync(id);
+            if (tblDeliveryLines == null)
+            {
+                return NotFound();
+            }
+
+            _context.TblDeliveryLines.Remove(tblDeliveryLines);
+            await _context.SaveChangesAsync();
+
+            return tblDeliveryLines;
+        }
+
+        [HttpDelete("DeleteTblDeliveryLinesByComplain/{id}")]
+        // [HttpGet("GetComByDate/startDate={startDate}&endDate={endDate}")]
+       
+        public async Task<ActionResult<TblDeliveryLines>> DeleteTblDeliveryLinesByComplain(int id)
+        {
+            var tblDeliveryLines = await _context.TblDeliveryLines.Where(l => l.ComplaintId == id).FirstOrDefaultAsync();
             if (tblDeliveryLines == null)
             {
                 return NotFound();
