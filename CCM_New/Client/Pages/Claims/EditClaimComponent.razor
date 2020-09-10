@@ -9,7 +9,7 @@
 @using Syncfusion.Blazor.DropDowns;
 @using Syncfusion.Blazor.Popups;
 @inject NavigationManager NavigationManager
-
+@using CCM_New.Client.Tool;
 
 <h5>Complain nr: @zComplaintIDUF</h5>
 
@@ -159,6 +159,12 @@
                                 <div class="row" style="height:25px">
                                     <label>Bill of lad.</label>
                                 </div>
+                                <div class="row" style="height:25px">
+
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <label>Delivery number</label>
+                                </div>
                             </div>
                             <div class="col-2">
                                 <div class="row" style="height:25px">
@@ -169,6 +175,12 @@
                                 </div>
                                 <div class="row" style="height:25px">
                                     <SfTextBox @bind-Value="@zBillOfLading" Readonly="true"></SfTextBox>
+                                </div>
+                                <div class="row" style="height:25px">
+
+                                </div>
+                                <div class="row" style="height:25px">
+                                    <SfTextBox @bind-Value="@zmDeliveryNumber" Readonly="true"></SfTextBox>
                                 </div>
                             </div>
                         </div>
@@ -612,7 +624,7 @@
                     </SfComboBox>
                 </div>
                 <div class="col-5">
-                    <SfComboBox TValue="int" TItem="TblRootCauses" Placeholder="Select rootcause" DataSource="@comboRootCause" @bind-Value="zFinalRootcausefinal">   
+                    <SfComboBox TValue="int" TItem="TblRootCauses" Placeholder="Select rootcause" DataSource="@comboRootCause" @bind-Value="zFinalRootcausefinal">
                         <ComboBoxEvents TValue="string" ValueChange="ComboFinalRootcausefinal"></ComboBoxEvents>
                         <ComboBoxFieldSettings Value="RootCauseId" Text="RootCauseName"></ComboBoxFieldSettings>
                     </SfComboBox>
@@ -631,16 +643,34 @@
     </DialogButtons>
 </SfDialog>
 
+<Confirm ConfirmationChanged="ConfirmDeleteLSP_Click" @ref="DeleteConfirmationLSP"
+         ConfirmationMessage="Are You sure delete ?"
+         ConfirmationTitle="Warning"></Confirm>
 
+<Confirm ConfirmationChanged="ConfirmDeleteFR_Click" @ref="DeleteConfirmationFR"
+         ConfirmationMessage="Are You sure delete ?"
+         ConfirmationTitle="Warning"></Confirm>
+
+<Confirm ConfirmationChanged="ConfirmDeleteDOC_Click" @ref="DeleteConfirmationDOC"
+         ConfirmationMessage="Are You sure delete ?"
+         ConfirmationTitle="Warning"></Confirm>
 
 @code {
     [Parameter]
     public string idCompain { get; set; }
 
+    protected ConfirmBase DeleteConfirmationLSP { get; set; }
+    protected ConfirmBase DeleteConfirmationFR { get; set; }
+    protected ConfirmBase DeleteConfirmationDOC { get; set; }
 
+
+    public bool ConfirmationDeleteLsp = false;
+
+    public int idDocumentDoSkasowania { get; set; }
 
     public int zRootcause { get; set; }
     public int zLiableParty { get; set; }
+    public int idDoSkasowania = 0;
 
 
     public int zFinalLiableParty { get; set; }
@@ -792,6 +822,8 @@
         zCarrierID = complain.CarrierFunloc;
         zCarrier_Funloc = complain.CarrierFunloc;
         zsendPOD_Request = complain.SendPodRequest;
+        zmDeliveryNumber = zmtblDeliveryLines[0].DeliveryNumber;
+
 
     }
 
@@ -885,18 +917,27 @@
         }
     }
 
-    private async void DeleteItemfromTable(TblAttachments ff)
+    private void DeleteItemfromTable(TblAttachments ff)
     {
-        string linkKasowania = "api/TblAttachments/" + ff.UploadId.ToString();
-        var d = await Http.DeleteAsync(linkKasowania);
+        idDocumentDoSkasowania = ff.UploadId;
+        DeleteConfirmationDOC.Show();
+    }
 
-        // skasowanie pliku z dysku
+    private async void ConfirmDeleteDOC_Click(bool deleteConfirmed)
+    {
+        if (deleteConfirmed)
+        {
+            string linkKasowania = "api/TblAttachments/" + idDocumentDoSkasowania.ToString();
+            var d = await Http.DeleteAsync(linkKasowania);
 
-        string linkKasowaniazDysku = "/api/Delete/file?fileName=" + ff.Filename + "&idKatalog=" + idCompain;
-        var dd = await Http.GetAsync(linkKasowaniazDysku);
+            // skasowanie pliku z dysku
 
-        await LoadData();
-        StateHasChanged();
+            string linkKasowaniazDysku = "/api/Delete/file?fileName=" + idDocumentDoSkasowania.ToString() + "&idKatalog=" + idCompain;
+            var dd = await Http.GetAsync(linkKasowaniazDysku);
+
+            await LoadData();
+            StateHasChanged();
+        }
     }
 
 
@@ -927,8 +968,12 @@
     }
 
 
+
+
     private void DeleteItemfromTable(int zmDelLine)
     {
+
+
         Console.WriteLine("ilosc przed delete " + zmtblDeliveryLines.Count.ToString());
         zmtblDeliveryLines.RemoveAll(r => r.DeliveryLine == zmDelLine);
         // zmtblDeliveryLines.RemoveAt(2);
@@ -954,18 +999,25 @@
 
     }
 
-
-
-    private async void DeleteLspfeedback (TblDeliveryLines tt)
+    private async void ConfirmDeleteLSP_Click(bool deleteConfirmed)
     {
-        // pytanie modalne 
+        if (deleteConfirmed)
+        {
+            string linkKasowania = "/api/TblDeliveryLines/" + idDoSkasowania.ToString();
+            var d = await Http.DeleteAsync(linkKasowania);
+            await LoadData();
+            StateHasChanged();
+        }
+    }
 
-        string linkKasowania = "/api/TblDeliveryLines/" + tt.DeliveryLineId.ToString();
-        var d = await Http.DeleteAsync(linkKasowania);
+    private  void DeleteLspfeedback(TblDeliveryLines tt)
+    {
+        idDoSkasowania = tt.DeliveryLineId;
+        DeleteConfirmationLSP.Show();
 
-        await LoadData();
 
-        StateHasChanged();
+
+
     }
 
     private void CloseDialogLine()
@@ -1167,10 +1219,6 @@
     }
 
 
-
-
-
-
     private void EditFinalRootcause(TblDeliveryLines fasnrc)
     {
         IsVisibleNewLineFinalRootcause = true;
@@ -1180,7 +1228,6 @@
         zmMaterialOrd11cn = fasnrc.MaterialOrd11cn;
         zmMaterialOrdCtv = fasnrc.MaterialOrdCtv;
         zmOrderQty = fasnrc.OrderQty;
-
 
         zmDeliveryNumber = fasnrc.DeliveryNumber;
         zmActualGoodsIssueDate = fasnrc.ActualGoodsIssueDate;
@@ -1197,20 +1244,25 @@
         zLiableParty = Convert.ToInt32(fasnrc.LiableParty);
         zRootcause = Convert.ToInt32(fasnrc.Rootcause);
 
-
-
     }
 
-    private async void DeleteFinalRootcause(TblDeliveryLines farn)
+    private async void ConfirmDeleteFR_Click(bool deleteConfirmed)
     {
-        // pytanie modalne 
+        if (deleteConfirmed)
+        {
+            string linkKasowania = "/api/TblDeliveryLines/" + idDoSkasowania.ToString();
+            var d = await Http.DeleteAsync(linkKasowania);
+            await LoadData();
+            StateHasChanged();
+        }
+    }
 
-        string linkKasowania = "/api/TblDeliveryLines/" + farn.DeliveryLineId.ToString();
-        var d = await Http.DeleteAsync(linkKasowania);
+    private  void DeleteFinalRootcause(TblDeliveryLines farn)
+    {
+        idDoSkasowania = farn.DeliveryLineId;
 
-        await LoadData();
+        DeleteConfirmationLSP.Show();
 
-        StateHasChanged();
     }
 
     private void ComboLiabilityFinalRootcauseBack(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
@@ -1242,7 +1294,6 @@
         newTblDeliveryLine.DeliveryLineId = zmDeliveryLineId;
         newTblDeliveryLine.ComplaintId = Convert.ToInt32(idCompain);
 
-
         newTblDeliveryLine.DeliveryNumber = zmDeliveryNumber;
         newTblDeliveryLine.ActualGoodsIssueDate = zmActualGoodsIssueDate;
         newTblDeliveryLine.PlannedGoodsIssueDate = zmPlannedGoodsIssueDate;
@@ -1252,8 +1303,6 @@
         newTblDeliveryLine.CurrencyComplaintValue = zmCurrencyComplaintValue;
         newTblDeliveryLine.FinalRootcause = zFinalRootcausefinal;
         newTblDeliveryLine.FinalLiableParty = zFinalLiableParty;
-
-
 
         if (zmDeliveryLineId == 0)
         {

@@ -5,50 +5,147 @@
 @using Syncfusion.Blazor.DropDowns;
 @using CCM_New.Shared;
 
+@using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.Inputs
+@using CCM_New.Client.Tool; 
 
-@if (comboCarriers.Length == 0)
-{<p>Loading..</p> }
-else
-{
+<button class="e-btn dlgbtn" @onclick="@ConfirmBtn">Confirm</button>
 
-    @*<SfComboBox TValue="int" TItem="TblCarriers" AllowFiltering=true Placeholder="Select a carrier" DataSource="@comboCarriers" @bind-Value="@zmWartoscPola">
-                <ComboBoxEvents TValue="string" ValueChange="onChangeCarrier"></ComboBoxEvents>
-                <ComboBoxFieldSettings Value="Id" Text="FullComboName"></ComboBoxFieldSettings>
-        </SfComboBox>*@
+<SfDialog @bind-Visible="@ConfirmDlgVisible" Width="400px" Target="#target" ShowCloseIcon="true">
+    <DialogTemplates>
+        <Header>
+            Delete Multiple Items
+        </Header>
+        <Content>
+            Are you sure you want to permanently delete these items ?
+        </Content>
+    </DialogTemplates>
+    <DialogEvents  Closed="@DialogClose"></DialogEvents>
+    <DialogButtons>
+        <DialogButton Content="Yes" IsPrimary="true" @onclick="() => Test(true)" />
+        <DialogButton Content="No" @onclick="() => Test(false)" />
+    </DialogButtons>
+</SfDialog>
 
-<SfComboBox TValue="string" TItem="TblCarriers" Placeholder="Select a game" DataSource="@comboCarriers" @bind-Value="@zmWartoscPola">
-    <ComboBoxEvents TValue="string" ValueChange="onChangeCarrier"></ComboBoxEvents>
-    <ComboBoxFieldSettings Text="FullComboName" Value="Id"></ComboBoxFieldSettings>
-</SfComboBox>
+<hr />
 
-}
-<style>
-</style>
+<Confirm ConfirmationChanged="ConfirmDelete_Click" @ref="DeleteConfirmation"
+         ConfirmationMessage="Are You sure delete ?"
+         ConfirmationTitle="Warning"
+         ></Confirm>
+
+
+<Confirm ConfirmationChanged="ConfirmDelete_ClickDrugi" @ref="DeleteConfirmationDrugi"
+         ConfirmationMessage="Are You sure delete ?"
+         ConfirmationTitle="Warning"></Confirm>
+
+<button class="e-btn dlgbtn" @onclick="@ConfirmBtnHin">ConfirmNowyBoot</button>
+
+<button class="e-btn dlgbtn" @onclick="@ConfirmBtnHinDrugi">ConfirmNowyBoot</button>
+<hr />
+
 
 
 @code {
 
+    protected ConfirmBase DeleteConfirmation { get; set; }
+    protected ConfirmBase DeleteConfirmationDrugi { get; set; }
 
-    public TblCarriers[] comboCarriers = { };
-    // List<TblCarriers> comboCarriersList = new List<TblCarriers>();
-    public string zCarrierID = "";
-    public string zmWartoscPola = "112";
+    private bool ConfirmDlgVisible { get; set; } = false;
 
-    protected override async Task OnParametersSetAsync()
+    private void ConfirmBtnHin()
     {
-        string linkCar = "/api/TblCarriers/";
-        comboCarriers = await http.GetFromJsonAsync<TblCarriers[]>(linkCar);
-        // comboCarriersList = new List<TblCarriers>(comboCarriers);
+        DeleteConfirmation.Show();
+    }
+
+    private void ConfirmBtnHinDrugi()
+    {
+        DeleteConfirmationDrugi.Show();
+    }
+
+    private void ConfirmDelete_Click(bool deleteConfirmed)
+    {
+        Console.WriteLine("KKKKKKKKlikniety " + deleteConfirmed);
+    }
+
+
+    private void ConfirmDelete_ClickDrugi(bool deleteConfirmed)
+    {
+        Console.WriteLine("KKKKKKKKlikniety drugi  " + deleteConfirmed);
+    }
+
+    private void ConfirmBtn()
+    {
+        this.ConfirmDlgVisible = true;
+    }
+
+    private void DialogClose(CloseEventArgs args)
+    {
 
     }
 
-    private void onChangeCarrier(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    private void HideDialogTrue(Object e)
     {
-        Console.WriteLine("Combi currier " + args.Value);
-        Console.WriteLine("Combi currier " + zmWartoscPola.ToString());
-        zCarrierID = args.Value;
-        StateHasChanged();
+        Console.WriteLine("TTTTTTTTTTTTT");
+        this.ConfirmDlgVisible = false;
+    }
+    private void HideDialogFalse(Object e)
+    {
+        Console.WriteLine("FFFFFFFFFFFF");
+        this.ConfirmDlgVisible = false;
+    }
+
+    public void Test(bool test)
+    {
+        Console.WriteLine(test);
+        ConfirmDlgVisible = false;
+    }
+
+    public void DeleteRecord(bool test)
+    {
+        Console.WriteLine(test);
     }
 
 }
+
+    <style>
+        .e-btn-hide {
+            display: none;
+        }
+
+        .Table {
+            border-collapse: separate;
+            border-spacing: 10px;
+            width: 85%;
+            margin: 0px -5px 0px;
+        }
+
+        .dlgbtn {
+            margin-right: 10px;
+        }
+
+        #target {
+            height: 460px;
+            min-height: 350px;
+        }
+
+        .dlgbtn {
+            margin-right: 10px;
+        }
+
+        .fabric #target #prompt_dialog.e-dialog {
+            height: 291px;
+        }
+
+        .material #target #prompt_dialog.e-dialog {
+            height: 270px;
+        }
+
+        #target #prompt_dialog.e-dialog {
+            height: 270px;
+        }
+
+        .bootstrap4 #target #prompt_dialog.e-dialog {
+            height: 285px;
+        }
+    </style>

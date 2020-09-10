@@ -13,13 +13,11 @@
 @inject NavigationManager NavigationManager
 @using CCM_New.Shared;
 @using Newtonsoft.Json;
+@using CCM_New.Client.Tool;
 
 
 <div class="containerClaim">
-
     <div class="containerNaglowek" style="height: 100px !important">
-
-
         <div class="row">
             <div class="col-3">
                 <SfTextBox @bind-Value="@DeliveryNumber" Placeholder='Delivery number' @onfocus='@(e=>keyReadDataDelivery=false)' FloatLabelType='@FloatLabelType.Auto'></SfTextBox>
@@ -31,17 +29,13 @@
             </div>
             <div class="col-3">
                 <div class="row">
-
                 </div>
                 <div class="row">
                     <SfCheckBox Label="Mainstream" LabelPosition="LabelPosition.After" @bind-Checked="isMainstream" CssClass="e-large"></SfCheckBox>
                 </div>
-
                 <hr />
             </div>
         </div>
-
-
     </div>
     <div class="row">
         <div class="col-12">
@@ -52,7 +46,6 @@
                             <div>Delivery note selection  </div>
                         </HeaderTemplate>
                         <ContentTemplate>
-
                             <div class="row">
                                 <div class="col-6">
                                     @if (indicatorDelivery)
@@ -72,11 +65,9 @@
                                                 <GridColumn Field=@nameof(TblSapData.Artkx) HeaderText="11Nc" TextAlign="TextAlign.Left" Width="100"></GridColumn>
                                                 <GridColumn Field=@nameof(TblSapData.Lgmng) HeaderText="Qty" TextAlign="TextAlign.Left" Width="30"></GridColumn>
                                                 <GridColumn Field=@nameof(TblSapData.IcValue) HeaderText="Value" TextAlign="TextAlign.Left" Width="50"></GridColumn>
-
                                             </GridColumns>
                                         </SfGrid>
                                     }
-
                                     @if (indicatorASN)
                                     {
                                         <label>ASN</label>
@@ -237,7 +228,7 @@
                                             <label>Comments</label>
                                         </div>
                                         <div class="row">
-                                            <SfButton OnClick="()=>OpenDialogGhostLine()"  Disabled="@ghostlinebuttonDisable">Ghost Line</SfButton>
+                                            <SfButton OnClick="()=>OpenDialogGhostLine()" Disabled="@ghostlinebuttonDisable">Ghost Line</SfButton>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -302,8 +293,6 @@
                             <div>Details</div>
                         </HeaderTemplate>
                         <ContentTemplate>
-
-
                             <div class="row">
                                 <div class="col-12">
                                     @if (indicatorComplain)
@@ -422,37 +411,30 @@
                 <tbody>
                     @foreach (var fasnrc in ghostLines)
                     {
-                    <tr>
-                        <td><SfTextBox @bind-Value="@fasnrc.DeliveryNumber"></SfTextBox></td>
-                        <td><SfNumericTextBox @bind-Value="@fasnrc.DeliveryLine" ShowSpinButton=false></SfNumericTextBox></td>
-                        <td><SfTextBox @bind-Value="@fasnrc.MaterialOrd11cn"></SfTextBox></td>
-                        <td><SfNumericTextBox @bind-Value="@fasnrc.OrderQty" ShowSpinButton=false></SfNumericTextBox></td>
-                        <td><SfNumericTextBox @bind-Value="@fasnrc.ComplaintQty" ShowSpinButton=false></SfNumericTextBox></td>
-                        <td><SfNumericTextBox @bind-Value="@fasnrc.TotalComplaintValueCurrentCurrency" ShowSpinButton=false></SfNumericTextBox></td>
-                        <td><SfTextBox @bind-Value="@fasnrc.CurrencyComplaintValue"></SfTextBox></td>
-                    </tr>
+                        <tr>
+                            <td><SfTextBox @bind-Value="@fasnrc.DeliveryNumber"></SfTextBox></td>
+                            <td><SfNumericTextBox @bind-Value="@fasnrc.DeliveryLine" ShowSpinButton=false></SfNumericTextBox></td>
+                            <td><SfTextBox @bind-Value="@fasnrc.MaterialOrd11cn"></SfTextBox></td>
+                            <td><SfNumericTextBox @bind-Value="@fasnrc.OrderQty" ShowSpinButton=false></SfNumericTextBox></td>
+                            <td><SfNumericTextBox @bind-Value="@fasnrc.ComplaintQty" ShowSpinButton=false></SfNumericTextBox></td>
+                            <td><SfNumericTextBox @bind-Value="@fasnrc.TotalComplaintValueCurrentCurrency" ShowSpinButton=false></SfNumericTextBox></td>
+                            <td><SfTextBox @bind-Value="@fasnrc.CurrencyComplaintValue"></SfTextBox></td>
+                        </tr>
                     }
                 </tbody>
             </table>
         </Content>
     </DialogTemplates>
     <DialogButtons>
-        <DialogButton Content="Save"  OnClick="@SaveGhostLine" IsPrimary="true" />
+        <DialogButton Content="Save" OnClick="@SaveGhostLine" IsPrimary="true" />
         <DialogButton Content="Cancel" OnClick="@CloseDialogGhostLine" />
     </DialogButtons>
 </SfDialog>
 
-<SfDialog Width="400px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisible">
-    <DialogTemplates>
-        <Header> Confirmation ? </Header>
-        <Content> Are You sure save chages  </Content>
-    </DialogTemplates>
-    <DialogButtons>
-        <DialogButton Content="OK" IsPrimary="true" OnClick="@SaveClaimAsn" />
-        <DialogButton Content="Cancel" OnClick="@CloseDialog" />
-    </DialogButtons>
-</SfDialog>
 
+<Confirm ConfirmationChanged="ConfirmDelete_Click" @ref="DeleteConfirmation" ButtonYes="Save" ButtonNo="Cancel"
+         ConfirmationMessage="Save complain?"
+         ConfirmationTitle="Confirmation"></Confirm>
 
 
 <style>
@@ -542,13 +524,15 @@
 
 @code {
 
+    protected ConfirmBase DeleteConfirmation { get; set; }
+
     public bool ghostlinebuttonDisable = true;
 
     public bool ghostlinevisible = false;
     public bool keyReadDataDelivery = true;
     public bool keyReadDataAsn = true;
 
-    private bool IsVisible { get; set; } = false;
+    //  private bool IsVisible { get; set; } = false;
 
     public int zmComplainQty = 0;
     public string zmNrClaim = "";
@@ -620,46 +604,27 @@
     string RecNo;
 
 
-  
+
     async Task EdycjaComplain(TblDeliveries DuComplain)
     {
-        //await AcrdnObj.EnableItem(0, true);
-        //await AcrdnObj.ExpandItem(false, 0);
         await AcrdnObj.EnableItem(1, true);
         await AcrdnObj.ExpandItem(true, 1);
         await AcrdnObj.EnableItem(2, true);
         await AcrdnObj.ExpandItem(true, 2);
-
         indicatorComplain = true;
-
         string linkRC = "/api/TblReasoncodes/";
         comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
-
-
         zmComplainID = DuComplain.ComplaintId;
         zmNrClaim = DuComplain.Comp.ComplaintIduf;
         zmComplianCustomerComments = DuComplain.Comp.CustomerComments;
-
-
         zCustomerFax = DuComplain.Comp.CustomerFax;
         zCustomerContact = DuComplain.Comp.CustomerContact;
         zCustomerEmail = DuComplain.Comp.CustomerEmail;
         zCustomerPhone = DuComplain.Comp.CustomerPhone;
-
-
         ZmComplainReasonCode = DuComplain.Comp.Reasoncode;
-        //  zmReazonCodeDoEdycji = "Too late";
-
-        // zaladuj tablice complainow po complain id przeszukaj complain lines
-
         string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + DuComplain.ComplaintId.ToString();
-
         deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
         zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
-
-
-
-        StateHasChanged();
     }
 
     async Task DisplayClaimsByDnAndAsn()
@@ -764,7 +729,7 @@
       ,
             MaterialOrdCtv = strVbeln.Artkx,
             OrderQty = Convert.ToInt32(strVbeln.Lgmng),
-
+            ComplaintQty = Convert.ToInt32(strVbeln.Lgmng)
         });
 
         StateHasChanged();
@@ -798,6 +763,7 @@
         ,
             MaterialOrdCtv = zmAsnJson.Matdesc,
             OrderQty = zmAsnJson.RecvdQty,
+            ComplaintQty = zmAsnJson.RecvdQty
 
         });
 
@@ -841,27 +807,37 @@
         }
     }
 
-
-    private void questionAboutSave()
+    private async Task ConfirmDelete_Click(bool deleteConfirmed)
     {
-        this.IsVisible = true;
+        if (deleteConfirmed)
+        {
+            await SaveClaimAsn();
+            CloseDialog();
+        }
     }
 
-    private async void SaveClaimAsn()
+
+    private  void questionAboutSave()
+    {
+      
+        DeleteConfirmation.Show();
+        }
+
+    private async Task SaveClaimAsn()
     {
 
 
         if (indicatorComplain)
         {
-            //zmComplainID
-            string Linkfordel = "/api/TblDeliveryLines/DeleteTblDeliveryLinesByComplain/" + zmComplainID.ToString();
-            var response0 = await Http.DeleteAsync(Linkfordel);
-            string Linkfordel1 = "/api/TblDeliveries/DeleteTblDeliveriesIdComp/" + zmComplainID.ToString();
-            var response1 = await Http.DeleteAsync(Linkfordel1);
-            string Linkfordel2 = "/api/TblComplaints/" + zmComplainID.ToString();
-            var response2 = await Http.DeleteAsync(Linkfordel2);
+            //    //zmComplainID
+            //    string Linkfordel = "/api/TblDeliveryLines/DeleteTblDeliveryLinesByComplain/" + zmComplainID.ToString();
+            //    var response0 = await Http.DeleteAsync(Linkfordel);
+            //    string Linkfordel1 = "/api/TblDeliveries/DeleteTblDeliveriesIdComp/" + zmComplainID.ToString();
+            //    var response1 = await Http.DeleteAsync(Linkfordel1);
+            //    string Linkfordel2 = "/api/TblComplaints/" + zmComplainID.ToString();
+            //    var response2 = await Http.DeleteAsync(Linkfordel2);
 
-            saveComplain.Reasoncode = ZmComplainReasonCode;
+            //    saveComplain.Reasoncode = ZmComplainReasonCode;
         }
 
 
@@ -925,7 +901,7 @@
         saveComplain.AmountInvoiced = 0;
         saveComplain.InvoicedCurrency = 0;
         saveComplain.RemarksFinance = "";
-        saveComplain.Status = 0;
+        saveComplain.Status = 1;
         saveComplain.CustomerCnnumber = "";
         saveComplain.CustomerCnvalue = 0;
         saveComplain.CustomerCncurrency = 0;
@@ -962,7 +938,6 @@
         var response = await Http.PostAsJsonAsync<TblComplaints>(postclaimLink, saveComplain);
         var jsonString = await response.Content.ReadAsStringAsync();
         TblComplaints obj = JsonConvert.DeserializeObject<TblComplaints>(jsonString);
-
 
         saveDelivery.ComplaintId = obj.ComplaintId;
         if (indicatorASN) saveDelivery.DeliveryNumber = zmASN;
@@ -1042,7 +1017,7 @@
     private async void CloseDialog()
     {
 
-        this.IsVisible = false;
+     //   this.IsVisible = false;
 
         // Pozamykaj programowo akordeon
         NavigationManager.NavigateTo("NewClaimPage", true);
@@ -1082,12 +1057,12 @@
         { zmSzuk = DeliveryNumber.Trim(); }
         if (indicatorASN)
         { zmSzuk = zmASN.Trim(); }
-        ghostLines.Add(new TblDeliveryLines { DeliveryNumber = zmSzuk} );
+        ghostLines.Add(new TblDeliveryLines { DeliveryNumber = zmSzuk });
     }
 
-    public async void SaveGhostLine()
+    public void SaveGhostLine()
     {
-        string postDelink = "/api/TblDeliveryLines";
+        //string postDelink = "/api/TblDeliveryLines";
         foreach (var dd in ghostLines)
         {
             DateTime teraz = DateTime.Now;
@@ -1097,12 +1072,13 @@
             dd.SalesOrder = "SO";
             dd.SalesOrderLine = "SOL";
             dd.MaterialOrdCtv = dd.MaterialOrd11cn;
-            var responseDel = await Http.PostAsJsonAsync<TblDeliveryLines>(postDelink, dd);
+            //  var responseDel = await Http.PostAsJsonAsync<TblDeliveryLines>(postDelink, dd);
+
+            zmtblDeliveryLines.Add(dd);
             ghostlinevisible = false;
         }
+
+
         StateHasChanged();
     }
-
-
-
-    }
+}
