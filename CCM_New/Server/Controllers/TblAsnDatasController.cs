@@ -12,12 +12,12 @@ namespace CCM_New.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TblAsnDatasController : ControllerBase
+    public class TblAsnDatasController : appController
     {
         private readonly CCMContext _context;
 
         public TblAsnDatasController(CCMContext context)
-        {
+        {        
             _context = context;
         }
 

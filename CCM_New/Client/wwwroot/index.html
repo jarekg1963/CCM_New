@@ -26,3 +26,16 @@
 </body>
 
 </html>
+
+<script>
+    function ReadLocalStorage(key) {
+        var d = localStorage.getItem(key);
+        if (d == null) d = "";
+        if (d == undefined) d = "";
+        return d;
+    }
+
+    function WriteLocalStorage(key, value) {
+        localStorage.setItem(key, value)
+    }
+</script>

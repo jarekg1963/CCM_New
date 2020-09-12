@@ -27,9 +27,24 @@ namespace CCM_New.Server.Data
         public virtual DbSet<TblAttachments> TblAttachments { get; set; }
         public virtual DbSet<TblRootCauses> TblRootCauses { get; set; }
         public virtual DbSet<TblLiableParties> TblLiableParties { get; set; }
+        public virtual DbSet<TblUsers> TblUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<TblUsers>(entity =>
+            {
+                entity.ToTable("Tbl_Users");
+
+                entity.Property(e => e.UserName).HasMaxLength(50);
+
+                entity.Property(e => e.UserPassword).HasMaxLength(50);
+
+                entity.Property(e => e.UserRole)
+                    .HasMaxLength(10)
+                    .IsFixedLength();
+            });
+
+
             modelBuilder.Entity<TblLiableParties>(entity =>
             {
                 entity.HasKey(e => e.LiablePartyId);

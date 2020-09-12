@@ -1,16 +1,102 @@
 ﻿@inherits LayoutComponentBase
+@inject LoginService loginService
+@inject HttpClient httpClient 
 
-    <div class="sidebar">
-        <NavMenu />
-    
-    </div>
+@if (loginService.isLogged == true)
+{
+<div class="sidebar">
+    <NavMenu />
+
+</div>
 
 <div class="main">
     <div class="top-row px-4">
-       
+        
+        <p>User: @loginService.session.user.UserName</p>
     </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
+}
+else
+{
+<div class="container">
+    <label>Login</label>
+    <input type="text" class="form-control" @bind="user.UserName" />
+    <label>Password</label>
+    <input type="password" class="form-control" @bind="user.UserPassword" />
+    <button class="btn btn-primary" @onclick="login">Login</button>
+</div>
+}
+
+@code{
+
+    CCM_New.Shared.TblUsers user = new CCM_New.Shared.TblUsers() { UserName="",UserPassword=""};
+
+    override protected void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            loginService.refresh += (() => StateHasChanged());
+            checkSession();
+        }
+    }
+
+    async void checkSession()
+    {
+        string sessionID = await loginService.jSRuntime.InvokeAsync<string>("ReadLocalStorage", new object[] { this.loginService.sessionKey });
+        Console.WriteLine($"Session id: {sessionID}");
+        if (sessionID != "")
+        {
+            try
+            {
+                var session = await httpClient.GetFromJsonAsync<LoginService.Session>($"./api/session?sessionID={sessionID}");
+                
+                if (session.ok == true)
+                {
+                    loginService.session = session;
+                    loginService.sessionID = sessionID;
+                    loginService.isLogged = true;
+                    await loginService.jSRuntime.InvokeVoidAsync("WriteLocalStorage", new object[] { this.loginService.sessionKey, this.loginService.sessionID });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        loginService.CallRefresh();
+    }
+
+    async void login()
+    {
+        if (this.user.UserName == "") return;
+        if (this.user.UserPassword == "") return;
+
+        var resp = await httpClient.PostAsJsonAsync<LoginService.Session>("./api/login", new LoginService.Session { user = this.user });
+        LoginService.Session s = await  resp.Content.ReadFromJsonAsync<LoginService.Session>();
+        if (s.ok == true)
+        {
+            this.loginService.session = s;
+            this.loginService.sessionID = s.sessionID;
+            this.loginService.isLogged = true;
+            await loginService.jSRuntime.InvokeVoidAsync("WriteLocalStorage", new object[] { this.loginService.sessionKey, this.loginService.sessionID });
+        }
+        loginService.CallRefresh();
+
+
+    }
+
+    async void Wyloguj()
+    {
+        await loginService.jSRuntime.InvokeVoidAsync("WriteLocalStorage", new object[] { this.loginService.sessionKey, "" });
+        this.loginService.session = null;
+        this.loginService.sessionID = "";
+        this.loginService.isLogged = false;
+    }
+
+}
