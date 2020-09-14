@@ -1,39 +1,97 @@
 ﻿@inherits LayoutComponentBase
 @inject LoginService loginService
-@inject HttpClient httpClient 
+@inject HttpClient httpClient
+@using Syncfusion.Blazor.Popups;
+@using Syncfusion.Blazor.Buttons;
+@inject NavigationManager navigationManager;
+@using Syncfusion.Blazor.Notifications;
+@using Syncfusion.Blazor.Navigations
 
 @if (loginService.isLogged == true)
 {
-<div class="sidebar">
-    <NavMenu />
+    <div class="sidebar">
+        <NavMenu />
 
-</div>
-
-<div class="main">
-    <div class="top-row px-4">
-        
-        <p>User: @loginService.session.user.UserName</p>
     </div>
 
-    <div class="content px-4">
-        @Body
+    <div class="main">
+
+        <div class="top-row px-4">
+
+            <div class="col-2" style="margin-top:10px">
+                <p>User: @loginService.session.user.UserName</p>
+            </div>
+            <div class="col-2">
+                <span class="oi oi-account-logout" aria-hidden="true" style="align-self"></span>
+                <a href="" style="cursor: pointer" @onclick="() => Wyloguj()">Logout</a>
+            </div>
+        </div>
+
+        <div class="content px-4">
+            @Body
+        </div>
     </div>
-</div>
 }
 else
 {
-<div class="container">
-    <label>Login</label>
-    <input type="text" class="form-control" @bind="user.UserName" />
-    <label>Password</label>
-    <input type="password" class="form-control" @bind="user.UserPassword" />
-    <button class="btn btn-primary" @onclick="login">Login</button>
-</div>
+    <SfDialog ID="dialog" IsModal="true" Width="500px" @bind-Visible="@LoginPageVisible">
+        <DialogTemplates>
+            <Header>
+                <nav id="navbar-example2" class="navbar navbar-light bg-primary">
+                    <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto"  >Sign In</div>
+                </nav>
+
+</Header>
+            <Content>
+                <div id='input-container'>
+                    <div class="e-float-input e-input-group">
+                        <input id="username" type="text" @bind="user.UserName" required />
+                        <span class="e-float-line"></span>
+                        <label class="e-float-text">Username</label>
+                    </div>
+                </div>
+                <div class='form-group'>
+                    <div class="e-float-input e-input-group">
+                        <input id="password" type="password" @bind="user.UserPassword" required />
+                        <span class="e-float-line"></span>
+                        <label class="e-float-text">Password</label>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(this.ErrorMessage))
+                {
+
+                    <div class="error-container">
+                        @ErrorMessage
+                    </div>
+                }
+            </Content>
+        </DialogTemplates>
+        <DialogButtons>
+            <DialogButton Content="Log In" IsPrimary="true" OnClick="@login" />
+        </DialogButtons>
+        <DialogEvents OnClose="@Validation"></DialogEvents>
+    </SfDialog>
+
 }
 
 @code{
+    private string ErrorMessage { get; set; } = "";
+    CCM_New.Shared.TblUsers user = new CCM_New.Shared.TblUsers() { UserName = "", UserPassword = "" };
+    public bool LoginPageVisible = true;
+    public string ToastMessageTxT = "";
 
-    CCM_New.Shared.TblUsers user = new CCM_New.Shared.TblUsers() { UserName="",UserPassword=""};
+
+
+    private void Validation(BeforeCloseEventArgs args)
+    {
+        if (user.UserName == "" && user.UserPassword == "")
+        {
+
+            args.Cancel = true;
+            this.LoginPageVisible = true;
+            this.ErrorMessage = "Enter the Username and Password";
+        }
+    }
 
     override protected void OnAfterRender(bool firstRender)
     {
@@ -55,13 +113,14 @@ else
             try
             {
                 var session = await httpClient.GetFromJsonAsync<LoginService.Session>($"./api/session?sessionID={sessionID}");
-                
+
                 if (session.ok == true)
                 {
                     loginService.session = session;
                     loginService.sessionID = sessionID;
                     loginService.isLogged = true;
                     await loginService.jSRuntime.InvokeVoidAsync("WriteLocalStorage", new object[] { this.loginService.sessionKey, this.loginService.sessionID });
+                    this.VerifySecurityLevel();
                 }
             }
             catch (Exception ex)
@@ -74,29 +133,103 @@ else
 
     async void login()
     {
-        if (this.user.UserName == "") return;
-        if (this.user.UserPassword == "") return;
-
         var resp = await httpClient.PostAsJsonAsync<LoginService.Session>("./api/login", new LoginService.Session { user = this.user });
-        LoginService.Session s = await  resp.Content.ReadFromJsonAsync<LoginService.Session>();
+        LoginService.Session s = await resp.Content.ReadFromJsonAsync<LoginService.Session>();
         if (s.ok == true)
         {
             this.loginService.session = s;
             this.loginService.sessionID = s.sessionID;
             this.loginService.isLogged = true;
             await loginService.jSRuntime.InvokeVoidAsync("WriteLocalStorage", new object[] { this.loginService.sessionKey, this.loginService.sessionID });
+            LoginPageVisible = false;
+            this.VerifySecurityLevel();
+            loginService.CallRefresh();
         }
-        loginService.CallRefresh();
-
-
+        else
+        {
+            this.LoginPageVisible = true;
+            this.ErrorMessage = "Wronf Username or Password try again";
+        }
     }
 
     async void Wyloguj()
     {
+        Console.WriteLine("Wyloguj ");
         await loginService.jSRuntime.InvokeVoidAsync("WriteLocalStorage", new object[] { this.loginService.sessionKey, "" });
         this.loginService.session = null;
         this.loginService.sessionID = "";
         this.loginService.isLogged = false;
+        this.loginService.CallRefresh();
+        StateHasChanged();
+    }
+
+    private void VerifySecurityLevel()
+    {
+        if (loginService.session.user.UserRole.Trim() == "Admin")
+        {
+            loginService.securityLevel = 100;
+        }
+        if (loginService.session.user.UserRole.Trim() == "Warehouse")
+        {
+            loginService.securityLevel = 10;
+        }
+        if (loginService.session.user.UserRole.Trim() == "TPV")
+        {
+            loginService.securityLevel = 20;
+        }
+
+
+        loginService.CallRefresh();
+
     }
 
 }
+
+<style>
+    #elementToastTime .e-toast-message {
+        padding: 10px;
+        text-align: center;
+    }
+
+    #dialog.e-dialog .e-dlg-header-content .e-dlg-header {
+        text-align: center;
+        width: 100%;
+        color: #333;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    #input-container .e-float-input { /* csslint allow: adjoining-classes */
+        margin: 17px 0;
+    }
+
+    .e-footer-content {
+        padding: 20px 0 0;
+        width: 100%;
+    }
+
+    .e-dialog .e-footer-content .e-btn {
+        width: 100%;
+        height: 36px;
+    }
+
+    #heading {
+        color: #333;
+        font-weight: bold;
+        margin: 0 0 15px;
+        text-align: center;
+        font-size: 20px;
+    }
+
+    #dialog.e-dialog .e-footer-content {
+        padding: 0 18px 18px;
+    }
+
+        #dialog.e-dialog .e-footer-content .e-btn {
+            margin-left: 0;
+        }
+
+    .error-container {
+        color: red;
+    }
+</style>

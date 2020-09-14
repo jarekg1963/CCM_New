@@ -56,7 +56,7 @@ namespace CCM_New.Client
         }
 
    
-        public double? cena1 { get; set; } = null;
+        public int securityLevel { get; set; } = 0;
         public double? stawka { get; set; } = null;
         public double? stawka1 { get; set; } = null;
         public bool? stalyCennik { get; set; } = null;
