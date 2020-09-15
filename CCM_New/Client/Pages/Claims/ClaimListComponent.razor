@@ -5,6 +5,7 @@
 @using Syncfusion.Blazor.Grids;
 @using Syncfusion.Blazor.Buttons;
 @using Syncfusion.Blazor.Inputs;
+@using System.Net.Mail;
 
 
 
@@ -22,9 +23,7 @@
             <SfButton @onclick="@DisplayDataDelivery" Disabled="keyReadDataDelivery">Read data </SfButton>
         </div>
     </div>
-
     <div class="row">
-
         <div class="col-12">
             <SfGrid DataSource="@listComplainForGrid" Height="100%" Width="100%" RowHeight="22" AllowSorting="true" AllowPaging="true">
                 <GridPageSettings PageSizes="true"></GridPageSettings>
@@ -50,11 +49,11 @@
                         </Template>
                     </GridColumn>
                     <GridColumn Field=@nameof(TblComplaints.CustomerComments) HeaderText="Comments" TextAlign="TextAlign.Left" Width="80"></GridColumn>
-
                 </GridColumns>
             </SfGrid>
         </div>
     </div>
+  
 </div>
 
 @code {

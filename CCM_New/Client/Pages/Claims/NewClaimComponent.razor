@@ -14,6 +14,7 @@
 @using CCM_New.Shared;
 @using Newtonsoft.Json;
 @using CCM_New.Client.Tool;
+@using Syncfusion.Blazor.Notifications;
 
 
 <div class="containerClaim">
@@ -73,7 +74,7 @@
                                         <label>ASN</label>
                                         <SfGrid DataSource="@listASNForGrid" Height="100%" Width="100%" RowHeight="22">
                                             <GridColumns>
-                                                <GridColumn HeaderText="Add" TextAlign="TextAlign.Center" Width="60">
+                                                <GridColumn HeaderText="Add" TextAlign="TextAlign.Center" Width="30">
                                                     <Template>
                                                         @{ var dn = (context as TblAsnData);
                                                             <a style="text-underline-position:below; cursor:pointer" @onclick="(() => ZalozClaimPoAsn(dn))">+</a>
@@ -95,7 +96,7 @@
                                     <label>Complains</label>
                                     <SfGrid DataSource="@listDeliveryForGrid" Height="100%" Width="100%" RowHeight="22">
                                         <GridColumns>
-                                            <GridColumn HeaderText="Add" TextAlign="TextAlign.Center" Width="60">
+                                            <GridColumn HeaderText="Add" TextAlign="TextAlign.Center" Width="30">
                                                 <Template>
                                                     @{ var dn = (context as TblDeliveries);
                                                         <a style="text-underline-position:below; cursor:pointer" @onclick="(() => EdycjaComplain(dn))">+</a>
@@ -426,9 +427,16 @@
         </Content>
     </DialogTemplates>
     <DialogButtons>
-        <DialogButton Content="Save" OnClick="@SaveGhostLine" IsPrimary="true" />
-        <DialogButton Content="Cancel" OnClick="@CloseDialogGhostLine" />
-    </DialogButtons>
+        <div class="row">
+            <div class="col-10" />
+            <div class="col-1">
+                <SfButton Content="Save" CssClass="e-primary e-flat" OnClick="@SaveGhostLine" IsPrimary="true" />
+            </div>
+            <div class="col-1">
+                <SfButton Content="Cancel" OnClick="@CloseDialogGhostLine" />
+            </div>
+        </div>
+</DialogButtons>
 </SfDialog>
 
 
@@ -437,12 +445,12 @@
          ConfirmationTitle="Confirmation"></Confirm>
 
 
+<SfToast @ref="ToastObj" Title="Error" Content="No reason code" CssClass="e-toast-danger">
+    <ToastPosition X="Right"></ToastPosition>
+</SfToast>
+
 <style>
-    .e-btn.e-flat.e-primary, .e-btn.e-flat.e-primary:focus {
-        background-color: #317ab9;
-        border-color: #265f91;
-        color: #fff;
-    }
+
 
     table.paleBlueRows {
         font-family: "Times New Roman",Times,serif;
@@ -523,430 +531,441 @@
 </style>
 
 @code {
+                SfToast ToastObj;
+                public string ToastMessageTxT = "";
 
-    protected ConfirmBase DeleteConfirmation { get; set; }
+                protected ConfirmBase DeleteConfirmation { get; set; }
 
-    public bool ghostlinebuttonDisable = true;
+                public bool ghostlinebuttonDisable = true;
 
-    public bool ghostlinevisible = false;
-    public bool keyReadDataDelivery = true;
-    public bool keyReadDataAsn = true;
+                public bool ghostlinevisible = false;
+                public bool keyReadDataDelivery = true;
+                public bool keyReadDataAsn = true;
 
-    //  private bool IsVisible { get; set; } = false;
+                //  private bool IsVisible { get; set; } = false;
 
-    public int zmComplainQty = 0;
-    public string zmNrClaim = "";
+                public int zmComplainQty = 0;
+                public string zmNrClaim = "";
 
-    public string maxIDNowyCaim;
+                public string maxIDNowyCaim;
 
-    SfAccordion AcrdnObj;
-    public bool isMainstream = false;
-    public bool indicatorASN = false;
-    public bool indicatorDelivery = false;
-    public bool indicatorComplain = false;
+                SfAccordion AcrdnObj;
+                public bool isMainstream = false;
+                public bool indicatorASN = false;
+                public bool indicatorDelivery = false;
+                public bool indicatorComplain = false;
 
-    public int zmlicznikDodaniaAsn = 0;
+                public int zmlicznikDodaniaAsn = 0;
 
-    public string zCustomerFax = "";
-    public string zCustomerContact = "";
-    public string zCustomerEmail = "";
-    public string zCustomerPhone = "";
+                public string zCustomerFax = "";
+                public string zCustomerContact = "";
+                public string zCustomerEmail = "";
+                public string zCustomerPhone = "";
 
 
 
-    public string zmSzuk = "";
+                public string zmSzuk = "";
 
 
-    public string DeliveryNumber { get; set; } = "";
-    public string zmASN { get; set; } = "";
+                public string DeliveryNumber { get; set; } = "";
+                public string zmASN { get; set; } = "";
 
-    List<TblDeliveryLines> ghostLines = new List<TblDeliveryLines>();
+                List<TblDeliveryLines> ghostLines = new List<TblDeliveryLines>();
 
-    public TblDeliveries[] DeliveryList = { };
-    List<TblDeliveries> listDeliveryForGrid = new List<TblDeliveries>();
+                public TblDeliveries[] DeliveryList = { };
+                List<TblDeliveries> listDeliveryForGrid = new List<TblDeliveries>();
 
-    public TblAsnData[] ASNList = { };
-    List<TblAsnData> listASNForGrid = new List<TblAsnData>();
+                public TblAsnData[] ASNList = { };
+                List<TblAsnData> listASNForGrid = new List<TblAsnData>();
 
-    public TblDeliveryLines[] deliveryLinesjson = { };
-    List<TblDeliveryLines> zmtblDeliveryLines = new List<TblDeliveryLines>();
+                public TblDeliveryLines[] deliveryLinesjson = { };
+                List<TblDeliveryLines> zmtblDeliveryLines = new List<TblDeliveryLines>();
 
-    TblComplaints saveComplain = new TblComplaints();
-    TblDeliveries saveDelivery = new TblDeliveries();
+                TblComplaints saveComplain = new TblComplaints();
+                TblDeliveries saveDelivery = new TblDeliveries();
 
-    //------------------------
-    public string zmASNForComplainCreation;
-    public string zmASNLineComplainCreation;
-    public string zmASNMaterialComplainCreation;
-    public int zmASNOrderedQtyComplainCreation;
-    public int zmASNComplainQtyComplainCreation;
+                //------------------------
+                public string zmASNForComplainCreation;
+                public string zmASNLineComplainCreation;
+                public string zmASNMaterialComplainCreation;
+                public int zmASNOrderedQtyComplainCreation;
+                public int zmASNComplainQtyComplainCreation;
 
-    public double zmDNLine;
-    public DateTime? zmDNDate;
-    public string zmDNCTV;
-    public string zmDN11CN;
-    public double? zmDnQty;
+                public double zmDNLine;
+                public DateTime? zmDNDate;
+                public string zmDNCTV;
+                public string zmDN11CN;
+                public double? zmDnQty;
 
 
-    public int zmComplainID;
-    public string zmComplianCustomerComments;
-    public int ZmComplainReasonCode;
+                public int zmComplainID;
+                public string zmComplianCustomerComments;
+                public int ZmComplainReasonCode;
 
-    // public string zmReazonCodeDoEdycji;
+                // public string zmReazonCodeDoEdycji;
 
-    //------------------------
+                //------------------------
 
-    public TblSapData[] DeliveryListSap = { };
-    List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
+                public TblSapData[] DeliveryListSap = { };
+                List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
 
 
-    public TblReasoncodes[] comboReasonCodes = { };
-    string RecNo;
+                public TblReasoncodes[] comboReasonCodes = { };
+                string RecNo;
 
 
 
-    async Task EdycjaComplain(TblDeliveries DuComplain)
-    {
-        await AcrdnObj.EnableItem(1, true);
-        await AcrdnObj.ExpandItem(true, 1);
-        await AcrdnObj.EnableItem(2, true);
-        await AcrdnObj.ExpandItem(true, 2);
-        indicatorComplain = true;
-        string linkRC = "/api/TblReasoncodes/";
-        comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
-        zmComplainID = DuComplain.ComplaintId;
-        zmNrClaim = DuComplain.Comp.ComplaintIduf;
-        zmComplianCustomerComments = DuComplain.Comp.CustomerComments;
-        zCustomerFax = DuComplain.Comp.CustomerFax;
-        zCustomerContact = DuComplain.Comp.CustomerContact;
-        zCustomerEmail = DuComplain.Comp.CustomerEmail;
-        zCustomerPhone = DuComplain.Comp.CustomerPhone;
-        ZmComplainReasonCode = DuComplain.Comp.Reasoncode;
-        string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + DuComplain.ComplaintId.ToString();
-        deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
-        zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
-    }
+                async Task EdycjaComplain(TblDeliveries DuComplain)
+                {
+                    await AcrdnObj.EnableItem(1, true);
+                    await AcrdnObj.ExpandItem(true, 1);
+                    await AcrdnObj.EnableItem(2, true);
+                    await AcrdnObj.ExpandItem(true, 2);
+                    indicatorComplain = true;
+                    string linkRC = "/api/TblReasoncodes/";
+                    comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+                    zmComplainID = DuComplain.ComplaintId;
+                    zmNrClaim = DuComplain.Comp.ComplaintIduf;
+                    zmComplianCustomerComments = DuComplain.Comp.CustomerComments;
+                    zCustomerFax = DuComplain.Comp.CustomerFax;
+                    zCustomerContact = DuComplain.Comp.CustomerContact;
+                    zCustomerEmail = DuComplain.Comp.CustomerEmail;
+                    zCustomerPhone = DuComplain.Comp.CustomerPhone;
+                    ZmComplainReasonCode = DuComplain.Comp.Reasoncode;
+                    string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + DuComplain.ComplaintId.ToString();
+                    deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
+                    zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
+                }
 
-    async Task DisplayClaimsByDnAndAsn()
-    {
-        if (DeliveryNumber.Length > 0 | zmASN.Length > 0)
-        {
+                async Task DisplayClaimsByDnAndAsn()
+                {
+                    if (DeliveryNumber.Length > 0 | zmASN.Length > 0)
+                    {
+
+                        if (indicatorDelivery)
+                        { zmSzuk = DeliveryNumber.Trim(); }
 
-            if (indicatorDelivery)
-            { zmSzuk = DeliveryNumber.Trim(); }
+                        if (indicatorASN)
+                        { zmSzuk = zmASN.Trim(); }
 
-            if (indicatorASN)
-            { zmSzuk = zmASN.Trim(); }
+                        string linktmp = "/api/TblDeliveries/GetByDeliveries/" + zmSzuk.Trim();
 
-            string linktmp = "/api/TblDeliveries/GetByDeliveries/" + zmSzuk.Trim();
+                        Console.WriteLine("-------------:" + linktmp);
 
-            Console.WriteLine("-------------:" + linktmp);
+                        DeliveryList = await Http.GetFromJsonAsync<TblDeliveries[]>(linktmp);
+                        listDeliveryForGrid = new List<TblDeliveries>(DeliveryList);
 
-            DeliveryList = await Http.GetFromJsonAsync<TblDeliveries[]>(linktmp);
-            listDeliveryForGrid = new List<TblDeliveries>(DeliveryList);
 
+                        StateHasChanged();
+                    }
+                }
 
-            StateHasChanged();
-        }
-    }
+                async Task DisplayASNData()
+                {
+                    indicatorASN = true;
+                    indicatorDelivery = false;
+                    await DisplayClaimsByDnAndAsn();
+                    await LoadDataForASN();
+                    StateHasChanged();
+                }
 
-    async Task DisplayASNData()
-    {
-        indicatorASN = true;
-        indicatorDelivery = false;
-        await DisplayClaimsByDnAndAsn();
-        await LoadDataForASN();
-        StateHasChanged();
-    }
+                async Task LoadDataForASN()
+                {
 
-    async Task LoadDataForASN()
-    {
+                    await AcrdnObj.EnableItem(0, true);
+                    await AcrdnObj.ExpandItem(true, 0);
 
-        await AcrdnObj.EnableItem(0, true);
-        await AcrdnObj.ExpandItem(true, 0);
+                    listASNForGrid = new List<TblAsnData>();
 
-        listASNForGrid = new List<TblAsnData>();
 
+                    string linktmpDnSAP = "/api/TblAsnDatas/GetTblAsnDatabyAsnNr/" + "0" + zmASN.Trim();
+                    ASNList = await Http.GetFromJsonAsync<TblAsnData[]>(linktmpDnSAP);
+                    Console.WriteLine("Asn ilosc " + ASNList.Count().ToString());
+                    listASNForGrid = new List<TblAsnData>(ASNList);
 
-        string linktmpDnSAP = "/api/TblAsnDatas/GetTblAsnDatabyAsnNr/" + "0" + zmASN.Trim();
-        ASNList = await Http.GetFromJsonAsync<TblAsnData[]>(linktmpDnSAP);
-        Console.WriteLine("Asn ilosc " + ASNList.Count().ToString());
-        listASNForGrid = new List<TblAsnData>(ASNList);
+                }
 
-    }
+                async Task LoadDataForDN()
+                {
 
-    async Task LoadDataForDN()
-    {
+                    listDeliverySapForGrid = new List<TblSapData>();
+                    StateHasChanged();
 
-        listDeliverySapForGrid = new List<TblSapData>();
-        StateHasChanged();
+                    await AcrdnObj.EnableItem(0, true);
+                    await AcrdnObj.ExpandItem(true, 0);
 
-        await AcrdnObj.EnableItem(0, true);
-        await AcrdnObj.ExpandItem(true, 0);
+                    string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + DeliveryNumber.Trim();
+                    DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
+                    listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
 
-        string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + DeliveryNumber.Trim();
-        DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
-        listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
+                    if (listDeliverySapForGrid.Count > 0)
+                    {
+                        await AcrdnObj.EnableItem(0, true);
+                        await AcrdnObj.ExpandItem(true, 0);
+                    }
+                    StateHasChanged();
+                }
 
-        if (listDeliverySapForGrid.Count > 0)
-        {
-            await AcrdnObj.EnableItem(0, true);
-            await AcrdnObj.ExpandItem(true, 0);
-        }
-        StateHasChanged();
-    }
+                async Task DisplayDataDelivery()
+                {
+                    indicatorDelivery = true;
+                    indicatorASN = false;
+                    await DisplayClaimsByDnAndAsn();
+                    await LoadDataForDN();
+                    StateHasChanged();
+                }
 
-    async Task DisplayDataDelivery()
-    {
-        indicatorDelivery = true;
-        indicatorASN = false;
-        await DisplayClaimsByDnAndAsn();
-        await LoadDataForDN();
-        StateHasChanged();
-    }
 
+                async Task ZalozClaimPoDn(TblSapData strVbeln)
+                {
+                    //await AcrdnObj.EnableItem(0, true);
+                    //await AcrdnObj.ExpandItem(false, 0);
+                    await AcrdnObj.EnableItem(1, true);
+                    await AcrdnObj.ExpandItem(true, 1);
+                    await AcrdnObj.EnableItem(2, true);
+                    await AcrdnObj.ExpandItem(true, 2);
 
-    async Task ZalozClaimPoDn(TblSapData strVbeln)
-    {
-        //await AcrdnObj.EnableItem(0, true);
-        //await AcrdnObj.ExpandItem(false, 0);
-        await AcrdnObj.EnableItem(1, true);
-        await AcrdnObj.ExpandItem(true, 1);
-        await AcrdnObj.EnableItem(2, true);
-        await AcrdnObj.ExpandItem(true, 2);
+                    string linkRC = "/api/TblReasoncodes/";
+                    comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
 
-        string linkRC = "/api/TblReasoncodes/";
-        comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+                    maxIDNowyCaim = await Http.GetStringAsync("/api/TblComplaints/MaxIdComplain");
 
-        maxIDNowyCaim = await Http.GetStringAsync("/api/TblComplaints/MaxIdComplain");
+                    zmNrClaim = DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM") + DateTime.Now.ToString("dd") + strVbeln.Vkorg.Trim() + maxIDNowyCaim;
 
-        zmNrClaim = DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM") + DateTime.Now.ToString("dd") + strVbeln.Vkorg.Trim() + maxIDNowyCaim;
+                    zmtblDeliveryLines.Add(new TblDeliveryLines()
+                    {
+                        DeliveryLine = Convert.ToInt32(strVbeln.Posnr),
+                        MaterialOrd11cn = strVbeln.Matnr
+                  ,
+                        MaterialOrdCtv = strVbeln.Artkx,
+                        OrderQty = Convert.ToInt32(strVbeln.Lgmng),
+                        ComplaintQty = Convert.ToInt32(strVbeln.Lgmng)
+                    });
 
-        zmtblDeliveryLines.Add(new TblDeliveryLines()
-        {
-            DeliveryLine = Convert.ToInt32(strVbeln.Posnr),
-            MaterialOrd11cn = strVbeln.Matnr
-      ,
-            MaterialOrdCtv = strVbeln.Artkx,
-            OrderQty = Convert.ToInt32(strVbeln.Lgmng),
-            ComplaintQty = Convert.ToInt32(strVbeln.Lgmng)
-        });
+                    StateHasChanged();
 
-        StateHasChanged();
+                }
 
-    }
 
+                async Task ZalozClaimPoAsn(TblAsnData zmAsnJson)
+                {
+                    zmlicznikDodaniaAsn = zmlicznikDodaniaAsn + 1;
+                    //await AcrdnObj.EnableItem(0, true);
+                    //await AcrdnObj.ExpandItem(false, 0);
+                    await AcrdnObj.EnableItem(1, true);
+                    await AcrdnObj.ExpandItem(true, 1);
+                    await AcrdnObj.EnableItem(2, true);
+                    await AcrdnObj.ExpandItem(true, 2);
 
-    async Task ZalozClaimPoAsn(TblAsnData zmAsnJson)
-    {
-        zmlicznikDodaniaAsn = zmlicznikDodaniaAsn + 1;
-        //await AcrdnObj.EnableItem(0, true);
-        //await AcrdnObj.ExpandItem(false, 0);
-        await AcrdnObj.EnableItem(1, true);
-        await AcrdnObj.ExpandItem(true, 1);
-        await AcrdnObj.EnableItem(2, true);
-        await AcrdnObj.ExpandItem(true, 2);
 
+                    string linkRC = "/api/TblReasoncodes/";
+                    comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
 
-        string linkRC = "/api/TblReasoncodes/";
-        comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
 
+                    maxIDNowyCaim = await Http.GetStringAsync("/api/TblComplaints/MaxIdComplain");
 
-        maxIDNowyCaim = await Http.GetStringAsync("/api/TblComplaints/MaxIdComplain");
+                    zmNrClaim = DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM") + DateTime.Now.ToString("dd") + zmAsnJson.Plant.Trim() + maxIDNowyCaim;
 
-        zmNrClaim = DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM") + DateTime.Now.ToString("dd") + zmAsnJson.Plant.Trim() + maxIDNowyCaim;
+                    zmtblDeliveryLines.Add(new TblDeliveryLines()
+                    {
+                        DeliveryLine = Int32.Parse(zmAsnJson.Asnline),
+                        MaterialOrd11cn = zmAsnJson.Material
+                    ,
+                        MaterialOrdCtv = zmAsnJson.Matdesc,
+                        OrderQty = zmAsnJson.RecvdQty,
+                        ComplaintQty = zmAsnJson.RecvdQty
 
-        zmtblDeliveryLines.Add(new TblDeliveryLines()
-        {
-            DeliveryLine = Int32.Parse(zmAsnJson.Asnline),
-            MaterialOrd11cn = zmAsnJson.Material
-        ,
-            MaterialOrdCtv = zmAsnJson.Matdesc,
-            OrderQty = zmAsnJson.RecvdQty,
-            ComplaintQty = zmAsnJson.RecvdQty
+                    });
 
-        });
 
+                    StateHasChanged();
+                }
 
-        StateHasChanged();
-    }
-
-    private void DeleteItemfromTable(int zmDelLine)
-    {
-        Console.WriteLine("ilosc przed delete " + zmtblDeliveryLines.Count.ToString());
-        zmtblDeliveryLines.RemoveAll(r => r.DeliveryLine == zmDelLine);
-        // zmtblDeliveryLines.RemoveAt(2);
-        Console.WriteLine("ilosc PO delete " + zmtblDeliveryLines.Count.ToString());
-        StateHasChanged();
-    }
-
-    private void UpdatedClaimPoDn(string strVbeln)
-    {
-        Console.WriteLine("Zaloz dnke " + strVbeln.ToString());
-    }
-
-
-
-    private async void OnChange1(UploadChangeEventArgs args)
-    {
-        const string idpliku = "1000001";
-
-        foreach (var f in args.Files)
-        {
-            Console.WriteLine($" Message z komponentu :  {f.FileInfo.Name}");
-            var dane = f.Stream.ToArray();
-
-            var DaneForupload = new UploadRequestClass { id = idpliku, file = dane, filename = f.FileInfo.Name };
-            var rep = await this.Http.PostAsJsonAsync<UploadRequestClass>("api/upload/file", DaneForupload);
-            var rep1 = await rep.Content.ReadAsStringAsync();
-
-            Console.WriteLine("Resposse z kontrolera " + rep1);
-
-
-            // post do tabeli z plikami
-        }
-    }
-
-    private async Task ConfirmDelete_Click(bool deleteConfirmed)
-    {
-        if (deleteConfirmed)
-        {
-            await SaveClaimAsn();
-            CloseDialog();
-        }
-    }
-
-
-    private  void questionAboutSave()
-    {
-      
-        DeleteConfirmation.Show();
-        }
-
-    private async Task SaveClaimAsn()
-    {
-
-
-        if (indicatorComplain)
-        {
-            //    //zmComplainID
-            //    string Linkfordel = "/api/TblDeliveryLines/DeleteTblDeliveryLinesByComplain/" + zmComplainID.ToString();
-            //    var response0 = await Http.DeleteAsync(Linkfordel);
-            //    string Linkfordel1 = "/api/TblDeliveries/DeleteTblDeliveriesIdComp/" + zmComplainID.ToString();
-            //    var response1 = await Http.DeleteAsync(Linkfordel1);
-            //    string Linkfordel2 = "/api/TblComplaints/" + zmComplainID.ToString();
-            //    var response2 = await Http.DeleteAsync(Linkfordel2);
-
-            //    saveComplain.Reasoncode = ZmComplainReasonCode;
-        }
-
-
-        #region zerowanie zmiennych przed zapisem do dopracowania TblCompains
-
-        DateTime dal = DateTime.Now;
-
-        saveComplain.BillOfLading = "";
-        saveComplain.ShippingPoint = "";
-        saveComplain.SalesOrganization = "";
-        saveComplain.DeliveryType = 0;
-        saveComplain.DeliveryDate = dal;
-        saveComplain.ShiptoCustomerNumber = "";
-        saveComplain.SoldToCustomerNumber = "";
-        saveComplain.BillOfLading = "";
-        saveComplain.ExtDelRef = "";
-
-        saveComplain.ComplaintType = 0;
-        // saveComplain.RegisteredBy =
-        saveComplain.CreateCnDn = false;
-        saveComplain.TotalCnDnValue = 0;
-        saveComplain.CnDnCurrency = "";
-        //  saveComplain.CustomerComments = zmComplianCustomerComments;
-        saveComplain.CnDnNumber = "";
-        saveComplain.InvoiceNumber = "";
-        saveComplain.SendToOriginDc = false;
-        saveComplain.SendingDateOriginDc = dal;
-        saveComplain.DcComments = "";
-        saveComplain.SendPodRequest = false;
-        saveComplain.SendingDatePodRequest = dal;
-        saveComplain.CarrierFeedback = false;
-        saveComplain.CarrierFeedbackDate = dal;
-        saveComplain.RemarksOnPod = false;
-        saveComplain.PodComments = "";
-        saveComplain.CarrierFunloc = "";
-        saveComplain.CarrierName = "";
-        saveComplain.BelowThreshold = false;
-        saveComplain.CnCreated = false;
-        saveComplain.CnCreatedDate = dal;
-        saveComplain.ClosureRemarks = "";
-        saveComplain.ResearchRemarks = "";
-        saveComplain.LiabilityNoteSent = false;
-        saveComplain.LiabilityNoteAccept = false;
-        saveComplain.CustomerFax = zCustomerFax;
-        saveComplain.CustomerContact = zCustomerContact;
-        saveComplain.CustomerEmail = zCustomerEmail;
-        saveComplain.CustomerPhone = zCustomerPhone;
-        saveComplain.PoliceReport = false;
-        saveComplain.DcfeedbackReceiveDate = dal;
-        saveComplain.RemarksLsprequest = "";
-        saveComplain.Rootcause = 0;
-        saveComplain.ClaimCreatedDate = dal;
-        saveComplain.ClaimParty = 0;
-        saveComplain.RadarRef = "";
-        saveComplain.ClaimAmount = 0;
-        saveComplain.ClaimCurrency = 0;
-        saveComplain.CreateCnRemarks = "";
-        saveComplain.LiabilityRemarks = "";
-        saveComplain.PrAvailable = false;
-        saveComplain.AmountReceived = 0;
-        saveComplain.AmountInvoiced = 0;
-        saveComplain.InvoicedCurrency = 0;
-        saveComplain.RemarksFinance = "";
-        saveComplain.Status = 1;
-        saveComplain.CustomerCnnumber = "";
-        saveComplain.CustomerCnvalue = 0;
-        saveComplain.CustomerCncurrency = 0;
-        saveComplain.CustomerCnremarks = "";
-        saveComplain.CarrierClaimRemarks = "";
-        saveComplain.InsuranceClaimRemarks = "";
-        saveComplain.InvoiceCreatedDate = dal;
-        saveComplain.AmountReceivedInvoice = 0;
-        saveComplain.LiableParty = 0;
-        saveComplain.CncustCreatedDate = dal;
-        saveComplain.FinalRootcause = 0;
-        saveComplain.CreateCncust = false;
-        saveComplain.VendorFunloc = "";
-        saveComplain.VendorName = "";
-        saveComplain.CarrierPodremarks = "";
-        saveComplain.CncustCreated = false;
-        saveComplain.RemarksPodnotReceived = "";
-        saveComplain.CreateCncustRemarks = "";
-        saveComplain.BillOfLading = "";
-
-
-        saveComplain.CustomerComments = zmComplianCustomerComments;
-        saveComplain.ComplaintIduf = zmNrClaim;
-
-
-
-        saveComplain.Cust = null;
-
-        #endregion zerowanie zmiennych przed zapisem do dopracowania TblCompains
-
-        string postclaimLink = "/api/TblComplaints/";
-
-
-        var response = await Http.PostAsJsonAsync<TblComplaints>(postclaimLink, saveComplain);
-        var jsonString = await response.Content.ReadAsStringAsync();
-        TblComplaints obj = JsonConvert.DeserializeObject<TblComplaints>(jsonString);
-
-        saveDelivery.ComplaintId = obj.ComplaintId;
-        if (indicatorASN) saveDelivery.DeliveryNumber = zmASN;
-        if (indicatorDelivery) saveDelivery.DeliveryNumber = DeliveryNumber;
-        saveDelivery.SalesOrder = "SO";
-        string postDelink = "/api/TblDeliveries";
-        var responseDel = await Http.PostAsJsonAsync<TblDeliveries>(postDelink, saveDelivery);
-
-        DateTime dt = DateTime.Now;
+                private void DeleteItemfromTable(int zmDelLine)
+                {
+                    Console.WriteLine("ilosc przed delete " + zmtblDeliveryLines.Count.ToString());
+                    zmtblDeliveryLines.RemoveAll(r => r.DeliveryLine == zmDelLine);
+                    // zmtblDeliveryLines.RemoveAt(2);
+                    Console.WriteLine("ilosc PO delete " + zmtblDeliveryLines.Count.ToString());
+                    StateHasChanged();
+                }
+
+                private void UpdatedClaimPoDn(string strVbeln)
+                {
+                    Console.WriteLine("Zaloz dnke " + strVbeln.ToString());
+                }
+
+
+
+                private async void OnChange1(UploadChangeEventArgs args)
+                {
+                    const string idpliku = "1000001";
+
+                    foreach (var f in args.Files)
+                    {
+                        Console.WriteLine($" Message z komponentu :  {f.FileInfo.Name}");
+                        var dane = f.Stream.ToArray();
+
+                        var DaneForupload = new UploadRequestClass { id = idpliku, file = dane, filename = f.FileInfo.Name };
+                        var rep = await this.Http.PostAsJsonAsync<UploadRequestClass>("api/upload/file", DaneForupload);
+                        var rep1 = await rep.Content.ReadAsStringAsync();
+
+                        Console.WriteLine("Resposse z kontrolera " + rep1);
+
+
+                        // post do tabeli z plikami
+                    }
+                }
+
+                private async Task ConfirmDelete_Click(bool deleteConfirmed)
+                {
+                    if (deleteConfirmed)
+                    {
+                        await SaveClaimAsn();
+                        CloseDialog();
+                    }
+                }
+
+
+                private void questionAboutSave()
+                {
+
+                    if (saveComplain.Reasoncode == 0)
+                    {
+
+                        ToastMessageTxT = "Select reason code ";
+                        ToastObj.Show();
+                    }
+                    else
+                    {
+                        DeleteConfirmation.Show();
+                    }
+                }
+
+                private async Task SaveClaimAsn()
+                {
+
+
+                    if (indicatorComplain)
+                    {
+                        //    //zmComplainID
+                        //    string Linkfordel = "/api/TblDeliveryLines/DeleteTblDeliveryLinesByComplain/" + zmComplainID.ToString();
+                        //    var response0 = await Http.DeleteAsync(Linkfordel);
+                        //    string Linkfordel1 = "/api/TblDeliveries/DeleteTblDeliveriesIdComp/" + zmComplainID.ToString();
+                        //    var response1 = await Http.DeleteAsync(Linkfordel1);
+                        //    string Linkfordel2 = "/api/TblComplaints/" + zmComplainID.ToString();
+                        //    var response2 = await Http.DeleteAsync(Linkfordel2);
+
+                        //    saveComplain.Reasoncode = ZmComplainReasonCode;
+                    }
+
+
+                    #region zerowanie zmiennych przed zapisem do dopracowania TblCompains
+
+                    DateTime dal = DateTime.Now;
+
+                    saveComplain.BillOfLading = "";
+                    saveComplain.ShippingPoint = "";
+                    saveComplain.SalesOrganization = "";
+                    saveComplain.DeliveryType = 0;
+                    saveComplain.DeliveryDate = dal;
+                    saveComplain.ShiptoCustomerNumber = "";
+                    saveComplain.SoldToCustomerNumber = "";
+                    saveComplain.BillOfLading = "";
+                    saveComplain.ExtDelRef = "";
+
+                    saveComplain.ComplaintType = 0;
+                    // saveComplain.RegisteredBy =
+                    saveComplain.CreateCnDn = false;
+                    saveComplain.TotalCnDnValue = 0;
+                    saveComplain.CnDnCurrency = "";
+                    //  saveComplain.CustomerComments = zmComplianCustomerComments;
+                    saveComplain.CnDnNumber = "";
+                    saveComplain.InvoiceNumber = "";
+                    saveComplain.SendToOriginDc = false;
+                    saveComplain.SendingDateOriginDc = dal;
+                    saveComplain.DcComments = "";
+                    saveComplain.SendPodRequest = false;
+                    saveComplain.SendingDatePodRequest = dal;
+                    saveComplain.CarrierFeedback = false;
+                    saveComplain.CarrierFeedbackDate = dal;
+                    saveComplain.RemarksOnPod = false;
+                    saveComplain.PodComments = "";
+                    saveComplain.CarrierFunloc = "";
+                    saveComplain.CarrierName = "";
+                    saveComplain.BelowThreshold = false;
+                    saveComplain.CnCreated = false;
+                    saveComplain.CnCreatedDate = dal;
+                    saveComplain.ClosureRemarks = "";
+                    saveComplain.ResearchRemarks = "";
+                    saveComplain.LiabilityNoteSent = false;
+                    saveComplain.LiabilityNoteAccept = false;
+                    saveComplain.CustomerFax = zCustomerFax;
+                    saveComplain.CustomerContact = zCustomerContact;
+                    saveComplain.CustomerEmail = zCustomerEmail;
+                    saveComplain.CustomerPhone = zCustomerPhone;
+                    saveComplain.PoliceReport = false;
+                    saveComplain.DcfeedbackReceiveDate = dal;
+                    saveComplain.RemarksLsprequest = "";
+                    saveComplain.Rootcause = 0;
+                    saveComplain.ClaimCreatedDate = dal;
+                    saveComplain.ClaimParty = 0;
+                    saveComplain.RadarRef = "";
+                    saveComplain.ClaimAmount = 0;
+                    saveComplain.ClaimCurrency = 0;
+                    saveComplain.CreateCnRemarks = "";
+                    saveComplain.LiabilityRemarks = "";
+                    saveComplain.PrAvailable = false;
+                    saveComplain.AmountReceived = 0;
+                    saveComplain.AmountInvoiced = 0;
+                    saveComplain.InvoicedCurrency = 0;
+                    saveComplain.RemarksFinance = "";
+                    saveComplain.Status = 1;
+                    saveComplain.CustomerCnnumber = "";
+                    saveComplain.CustomerCnvalue = 0;
+                    saveComplain.CustomerCncurrency = 0;
+                    saveComplain.CustomerCnremarks = "";
+                    saveComplain.CarrierClaimRemarks = "";
+                    saveComplain.InsuranceClaimRemarks = "";
+                    saveComplain.InvoiceCreatedDate = dal;
+                    saveComplain.AmountReceivedInvoice = 0;
+                    saveComplain.LiableParty = 0;
+                    saveComplain.CncustCreatedDate = dal;
+                    saveComplain.FinalRootcause = 0;
+                    saveComplain.CreateCncust = false;
+                    saveComplain.VendorFunloc = "";
+                    saveComplain.VendorName = "";
+                    saveComplain.CarrierPodremarks = "";
+                    saveComplain.CncustCreated = false;
+                    saveComplain.RemarksPodnotReceived = "";
+                    saveComplain.CreateCncustRemarks = "";
+                    saveComplain.BillOfLading = "";
+
+
+                    saveComplain.CustomerComments = zmComplianCustomerComments;
+                    saveComplain.ComplaintIduf = zmNrClaim;
+
+
+
+                    saveComplain.Cust = null;
+
+                    #endregion zerowanie zmiennych przed zapisem do dopracowania TblCompains
+
+                    string postclaimLink = "/api/TblComplaints/";
+
+
+                    var response = await Http.PostAsJsonAsync<TblComplaints>(postclaimLink, saveComplain);
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    TblComplaints obj = JsonConvert.DeserializeObject<TblComplaints>(jsonString);
+
+                    saveDelivery.ComplaintId = obj.ComplaintId;
+                    if (indicatorASN) saveDelivery.DeliveryNumber = zmASN;
+                    if (indicatorDelivery) saveDelivery.DeliveryNumber = DeliveryNumber;
+                    saveDelivery.SalesOrder = "SO";
+                    string postDelink = "/api/TblDeliveries";
+                    var responseDel = await Http.PostAsJsonAsync<TblDeliveries>(postDelink, saveDelivery);
+
+                    DateTime dt = DateTime.Now;
 
         @foreach (var dl in zmtblDeliveryLines)
         {
@@ -979,7 +998,7 @@
             dl.FinalLiableParty = null;
             dl.FinalRcRemarks = "";
             dl.FinalRcRemarksComplaintsTeam = "";
-            dl.SerialNumbers = "";
+          //  dl.SerialNumbers = "";
 
             #endregion zerowanie zmiennych delivery lines
 
@@ -1017,7 +1036,7 @@
     private async void CloseDialog()
     {
 
-     //   this.IsVisible = false;
+        //   this.IsVisible = false;
 
         // Pozamykaj programowo akordeon
         NavigationManager.NavigateTo("NewClaimPage", true);

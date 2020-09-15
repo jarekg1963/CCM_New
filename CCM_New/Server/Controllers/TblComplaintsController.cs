@@ -40,7 +40,7 @@ namespace CCM_New.Server.Controllers
         [HttpGet("GetComNr/{nr}")]
 
 
-        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDate(string nr)
+        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByNr(string nr)
         {
             return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.ComplaintIduf.Contains(nr)).ToListAsync();
         }
@@ -51,6 +51,7 @@ namespace CCM_New.Server.Controllers
 
         public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDate( DateTime startDate, DateTime endDate) 
         {
+            
         return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.DeliveryDate >= startDate & c.DeliveryDate <= endDate).ToListAsync();
     }
 

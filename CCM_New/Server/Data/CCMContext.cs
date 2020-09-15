@@ -677,10 +677,10 @@ namespace CCM_New.Server.Data
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.SerialNumbers)
-                    .HasColumnName("Serial_Numbers")
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
+                //entity.Property(e => e.SerialNumbers)
+                //    .HasColumnName("Serial_Numbers")
+                //    .HasMaxLength(255)
+                //    .IsUnicode(false);
 
                 entity.Property(e => e.TotalComplaintValueCurrentCurrency)
                     .HasColumnName("Total_Complaint_Value_Current_Currency")

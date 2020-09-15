@@ -32,7 +32,7 @@ namespace CCM_New.Shared
         public int? FinalLiableParty { get; set; }
         public string FinalRcRemarks { get; set; }
         public string FinalRcRemarksComplaintsTeam { get; set; }
-        public string SerialNumbers { get; set; }
+      //  public string SerialNumbers { get; set; }
 
 
         public TblLiableParties Liable { get; set; }        

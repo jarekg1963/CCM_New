@@ -18,8 +18,8 @@ namespace CCM_New.Shared
         public string CarrierContact { get; set; }
         public string CarrierEmail { get; set; }
         public bool? CarrierActive { get; set; }
-        [Key]
-        public int Id { get; set; }
+        //[Key]
+        // public int Id { get; set; }
         
         public string FullComboName { get { return Nso + " " + CarrierName + " " + CarrierId2; } }
        
