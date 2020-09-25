@@ -57,7 +57,7 @@ namespace CCM_New.Client
 
    
         public int securityLevel { get; set; } = 0;
-        public double? stawka { get; set; } = null;
+        public string softVersion { get; set; } = "Alfa 0.1";
         public double? stawka1 { get; set; } = null;
         public bool? stalyCennik { get; set; } = null;
 

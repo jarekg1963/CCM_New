@@ -19,7 +19,7 @@ namespace CCM_New.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-
+         
             builder.Services.AddSingleton<LoginService>();
             builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddSyncfusionBlazor(true);

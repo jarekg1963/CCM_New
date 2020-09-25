@@ -6,18 +6,16 @@
 @inject NavigationManager navigationManager;
 @using Syncfusion.Blazor.Notifications;
 @using Syncfusion.Blazor.Navigations
+@using Microsoft.Extensions.Configuration
+
 
 @if (loginService.isLogged == true)
 {
     <div class="sidebar">
         <NavMenu />
-
     </div>
-
     <div class="main">
-
         <div class="top-row px-4">
-
             <div class="col-2" style="margin-top:10px">
                 <p>User: @loginService.session.user.UserName</p>
             </div>
@@ -26,7 +24,6 @@
                 <a href="" style="cursor: pointer" @onclick="() => Wyloguj()">Logout</a>
             </div>
         </div>
-
         <div class="content px-4">
             @Body
         </div>
@@ -34,43 +31,44 @@
 }
 else
 {
-    <SfDialog ID="dialog" IsModal="true" Width="500px" @bind-Visible="@LoginPageVisible">
-        <DialogTemplates>
-            <Header>
-                <nav id="navbar-example2" class="navbar navbar-light bg-primary">
-                    <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto"  >Sign In</div>
-                </nav>
+<SfDialog ID="dialog" IsModal="true" Width="500px" @bind-Visible="@LoginPageVisible">
+    <DialogTemplates>
+        <Header>
+            <nav id="navbar-example2" class="navbar navbar-light bg-light">
+                <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto">Sign In</div>
+            </nav>
 
-</Header>
-            <Content>
-                <div id='input-container'>
-                    <div class="e-float-input e-input-group">
-                        <input id="username" type="text" @bind="user.UserName" required />
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">Username</label>
-                    </div>
+        </Header>
+        <Content>
+            <div id='input-container'>
+                <div class="e-float-input e-input-group">
+                    <input id="username" type="text" @bind="user.UserName" required />
+                    <span class="e-float-line"></span>
+                    <label class="e-float-text">Username</label>
                 </div>
-                <div class='form-group'>
-                    <div class="e-float-input e-input-group">
-                        <input id="password" type="password" @bind="user.UserPassword" required />
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">Password</label>
-                    </div>
+            </div>
+            <div class='form-group'>
+                <div class="e-float-input e-input-group">
+                    <input id="password" type="password" @bind="user.UserPassword" required />
+                    <span class="e-float-line"></span>
+                    <label class="e-float-text">Password</label>
                 </div>
-                @if (!string.IsNullOrEmpty(this.ErrorMessage))
-                {
+            </div>
+            @if (!string.IsNullOrEmpty(this.ErrorMessage))
+            {
 
-                    <div class="error-container">
-                        @ErrorMessage
-                    </div>
-                }
-            </Content>
-        </DialogTemplates>
-        <DialogButtons>
-            <DialogButton Content="Log In" IsPrimary="true" OnClick="@login" />
-        </DialogButtons>
-        <DialogEvents OnClose="@Validation"></DialogEvents>
-    </SfDialog>
+                <div class="error-container">
+                    @ErrorMessage
+                </div>
+            }
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Log In" OnClick="@login" />
+    </DialogButtons>
+    <DialogEvents OnClose="@Validation"></DialogEvents>
+    <p>Ver: @loginService.softVersion</p>
+</SfDialog>
 
 }
 
@@ -186,6 +184,7 @@ else
 }
 
 <style>
+
     #elementToastTime .e-toast-message {
         padding: 10px;
         text-align: center;

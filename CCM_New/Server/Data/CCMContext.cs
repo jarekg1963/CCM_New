@@ -29,8 +29,25 @@ namespace CCM_New.Server.Data
         public virtual DbSet<TblLiableParties> TblLiableParties { get; set; }
         public virtual DbSet<TblUsers> TblUsers { get; set; }
 
+        public virtual DbSet<TblCurrencies> TblCurrencies { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<TblCurrencies>(entity =>
+            {
+                entity.HasKey(e => e.CurrencyId);
+
+                entity.ToTable("Tbl_Currencies");
+
+                entity.Property(e => e.CurrencyId).HasColumnName("Currency_ID");
+
+                entity.Property(e => e.Currency)
+                    .IsRequired()
+                    .HasMaxLength(3)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<TblUsers>(entity =>
             {
                 entity.ToTable("Tbl_Users");

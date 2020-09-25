@@ -123,7 +123,7 @@
                                     <label>Contact Email</label>
                                 </div>
                                 <div class="row" style="height:25px">
-                                    <label>Contact phone</label>
+                                    <label>Phone</label>
                                 </div>
 
                                 <div class="row" style="height:25px">
@@ -200,6 +200,11 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
@@ -235,6 +240,11 @@
                                 }
                             </tbody>
                         </table>
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
@@ -254,9 +264,8 @@
                                 <label>Sent date</label>
                             </div>
                             <div class="col-2">
-                                <SfTextBox Readonly="true"></SfTextBox>
+                                <SfDatePicker Readonly="true" @bind-Value="zmSendingDateOriginDc"></SfDatePicker>
                             </div>
-
                         </div>
                         <div class="row">
                             <div class="col-2">
@@ -264,12 +273,15 @@
                             </div>
                             <div class="col-6">
                                 <div class="multiline">
-                                    <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zCustomer_Comments"></SfTextBox>
+                                    <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zmDcComments"></SfTextBox>
                                 </div>
                             </div>
                         </div>
-
-
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
@@ -323,7 +335,6 @@
                                                 else
                                                 { <label> @fasn.Rootca.RootCauseName </label>}
                                             </td>
-
                                             <td>
                                                 <SfNumericTextBox @bind-Value="@fasn.ComplaintQty" Readonly="true"></SfNumericTextBox>
                                             </td>
@@ -355,7 +366,7 @@
                             </div>
                             <div class="col-4">
                                 <div class="multiline">
-                                    <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zCustomer_Comments"></SfTextBox>
+                                    <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zCarrierPodremarks"></SfTextBox>
                                 </div>
                             </div>
                         </div>
@@ -364,26 +375,20 @@
                                 <label>Change carrier </label>
                             </div>
                             <div class="col-3">
-                                <SfCheckBox Label="Carrier update" @onchange="unBlockCurrierUpdate" @bind-Checked="BlockedChangeCarrier"></SfCheckBox>
 
-                                <SfComboBox TValue="string" TItem="TblCarriers" Placeholder="Select carrier" DataSource="@comboCarriers" @bind-Value="@zmWartoscPolaCombiCarrier" Readonly="@BlockedChangeCarrier">
+                                <SfComboBox TValue="string" TItem="TblCarriers" Placeholder="Select carrier" DataSource="@comboCarriers" @bind-Value="@zmWartoscPolaCombiCarrier">
                                     <ComboBoxEvents TValue="string" ValueChange="onChangeCarrier"></ComboBoxEvents>
-                                    <ComboBoxFieldSettings Text="FullComboName" Value="Id"></ComboBoxFieldSettings>
+                                    <ComboBoxFieldSettings Text="FullComboName" Value="FullComboName"></ComboBoxFieldSettings>
                                 </SfComboBox>
 
                             </div>
                             <div class="col-3">
-                                <div class="row" style="margin-top: 20px">
-                                    <SfTextBox @bind-Value="@zCarrier_Funloc" Readonly="true" Placeholder="Date sent"></SfTextBox>
-                                </div>
+                                <SfTextBox @bind-Value="@zCarrier_Funloc" Readonly="true" Placeholder="Date sent"></SfTextBox>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-2">
-
-                            </div>
-                            <div class="col-1">
-                                <div class="row" style="margin-top: 20px">
-                                    <SfButton>Save </SfButton>
-                                </div>
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
@@ -405,17 +410,24 @@
                                 <label>Remarks</label>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-2">
 
                             </div>
                             <div class="col-2">
-                                <SfDatePicker TValue="DateTime?" Value='@DateValue' Min='@MinDate' Max='@MaxDate'></SfDatePicker>
+                                <SfDatePicker TValue="DateTime?" Min='@MinDate' Max='@MaxDate' @bind-Value="zCarrierFeedbackDate"></SfDatePicker>
                             </div>
                             <div class="col-6">
                                 <div class="multiline">
-                                    <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zCustomer_Comments"></SfTextBox>
+                                    <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zPodComments"></SfTextBox>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
                             </div>
                         </div>
 
@@ -486,18 +498,45 @@
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Logistic disclouse  </div>
+                        <div>Logistical disclouse  </div>
                     </HeaderTemplate>
                     <ContentTemplate>
-
-                    </ContentTemplate>
-                </AccordionItem>
-                <AccordionItem Expanded="false">
-                    <HeaderTemplate>
-                        <div>Recording info on CN towards NSO / DC  </div>
-                    </HeaderTemplate>
-                    <ContentTemplate>
-
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Create CN for NSO:</label>
+                            </div>
+                            <div class="col-2">
+                                <SfRadioButton Label="Yes" Name="optionsCNNSO" Value="CNNSOYes" @bind-Checked="CNNSOstringChecked"></SfRadioButton>
+                                <SfRadioButton Label="No" Name="optionsCNNSO" Value="CNNSONo" @bind-Checked="CNNSOstringChecked"></SfRadioButton>
+                            </div>
+                            <div class="col-2">
+                                <label>Liability note sent:</label>
+                            </div>
+                            <div class="col-2">
+                                <SfRadioButton Label="Yes" Name="optionsLNS" Value="LNSYes" @bind-Checked="LNSstringChecked"></SfRadioButton>
+                                <SfRadioButton Label="No" Name="optionsLNS" Value="LNSNo" @bind-Checked="LNSstringChecked"></SfRadioButton>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Claim 3rd party:</label>
+                            </div>
+                            <div class="col-2">
+                                <SfRadioButton Label="Carrier" Name="optionsCar" Value="CARYes" @bind-Checked="CARstringChecked"></SfRadioButton>
+                                <SfRadioButton Label="Insurance" Name="optionsCar" Value="CARNo" @bind-Checked="CARstringChecked"></SfRadioButton>
+                            </div>
+                            <div class="col-1">
+                                <label>Remarks:</label>
+                            </div>
+                            <div class="col-5">
+                                <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zClosureRemarks"></SfTextBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
@@ -505,17 +544,121 @@
                         <div>Start recording task CN towards customer </div>
                     </HeaderTemplate>
                     <ContentTemplate>
-
+                        <div class="row">
+                            <div class="col-4">
+                                <label>Start recording task CN towards customer:</label>
+                            </div>
+                            <div class="col-2">
+                                <SfRadioButton Label="Yes" Name="optionsST" Value="STYes" @bind-Checked="STstringChecked"></SfRadioButton>
+                                <SfRadioButton Label="No" Name="optionsST" Value="STNo" @bind-Checked="STstringChecked"></SfRadioButton>
+                            </div>
+                            <div class="col-5">
+                                <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zRemarksLsprequest"></SfTextBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Claims currier details  </div>
+                        <div>Claim carrier details </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label>Liability accepted:</label>
+                                </div>
+                                <div class="col-2">
+                                    <SfRadioButton Label="Yes" Name="optionsLNA" Value="LNAYes" @bind-Checked="LNAstringChecked"></SfRadioButton>
+                                    <SfRadioButton Label="No" Name="optionsLNA" Value="LNANo" @bind-Checked="LNAstringChecked"></SfRadioButton>
+                                </div>
+                                <div class="col-4">
+                                    <label>Police report availible:</label>
+                                </div>
+                                <div class="col-2">
+                                    <SfRadioButton Label="Yes" Name="optionsPR" Value="PRYes" @bind-Checked="PRstringChecked"></SfRadioButton>
+                                    <SfRadioButton Label="No" Name="optionsPR" Value="PRNo" @bind-Checked="PRstringChecked"></SfRadioButton>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zCarrierClaimRemarks"></SfTextBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Record carrier invoice </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Invoice number:</label>
+                            </div>
+                            <div class="col-3">
+                                <SfTextBox @bind-Value="@zInvoicenumber"></SfTextBox>
+                            </div>
+                            <div class="col-2">
+                                <label>Invoice amount:</label>
+                            </div>
+                            <div class="col-3">
+                                <SfNumericTextBox @bind-Value="@zAmountInvoiced"></SfNumericTextBox>
+                            </div>
+                            <div class="col-2">
+                                <SfComboBox TValue="int" TItem="TblCurrencies" Placeholder="Select currency" DataSource="@comboTblCurrencies" @bind-Value="zCustomerCNCurrency">
+                                    <ComboBoxEvents TValue="string" ValueChange="onChangeCustomerCNCurrency"></ComboBoxEvents>
+                                    <ComboBoxFieldSettings Value="CurrencyId" Text="Currency"></ComboBoxFieldSettings>
+                                </SfComboBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Invoice creation date:</label>
+                            </div>
+                            <div class="col-3">
+                                <SfDatePicker @bind-Value="@zInvoiceCreatedDate"></SfDatePicker>
+                            </div>
+                            <div class="col-2">
+                                <label>Remarks:</label>
+                            </div>
+                            <div class="col-5">
+                                <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zCustomerCnremarks"></SfTextBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
+                    </ContentTemplate>
+                </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Claim insurance detail </div>
                     </HeaderTemplate>
                     <ContentTemplate>
 
                     </ContentTemplate>
                 </AccordionItem>
+                <AccordionItem Expanded="false">
+                    <HeaderTemplate>
+                        <div>Financial closure </div>
+                    </HeaderTemplate>
+                    <ContentTemplate>
+
+                    </ContentTemplate>
+                </AccordionItem>
+
             </AccordionItems>
         </SfAccordion>
     </div>
@@ -524,7 +667,9 @@
 
 <SfDialog Width="800px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLineLSPFeedback">
     <DialogTemplates>
-        <Header> Edit / New </Header>
+        <Header>
+            <div id="template" title="LSP feedback" class="e-icon-settings">LSP feedback</div>
+        </Header>
         <Content>
             <div class="row">
                 <div class="col-1">
@@ -553,8 +698,7 @@
                 </div>
 
             </div>
-            <div class="row">
-
+            <div class="row" style="height: 120px">
                 <div class="col-5">
                     <SfComboBox TValue="int" TItem="TblLiableParties" Placeholder="Select liable" DataSource="@comboTblParties" @bind-Value="zLiableParty">
                         <ComboBoxEvents TValue="string" ValueChange="ComboLiabilityLSPFeedBack"></ComboBoxEvents>
@@ -573,11 +717,20 @@
                 </div>
             </div>
 
+
         </Content>
     </DialogTemplates>
+    <DialogPositionData X="center" Y="center"></DialogPositionData>
     <DialogButtons>
-        <DialogButton Content="OK" IsPrimary="true" OnClick="@SaveLineLSPFeedback" />
-        <DialogButton Content="Cancel" OnClick="@CloseDialogLine" />
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <SfButton style="width: 90px" Content="OK" IsPrimary="true" OnClick="@SaveLineLSPFeedback" />
+            </div>
+            <div class="col-2">
+                <SfButton style="width: 90px" Content="Cancel" OnClick="@CloseDialogLine" />
+            </div>
+        </div>
     </DialogButtons>
 </SfDialog>
 
@@ -585,7 +738,9 @@
 
 <SfDialog Width="800px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLineFinalRootcause">
     <DialogTemplates>
-        <Header> Edit / New </Header>
+        <Header>
+            <div id="template" title="Final rootcause" class="e-icon-settings">Final rootcause</div>
+        </Header>
         <Content>
             <div class="row">
                 <div class="col-1">
@@ -615,8 +770,7 @@
                 </div>
 
             </div>
-            <div class="row">
-
+            <div class="row" style="height: 120px">
                 <div class="col-5">
                     <SfComboBox TValue="int" TItem="TblLiableParties" Placeholder="Select liable" DataSource="@comboTblParties" @bind-Value="zFinalLiableParty">
                         <ComboBoxEvents TValue="string" ValueChange="ComboLiabilityFinalRootcauseBack"></ComboBoxEvents>
@@ -637,14 +791,29 @@
 
         </Content>
     </DialogTemplates>
+    <DialogPositionData X="center" Y="center"></DialogPositionData>
     <DialogButtons>
-        <DialogButton Content="OK" IsPrimary="true" OnClick="@SaveLineFinalRootcause" />
-        <DialogButton Content="Cancel" OnClick="@CloseDialogLine" />
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <SfButton style="width: 90px" Content="OK" IsPrimary="true" OnClick="@SaveLineFinalRootcause" />
+            </div>
+            <div class="col-2">
+                <SfButton style="width: 90px" Content="Cancel" OnClick="@CloseDialogLine" />
+            </div>
+        </div>
     </DialogButtons>
+  
 </SfDialog>
+
 
 <Confirm ConfirmationChanged="ConfirmDeleteLSP_Click" @ref="DeleteConfirmationLSP"
          ConfirmationMessage="Are You sure delete ?"
+         ConfirmationTitle="Warning"></Confirm>
+
+
+<Confirm ConfirmationChanged="ConfirmSaveComplain_Click" @ref="SaveConfirmationComplain"  ButtonYes="Save" ButtonNo="Cancel"
+         ConfirmationMessage="Are You sure save ?"
          ConfirmationTitle="Warning"></Confirm>
 
 <Confirm ConfirmationChanged="ConfirmDeleteFR_Click" @ref="DeleteConfirmationFR"
@@ -662,6 +831,7 @@
     protected ConfirmBase DeleteConfirmationLSP { get; set; }
     protected ConfirmBase DeleteConfirmationFR { get; set; }
     protected ConfirmBase DeleteConfirmationDOC { get; set; }
+    protected ConfirmBase SaveConfirmationComplain { get; set; }
 
 
     public bool ConfirmationDeleteLsp = false;
@@ -693,6 +863,17 @@
     public string zmSalesOrderLine;
     public decimal zmTotalComplaintValueCurrentCurrency;
     public string zmCurrencyComplaintValue;
+    public string zmDcComments;
+    public string zCarrierPodremarks;
+    public string zPodComments;
+    public string zClosureRemarks;
+    public string zCarrierClaimRemarks;
+    public string zInvoicenumber;
+    public DateTime? zInvoiceCreatedDate;
+    public decimal? zAmountInvoiced;
+    public string zCustomerCnremarks;
+
+
 
 
     public bool IsVisibleNewLineLSPFeedback = false;
@@ -703,7 +884,15 @@
 
     public bool zmDelindicator = true;
     public string zmWartoscPolaCombiCarrier;
-    private string stringChecked = "Yes";
+    private string stringChecked;
+    private string stringCheckedPodFeed;
+    private string CNNSOstringChecked;
+    private string LNSstringChecked;
+    private string CARstringChecked;
+    private string STstringChecked;
+    private string LNAstringChecked;
+    private string PRstringChecked;
+
     public bool BlockedChangeCarrier = true;
     TblAttachments tblatt = new TblAttachments();
     TblComplaints complain = new TblComplaints();
@@ -725,9 +914,10 @@
     public string zCarrier_Funloc;
     public string zCustomer_Comments;
     public bool? zsendPOD_Request;
-
-
-
+    public DateTime? zmSendingDateOriginDc;
+    public DateTime? zCarrierFeedbackDate;
+    public string zRemarksLsprequest;
+    public int zCustomerCNCurrency;
 
 
     public string zCarrierID = "";
@@ -752,6 +942,10 @@
 
     public TblReasoncodes[] comboReasonCodes = { };
 
+    public TblComplaints[] comboTblComplaints = { };
+
+    public TblCurrencies[] comboTblCurrencies = { };
+
     public TblRootCauses[] comboRootCause = { };
     public TblRootCauses[] comboRootCauseForSFP = { };
 
@@ -769,6 +963,98 @@
     List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
 
 
+    private async void ConfirmSaveComplain_Click(bool SaveConfirmed)
+    {
+        Console.WriteLine("Radio button " + stringCheckedPodFeed);
+
+        if (SaveConfirmed)
+        {
+            DateTime dzis = DateTime.Now;
+
+            if (stringChecked.Trim() == "PodYes")
+            { complain.SendToOriginDc = true; }
+
+            if (stringChecked == "PodNo")
+            { complain.SendToOriginDc = false; }
+
+
+            if (stringCheckedPodFeed.Trim() == "PodFeedYes")
+            { complain.CarrierFeedback = true; }
+
+            if (stringCheckedPodFeed == "PodNo")
+            { complain.CarrierFeedback = false; }
+
+
+            if (CNNSOstringChecked.Trim() == "CNNSOYes")
+            { complain.CreateCnDn = true; }
+
+            if (CNNSOstringChecked == "CNNSONo")
+            { complain.CreateCnDn = false; }
+
+            if (LNSstringChecked.Trim() == "LNSYes")
+            { complain.LiabilityNoteSent = true; }
+
+            if (LNSstringChecked == "LNSNo")
+            { complain.LiabilityNoteSent = false; }
+
+
+            if (CARstringChecked.Trim() == "CARYes")
+            { complain.CncustCreated = true; }
+
+            if (CARstringChecked == "CARNo")
+            { complain.CncustCreated = false; }
+
+
+            if (STstringChecked.Trim() == "STYes")
+            { complain.RemarksOnPod = true; }
+
+            if (LNAstringChecked == "LNANo")
+            { complain.LiabilityNoteAccept = false; }
+
+
+            if (LNAstringChecked.Trim() == "LNAYes")
+            { complain.LiabilityNoteAccept = true; }
+
+            if (PRstringChecked.Trim() == "PRNo")
+            { complain.PoliceReport = false; }
+
+
+            if (PRstringChecked.Trim() == "PRYes")
+            { complain.PoliceReport = true; }
+
+            complain.DcComments = zmDcComments;
+            complain.SendingDateOriginDc = dzis;
+            complain.SendPodRequest = zsendPOD_Request;
+            complain.CarrierPodremarks = zCarrierPodremarks;
+            complain.PodComments = zPodComments;
+            complain.CarrierFeedbackDate = zCarrierFeedbackDate;
+            complain.ClosureRemarks = zClosureRemarks;
+            complain.RemarksLsprequest = zRemarksLsprequest;
+            complain.CarrierClaimRemarks = zCarrierClaimRemarks;
+            complain.InvoiceNumber = zInvoicenumber;
+            complain.InvoiceCreatedDate = zInvoiceCreatedDate;
+            complain.AmountInvoiced = zAmountInvoiced;
+            complain.CustomerCnremarks = zCustomerCnremarks;
+            complain.CustomerCncurrency = zCustomerCNCurrency;
+
+            // Tabela Complain 
+            complain.CustomerComments = zCustomerComments;
+            string postclaimLink = "/api/TblComplaints/" + idCompain;
+            var response = await Http.PutAsJsonAsync<TblComplaints>(postclaimLink, complain);
+            // Tabela deliverylines
+            foreach (var dl in zmtblDeliveryLines)
+            {
+                string postDellinelink = "/api/TblDeliveryLines/" + dl.DeliveryLineId.ToString();
+                var responseDelLine = await Http.PutAsJsonAsync<TblDeliveryLines>(postDellinelink, dl);
+            }
+        }
+    }
+
+    private void ClickWarningSaveComplain()
+    {
+        SaveConfirmationComplain.Show();
+    }
+
 
     private async Task LoadData()
     {
@@ -776,9 +1062,11 @@
         attachmentList = await Http.GetFromJsonAsync<TblAttachments[]>(linktmpAttach);
         attachmentListForGrid = new List<TblAttachments>(attachmentList);
 
-
         string linkRC = "/api/TblReasoncodes/";
         comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+        string linkCur = "/api/TblCurrencies/";
+        comboTblCurrencies = await Http.GetFromJsonAsync<TblCurrencies[]>(linkCur);
 
         string linkRcu = "/api/TblRootCauses/";
         comboRootCause = await Http.GetFromJsonAsync<TblRootCauses[]>(linkRcu);
@@ -787,29 +1075,24 @@
 
         comboTblParties = await Http.GetFromJsonAsync<TblLiableParties[]>(linkRp);
 
-
         string linkCar = "/api/TblCarriers/";
 
         comboCarriers = await Http.GetFromJsonAsync<TblCarriers[]>(linkCar);
         // comboCarriersList = new List<TblCarriers>(comboCarriers);
-
 
         string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + idCompain;
 
         deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
         zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
 
-
-
         string linktmpComp = "/api/TblComplaints/" + idCompain;
         complain = await Http.GetFromJsonAsync<TblComplaints>(linktmpComp);
-
 
         zComplaintIDUF = complain.ComplaintIduf;
         zShipping_Point = complain.ShippingPoint;
         zSalesOrganization = complain.SalesOrganization;
         zDeliveryDate = complain.DeliveryDate;
-        zCustomerName = "YYYYYYYYYYYYY";
+        zCustomerName = "";
         zShiptoCustomerNumber = complain.ShiptoCustomerNumber;
         zSoldToCustomerNumber = complain.SoldToCustomerNumber;
         zBillOfLading = complain.BillOfLading;
@@ -823,6 +1106,93 @@
         zCarrier_Funloc = complain.CarrierFunloc;
         zsendPOD_Request = complain.SendPodRequest;
         zmDeliveryNumber = zmtblDeliveryLines[0].DeliveryNumber;
+        zmDcComments = complain.DcComments;
+        zmSendingDateOriginDc = complain.SendingDateOriginDc;
+        zClosureRemarks = complain.ClosureRemarks;
+        zRemarksLsprequest = complain.RemarksLsprequest;
+        zCarrierClaimRemarks = complain.CarrierClaimRemarks;
+        zInvoiceCreatedDate = complain.InvoiceCreatedDate;
+        zAmountInvoiced = complain.AmountInvoiced;
+        zCustomerCnremarks = complain.CustomerCnremarks;
+        zCustomerCNCurrency = Convert.ToInt32(complain.CustomerCncurrency);
+
+        zInvoicenumber = complain.InvoiceNumber;
+
+        if (Convert.ToBoolean(complain.PoliceReport))
+        {
+            PRstringChecked = "PRYes";
+        }
+        else
+        {
+            PRstringChecked = "PRNo";
+        }
+
+        if (Convert.ToBoolean(complain.LiabilityNoteAccept))
+        {
+            LNAstringChecked = "LNAYes";
+        }
+        else
+        {
+            LNAstringChecked = "LNANo";
+        }
+
+        if (Convert.ToBoolean(complain.SendToOriginDc)  )
+        {
+            stringChecked = "PodYes";
+        }
+        else
+        {
+            stringChecked = "PodNo";
+        }
+        if (Convert.ToBoolean(complain.CarrierFeedback))
+        {
+            stringCheckedPodFeed = "PodFeedYes";
+        }
+        else
+        {
+            stringCheckedPodFeed = "PodFeedNo";
+        }
+
+        if (Convert.ToBoolean(complain.CreateCnDn))
+        {
+            CNNSOstringChecked = "CNNSOYes";
+        }
+        else
+        {
+            CNNSOstringChecked = "CNNSONo";
+        }
+
+        if (Convert.ToBoolean(complain.LiabilityNoteSent))
+        {
+            LNSstringChecked = "LNSYes";
+        }
+        else
+        {
+            LNSstringChecked = "LNSNo";
+        }
+
+        if (Convert.ToBoolean(complain.CncustCreated))
+        {
+            CARstringChecked = "CARYes";
+        }
+        else
+        {
+            CARstringChecked = "CARNo";
+        }
+
+        if (Convert.ToBoolean(complain.RemarksOnPod))
+        {
+            STstringChecked = "STYes";
+        }
+        else
+        {
+            STstringChecked = "STNo";
+        }
+
+        zCarrierPodremarks = complain.CarrierPodremarks;
+        zPodComments = complain.PodComments;
+        zCarrierFeedbackDate = complain.CarrierFeedbackDate;
+
 
 
     }
@@ -855,24 +1225,14 @@
             else
             {
                 //DN
-
                 zmDelindicator = true;
-
-
                 string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + tmpDn.Trim();
                 DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
                 listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
 
                 Console.WriteLine("Ilosc rekordow DN SAp ---------------------:" + listDeliverySapForGrid.Count.ToString());
             }
-
-
         }
-
-
-
-
-
     }
 
     protected override async Task OnParametersSetAsync()
@@ -953,21 +1313,30 @@
         public string responseMessage { get; set; }
     }
 
-    private void onChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    private  void onChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
     {
-
-        //   saveComplain.Reasoncode = Convert.ToInt32(args.Value);
+        complain.Reasoncode = Convert.ToInt32(args.Value);
     }
-
 
     private void onChangeCarrier(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
     {
-        Console.WriteLine("Combi currier " + args.Value);
+
+
+        zCarrier_Funloc = args.Value;
+        complain.CarrierFunloc = args.Value;
+
         zCarrierID = args.Value;
         StateHasChanged();
     }
 
+    private void onChangeCustomerCNCurrency(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
 
+
+        zCustomerCNCurrency = Convert.ToInt32(args.Value);
+
+
+    }
 
 
     private void DeleteItemfromTable(int zmDelLine)
@@ -995,7 +1364,8 @@
     {
         // wyslanie mala do POD request
         // zapisanie do Tbl_compains
-        BlockedChangeCarrier = false;
+        // BlockedChangeCarrier = false;
+        complain.SendPodRequest = zsendPOD_Request;
 
     }
 
@@ -1010,7 +1380,7 @@
         }
     }
 
-    private  void DeleteLspfeedback(TblDeliveryLines tt)
+    private void DeleteLspfeedback(TblDeliveryLines tt)
     {
         idDoSkasowania = tt.DeliveryLineId;
         DeleteConfirmationLSP.Show();
@@ -1257,7 +1627,7 @@
         }
     }
 
-    private  void DeleteFinalRootcause(TblDeliveryLines farn)
+    private void DeleteFinalRootcause(TblDeliveryLines farn)
     {
         idDoSkasowania = farn.DeliveryLineId;
 
@@ -1331,6 +1701,29 @@
 
 
 <style>
+    #template {
+        display: inline-block;
+        padding: 0px 10px;
+        vertical-align: middle;
+        height: 40px;
+        line-height: 40px;
+        font-size:x-large;
+    }
+
+    .e-dialog .e-dlg-header-content {
+        background-color: #e8e9eb;
+    }
+
+        .e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn {
+            top: 5px;
+            left: -11px;
+        }
+
+    .e-dialog .e-dlg-header {
+        position: relative;
+    }
+
+
     table.paleBlueRows {
         font-family: "Times New Roman",Times,serif;
         border: 1px solid #FFFFFF;

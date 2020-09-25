@@ -20,7 +20,7 @@ namespace CCM_New.Client.Tool
         public string ButtonYes { get; set; } = "Delete";
 
         [Parameter]
-        public string ButtonNo { get; set; } = "Cancek";
+        public string ButtonNo { get; set; } = "Cancel";
 
         public void Show()
         {
