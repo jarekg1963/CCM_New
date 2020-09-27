@@ -27,10 +27,15 @@
                 <GridPageSettings PageSizes="true"></GridPageSettings>
                 <GridColumns>
                     <GridColumn HeaderText="Select" TextAlign="TextAlign.Center" Width="60">
+                        @*<Template>
+            @{ var dn = (context as TblComplaints);
+                <a style="text-underline-position:below; cursor:pointer" @onclick="(() => SelectClaim(dn))">Select</a>
+            }
+        </Template>*@
                         <Template>
                             @{ var dn = (context as TblComplaints);
-                                <a style="text-underline-position:below; cursor:pointer" @onclick="(() => SelectClaim(dn))">Select</a>
-                            }
+                                <SfButton CssClass="e-link" @onclick="(() => SelectClaim(dn))">select</SfButton>
+                                }
                         </Template>
                     </GridColumn>
                     <GridColumn Field=@nameof(TblComplaints.Status) HeaderText="Status" TextAlign="TextAlign.Left" Width="10"></GridColumn>

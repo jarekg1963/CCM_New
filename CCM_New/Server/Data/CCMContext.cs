@@ -31,8 +31,25 @@ namespace CCM_New.Server.Data
 
         public virtual DbSet<TblCurrencies> TblCurrencies { get; set; }
 
+        public virtual DbSet<TblComplaintTypes> TblComplaintTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<TblComplaintTypes>(entity =>
+            {
+                entity.HasKey(e => e.ComplaintTypeId);
+
+                entity.ToTable("Tbl_ComplaintTypes");
+
+                entity.Property(e => e.ComplaintTypeId).HasColumnName("ComplaintType_ID");
+
+                entity.Property(e => e.ComplaintTypeName)
+                    .IsRequired()
+                    .HasColumnName("ComplaintType_Name")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<TblCurrencies>(entity =>
             {

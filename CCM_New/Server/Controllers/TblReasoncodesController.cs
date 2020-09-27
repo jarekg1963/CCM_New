@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CCM_New.Server.Data;
 using CCM_New.Shared;
+using Syncfusion.Blazor.Schedule;
 
 namespace CCM_New.Server.Controllers
 {
@@ -28,6 +29,20 @@ namespace CCM_New.Server.Controllers
             return await _context.TblReasoncodes.ToListAsync();
         }
 
+        [HttpGet]
+        [Route("GetTblReasoncodesType")]
+        public IQueryable<ReasonCodeExtended> GetTblReasoncodesType()
+        {
+
+            return _context.TblReasoncodes.Include(s => s.ClaimType).Select(p =>
+          new ReasonCodeExtended
+          {
+              ReasoncodeId = p.ReasoncodeId,
+              ReasoncodeName = p.ClaimType.ComplaintTypeName.Substring(0, 4) + " " +p.ReasoncodeName ,
+          
+          });
+
+        }
         // GET: api/TblReasoncodes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TblReasoncodes>> GetTblReasoncodes(int id)
@@ -115,10 +130,13 @@ namespace CCM_New.Server.Controllers
 
             return tblReasoncodes;
         }
-
+ public int IdNameReasonCode { get; set; }
+        public string ReasonCode { get; set; }
         private bool TblReasoncodesExists(int id)
         {
             return _context.TblReasoncodes.Any(e => e.ReasoncodeId == id);
         }
+    
     }
+   
 }

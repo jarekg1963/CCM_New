@@ -511,13 +511,10 @@
 
     .e-grid .e-rowcell {
         font-size: 12px;
-        body
-
-    {
-        font: normal small/1 sans-serif;
+       
     }
 
-
+  
     tbody tr:nth-child(odd) {
         background: #eee;
     }
@@ -561,6 +558,12 @@
     public string zCustomerContact = "";
     public string zCustomerEmail = "";
     public string zCustomerPhone = "";
+    public string zShippingPoint = "";
+    public string zSalesOrganization = "";
+    public DateTime? zDeliveryDate ;
+    public string zShiptoCustomerNumber = "";
+    public string zSoldToCustomerNumber = "";
+    public string zBillOfLading = "";
 
 
 
@@ -609,8 +612,9 @@
     public TblSapData[] DeliveryListSap = { };
     List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
 
-
     public TblReasoncodes[] comboReasonCodes = { };
+
+
     string RecNo="";
 
 
@@ -622,8 +626,11 @@
         await AcrdnObj.EnableItem(2, true);
         await AcrdnObj.ExpandItem(true, 2);
         indicatorComplain = true;
-        string linkRC = "/api/TblReasoncodes/";
+        //  string linkRC = "/api/TblReasoncodes/";
+        string linkRC = "/api/TblReasoncodes/GetTblReasoncodesType";
         comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+
         zmComplainID = DuComplain.ComplaintId;
         zmNrClaim = DuComplain.Comp.ComplaintIduf;
         zmComplianCustomerComments = DuComplain.Comp.CustomerComments;
@@ -632,6 +639,14 @@
         zCustomerEmail = DuComplain.Comp.CustomerEmail;
         zCustomerPhone = DuComplain.Comp.CustomerPhone;
         ZmComplainReasonCode = DuComplain.Comp.Reasoncode;
+
+        zShippingPoint = DuComplain.Comp.ShippingPoint;
+        zSalesOrganization = DuComplain.Comp.SalesOrganization;
+        zDeliveryDate = DuComplain.Comp.DeliveryDate;
+        zShiptoCustomerNumber = DuComplain.Comp.ShiptoCustomerNumber;
+        zSoldToCustomerNumber = DuComplain.Comp.SoldToCustomerNumber;
+        zBillOfLading = DuComplain.Comp.BillOfLading;
+
         string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + DuComplain.ComplaintId.ToString();
         deliveryLinesjson = await Http.GetFromJsonAsync<TblDeliveryLines[]>(linkDoComplineLine);
         zmtblDeliveryLines = new List<TblDeliveryLines>(deliveryLinesjson);
@@ -641,7 +656,6 @@
     {
         if (DeliveryNumber.Length > 0 | zmASN.Length > 0)
         {
-
             if (indicatorDelivery)
             { zmSzuk = DeliveryNumber.Trim(); }
 
@@ -649,12 +663,8 @@
             { zmSzuk = zmASN.Trim(); }
 
             string linktmp = "/api/TblDeliveries/GetByDeliveries/" + zmSzuk.Trim();
-
-            Console.WriteLine("-------------:" + linktmp);
-
             DeliveryList = await Http.GetFromJsonAsync<TblDeliveries[]>(linktmp);
             listDeliveryForGrid = new List<TblDeliveries>(DeliveryList);
-
 
             StateHasChanged();
         }
@@ -680,8 +690,14 @@
 
         string linktmpDnSAP = "/api/TblAsnDatas/GetTblAsnDatabyAsnNr/" + "0" + zmASN.Trim();
         ASNList = await Http.GetFromJsonAsync<TblAsnData[]>(linktmpDnSAP);
-        Console.WriteLine("Asn ilosc " + ASNList.Count().ToString());
+
         listASNForGrid = new List<TblAsnData>(ASNList);
+        zShippingPoint = listASNForGrid[0].Vendor;
+        zDeliveryDate = listASNForGrid[0].DelivDate;
+        zShiptoCustomerNumber = listASNForGrid[0].Plant;
+        zSoldToCustomerNumber = listASNForGrid[0].Plant;
+
+        Console.WriteLine("Load data by asn " + zShiptoCustomerNumber);
 
     }
 
@@ -697,6 +713,13 @@
         string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + DeliveryNumber.Trim();
         DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
         listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
+
+        zShippingPoint = listDeliverySapForGrid[0].Vstel;
+        zSalesOrganization = listDeliverySapForGrid[0].Vkorg;
+        zDeliveryDate = listDeliverySapForGrid[0].Wadat;
+        zShiptoCustomerNumber = listDeliverySapForGrid[0].Kunnr;
+        zSoldToCustomerNumber = listDeliverySapForGrid[0].Kunag;
+        zBillOfLading = listDeliverySapForGrid[0].Bolnr;
 
         if (listDeliverySapForGrid.Count > 0)
         {
@@ -725,7 +748,8 @@
         await AcrdnObj.EnableItem(2, true);
         await AcrdnObj.ExpandItem(true, 2);
 
-        string linkRC = "/api/TblReasoncodes/";
+        // string linkRC = "/api/TblReasoncodes/";
+        string linkRC = "/api/TblReasoncodes/GetTblReasoncodesType";
         comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
 
         maxIDNowyCaim = await Http.GetStringAsync("/api/TblComplaints/MaxIdComplain");
@@ -734,20 +758,20 @@
 
         zmtblDeliveryLines.Add(new TblDeliveryLines()
         {
-          //DeliveryLine = 1111,
-             DeliveryLine = Convert.ToInt32(strVbeln.Posnr),
-          // MaterialOrd11cn = "qqqqqqq"
-         MaterialOrd11cn = strVbeln.Matnr
-        
+            //DeliveryLine = 1111,
+            DeliveryLine = Convert.ToInt32(strVbeln.Posnr),
+            // MaterialOrd11cn = "qqqqqqq"
+            MaterialOrd11cn = strVbeln.Matnr
+
       ,
             MaterialOrdCtv = strVbeln.Artkx,
-// MaterialOrdCtv = "22222222",
+            // MaterialOrdCtv = "22222222",
             OrderQty = Convert.ToInt32(strVbeln.Lgmng),
-//OrderQty = 888,
+            //OrderQty = 888,
 
-       
-         ComplaintQty = Convert.ToInt32(strVbeln.Lgmng)
- //ComplaintQty = 55
+
+            ComplaintQty = Convert.ToInt32(strVbeln.Lgmng)
+            //ComplaintQty = 55
         });
 
         StateHasChanged();
@@ -768,13 +792,14 @@
             await AcrdnObj.ExpandItem(true, 2);
 
 
-            string linkRC = "/api/TblReasoncodes/";
+            //  string linkRC = "/api/TblReasoncodes/";
+            string linkRC = "/api/TblReasoncodes/GetTblReasoncodesType";
             comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
 
 
             maxIDNowyCaim = await Http.GetStringAsync("/api/TblComplaints/MaxIdComplain");
 
-               
+
             zmNrClaim = DateTime.Now.ToString("yyyy") + DateTime.Now.ToString("MM") + DateTime.Now.ToString("dd") + zmAsnJson.Plant.Trim() + maxIDNowyCaim;
 
             zmtblDeliveryLines.Add(new TblDeliveryLines()
@@ -885,13 +910,16 @@
         DateTime dal = DateTime.Now;
 
         saveComplain.BillOfLading = "";
-        saveComplain.ShippingPoint = "";
-        saveComplain.SalesOrganization = "";
+        saveComplain.ShippingPoint = zShippingPoint;
+        saveComplain.SalesOrganization = zSalesOrganization;
+        saveComplain.DeliveryDate = zDeliveryDate;
+        saveComplain.ShiptoCustomerNumber = zShiptoCustomerNumber;
+        saveComplain.SoldToCustomerNumber = zSoldToCustomerNumber;
+        saveComplain.BillOfLading = zBillOfLading;
+
         saveComplain.DeliveryType = 0;
         saveComplain.DeliveryDate = dal;
-        saveComplain.ShiptoCustomerNumber = "";
-        saveComplain.SoldToCustomerNumber = "";
-        saveComplain.BillOfLading = "";
+        
         saveComplain.ExtDelRef = "";
 
         saveComplain.ComplaintType = 0;

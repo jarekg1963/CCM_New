@@ -647,7 +647,45 @@
                         <div>Claim insurance detail </div>
                     </HeaderTemplate>
                     <ContentTemplate>
-
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Radar ref:</label>
+                            </div>
+                            <div class="col-2">
+                                <SfTextBox @bind-Value="@zRadarRef"></SfTextBox>
+                            </div>
+                            <div class="col-2">
+                                <label>Claimed amount:</label>
+                            </div>
+                            <div class="col-2">
+                                <SfNumericTextBox @bind-Value="@zClaimAmount"></SfNumericTextBox>
+                            </div>
+                            <div class="col-2">
+                                <SfComboBox TValue="int" TItem="TblCurrencies" Placeholder="Select currency" DataSource="@comboTblCurrencies" @bind-Value="zClaimCurrency">
+                                    <ComboBoxEvents TValue="string" ValueChange="onChangeInsuranceCNCurrency"></ComboBoxEvents>
+                                    <ComboBoxFieldSettings Value="CurrencyId" Text="Currency"></ComboBoxFieldSettings>
+                                </SfComboBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Radar creation date:</label>
+                            </div>
+                            <div class="col-3">
+                                <SfDatePicker @bind-Value="@zCncustCreatedDate"></SfDatePicker>
+                            </div>
+                            <div class="col-2">
+                                <label>Remarks:</label>
+                            </div>
+                            <div class="col-5">
+                                <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zCreateCnRemarks"></SfTextBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
@@ -655,7 +693,39 @@
                         <div>Financial closure </div>
                     </HeaderTemplate>
                     <ContentTemplate>
-
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Received on radar ref:</label>
+                            </div>
+                            <div class="col-2">
+                                <SfTextBox @bind-Value="@zInvoicenumber"></SfTextBox>
+                            </div>
+                            <div class="col-2">
+                                <label>Received amount:</label>
+                            </div>
+                            <div class="col-2">
+                                <SfNumericTextBox @bind-Value="@zAmountReceivedInvoice"></SfNumericTextBox>
+                            </div>
+                            <div class="col-2">
+                                <SfComboBox TValue="int" TItem="TblCurrencies" Placeholder="Select currency" DataSource="@comboTblCurrencies" @bind-Value="zClaimCurrency">
+                                    <ComboBoxEvents TValue="string" ValueChange="onChangeInsuranceCNCurrency"></ComboBoxEvents>
+                                    <ComboBoxFieldSettings Value="CurrencyId" Text="Currency"></ComboBoxFieldSettings>
+                                </SfComboBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <label>Remarks:</label>
+                            </div>
+                            <div class="col-5">
+                                <SfTextBox Multiline=true Placeholder="Remarks" @bind-Value="@zRemarksFinance"></SfTextBox>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">
+                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            </div>
+                        </div>
                     </ContentTemplate>
                 </AccordionItem>
 
@@ -872,6 +942,13 @@
     public DateTime? zInvoiceCreatedDate;
     public decimal? zAmountInvoiced;
     public string zCustomerCnremarks;
+    public string zRadarRef;
+    public decimal? zClaimAmount;
+    public int zClaimCurrency;
+    public string zCreateCnRemarks;
+    public DateTime? zCncustCreatedDate;
+    public decimal? zAmountReceivedInvoice;
+    public string zRemarksFinance;
 
 
 
@@ -899,7 +976,7 @@
     public string zComplaintIDUF;
     public string zShipping_Point;
     public string zSalesOrganization;
-    public DateTime zDeliveryDate;
+    public DateTime? zDeliveryDate;
     public string zCustomerName;
     public string zShiptoCustomerNumber;
     public string zSoldToCustomerNumber;
@@ -927,7 +1004,7 @@
     public DateTime MaxDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 27);
 
 
-    // TblDeliveryLines newTblDeliveryLine = new TblDeliveryLines();
+
 
 
     public TblDeliveryLines[] deliveryLinesjson = { };
@@ -954,7 +1031,7 @@
 
 
     public TblCarriers[] comboCarriers = { };
-    // List<TblCarriers> comboCarriersList = new List<TblCarriers>();
+
 
     public TblAsnData[] ASNList = { };
     List<TblAsnData> listASNForGrid = new List<TblAsnData>();
@@ -1036,6 +1113,13 @@
             complain.AmountInvoiced = zAmountInvoiced;
             complain.CustomerCnremarks = zCustomerCnremarks;
             complain.CustomerCncurrency = zCustomerCNCurrency;
+            complain.RadarRef = zRadarRef;
+            complain.ClaimAmount = zClaimAmount;
+            complain.ClaimCurrency = zClaimCurrency;
+            complain.CreateCnRemarks = zCreateCnRemarks;
+            complain.CncustCreatedDate = zCncustCreatedDate;
+            complain.AmountReceivedInvoice = zAmountReceivedInvoice;
+            complain.RemarksFinance = zRemarksFinance;
 
             // Tabela Complain 
             complain.CustomerComments = zCustomerComments;
@@ -1062,7 +1146,7 @@
         attachmentList = await Http.GetFromJsonAsync<TblAttachments[]>(linktmpAttach);
         attachmentListForGrid = new List<TblAttachments>(attachmentList);
 
-        string linkRC = "/api/TblReasoncodes/";
+        string linkRC = "/api/TblReasoncodes/GetTblReasoncodesType";
         comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
 
         string linkCur = "/api/TblCurrencies/";
@@ -1078,7 +1162,7 @@
         string linkCar = "/api/TblCarriers/";
 
         comboCarriers = await Http.GetFromJsonAsync<TblCarriers[]>(linkCar);
-        // comboCarriersList = new List<TblCarriers>(comboCarriers);
+        //comboCarriersList = new List<TblCarriers>(comboCarriers);
 
         string linkDoComplineLine = "/api/TblDeliveryLines/GetTblDeliveryLinesByCid/" + idCompain;
 
@@ -1091,6 +1175,7 @@
         zComplaintIDUF = complain.ComplaintIduf;
         zShipping_Point = complain.ShippingPoint;
         zSalesOrganization = complain.SalesOrganization;
+
         zDeliveryDate = complain.DeliveryDate;
         zCustomerName = "";
         zShiptoCustomerNumber = complain.ShiptoCustomerNumber;
@@ -1105,7 +1190,7 @@
         zCarrierID = complain.CarrierFunloc;
         zCarrier_Funloc = complain.CarrierFunloc;
         zsendPOD_Request = complain.SendPodRequest;
-        zmDeliveryNumber = zmtblDeliveryLines[0].DeliveryNumber;
+       zmDeliveryNumber = zmtblDeliveryLines[0].DeliveryNumber;
         zmDcComments = complain.DcComments;
         zmSendingDateOriginDc = complain.SendingDateOriginDc;
         zClosureRemarks = complain.ClosureRemarks;
@@ -1115,8 +1200,14 @@
         zAmountInvoiced = complain.AmountInvoiced;
         zCustomerCnremarks = complain.CustomerCnremarks;
         zCustomerCNCurrency = Convert.ToInt32(complain.CustomerCncurrency);
-
+        zRadarRef = complain.RadarRef;
+        zClaimAmount = complain.ClaimAmount;
+        zClaimCurrency = Convert.ToInt32(complain.ClaimCurrency);
+        zCreateCnRemarks = complain.CreateCnRemarks;
         zInvoicenumber = complain.InvoiceNumber;
+        zCncustCreatedDate = complain.CncustCreatedDate;
+        zAmountReceivedInvoice = complain.AmountReceivedInvoice;
+        zRemarksFinance = complain.RemarksFinance;
 
         if (Convert.ToBoolean(complain.PoliceReport))
         {
@@ -1331,11 +1422,12 @@
 
     private void onChangeCustomerCNCurrency(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
     {
-
-
         zCustomerCNCurrency = Convert.ToInt32(args.Value);
+    }
 
-
+    private void onChangeInsuranceCNCurrency(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        zClaimCurrency = Convert.ToInt32(args.Value);
     }
 
 

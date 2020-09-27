@@ -14,7 +14,7 @@ namespace CCM_New.Shared
         public string ShippingPoint { get; set; }
         public string SalesOrganization { get; set; }
         public int DeliveryType { get; set; }
-        public DateTime DeliveryDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         [ForeignKey("Cust")]
         public string ShiptoCustomerNumber { get; set; }
         public string SoldToCustomerNumber { get; set; }
