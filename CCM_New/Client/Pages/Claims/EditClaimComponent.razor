@@ -89,7 +89,7 @@
                                 <div class="row" style="height:25px">
                                     <label>Cust.name</label>
                                 </div>
-
+                           
                             </div>
                             <div class="col-2">
                                 <div class="row" style="height:25px">
@@ -1145,6 +1145,7 @@
         string linktmpAttach = "/api/TblAttachments/GetTblAttachmentsbyId/" + idCompain;
         attachmentList = await Http.GetFromJsonAsync<TblAttachments[]>(linktmpAttach);
         attachmentListForGrid = new List<TblAttachments>(attachmentList);
+
 
         string linkRC = "/api/TblReasoncodes/GetTblReasoncodesType";
         comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
