@@ -241,32 +241,7 @@
                                     </div>
                                 }
                             </div>
-                            <div class="row" style=" margin-top: 10px">
-                                <div class="col-1">
-                                    <label>Customer</label>
-                                </div>
-                                <div class="col-2">
-                                    <SfTextBox @bind-Value="@zCustomerContact" Readonly="false"></SfTextBox>
-                                </div>
-                                <div class="col-1">
-                                    <label>Phone</label>
-                                </div>
-                                <div class="col-2">
-                                    <SfTextBox @bind-Value="@zCustomerPhone" Readonly="false"></SfTextBox>
-                                </div>
-                                <div class="col-1">
-                                    <label>Email</label>
-                                </div>
-                                <div class="col-2">
-                                    <SfTextBox @bind-Value="@zCustomerEmail" Readonly="false"></SfTextBox>
-                                </div>
-                                <div class="col-1">
-                                    <label>Fax</label>
-                                </div>
-                                <div class="col-2">
-                                    <SfTextBox @bind-Value="@zCustomerFax" Readonly="false"></SfTextBox>
-                                </div>
-                            </div>
+                          
 
 
                             <div class="row">
@@ -372,12 +347,67 @@
 
                     <AccordionItem>
                         <HeaderTemplate>
-                            <div>Complian Status </div>
+                            <div>Customer data </div>
                         </HeaderTemplate>
                         <ContentTemplate>
                             <div class='container'>
-                                <div class='content'>
-                                    <p>Pola </p>
+                                <div class="row" style=" margin-top: 10px">
+                                    <div class="col-1">
+                                        <label>Name</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <SfTextBox @bind-Value="@zCustomerName" Readonly="false"></SfTextBox>
+                                    </div>
+                                    <div class="col-1">
+                                        <label>Adres 1</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <SfTextBox @bind-Value="@zCustomerAddress1" Readonly="false"></SfTextBox>
+                                    </div>
+                                    <div class="col-1">
+                                        <label>Adres 2</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <SfTextBox @bind-Value="@zCustomerAddress2" Readonly="false"></SfTextBox>
+                                    </div>
+                                    <div class="col-1">
+                                        <label>Country</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <SfTextBox @bind-Value="@zCustomerCountry" Readonly="false"></SfTextBox>
+                                    </div>
+                                </div>
+                                <div class="row" style=" margin-top: 10px">
+                                    <div class="col-1">
+                                        <label>Customer</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <SfTextBox @bind-Value="@zCustomerContact" Readonly="false"></SfTextBox>
+                                    </div>
+                                    <div class="col-1">
+                                        <label>Phone</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <SfTextBox @bind-Value="@zCustomerPhone" Readonly="false"></SfTextBox>
+                                    </div>
+                                    <div class="col-1">
+                                        <label>Email</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <SfTextBox @bind-Value="@zCustomerEmail" Readonly="false"></SfTextBox>
+                                    </div>
+                                    <div class="col-1">
+                                        <label>Fax</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <SfTextBox @bind-Value="@zCustomerFax" Readonly="false"></SfTextBox>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <hr />
+                                        <SfButton @onclick="questionAboutSave">Save claim  </SfButton>
+                                    </div>
                                 </div>
                             </div>
                         </ContentTemplate>
@@ -564,11 +594,12 @@
     public string zShiptoCustomerNumber = "";
     public string zSoldToCustomerNumber = "";
     public string zBillOfLading = "";
-
-
+    public string zCustomerName;
+    public string zCustomerAddress1;
+    public string zCustomerAddress2;
+    public string zCustomerCountry;
 
     public string zmSzuk = "";
-
 
     public string DeliveryNumber { get; set; } = "";
     public string zmASN { get; set; } = "";
@@ -599,25 +630,21 @@
     public string zmDNCTV;
     public string zmDN11CN;
     public double? zmDnQty;
+    public string zmDeliveryNumber;
 
 
     public int zmComplainID;
     public string zmComplianCustomerComments;
     public int ZmComplainReasonCode;
 
-    // public string zmReazonCodeDoEdycji;
-
-    //------------------------
-
     public TblSapData[] DeliveryListSap = { };
     List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
 
     public TblReasoncodes[] comboReasonCodes = { };
 
+    TblCustomers CustomerDelivery = new TblCustomers();
 
-    string RecNo="";
-
-
+    string RecNo ="";
 
     async Task EdycjaComplain(TblDeliveries DuComplain)
     {
@@ -687,7 +714,6 @@
 
         listASNForGrid = new List<TblAsnData>();
 
-
         string linktmpDnSAP = "/api/TblAsnDatas/GetTblAsnDatabyAsnNr/" + "0" + zmASN.Trim();
         ASNList = await Http.GetFromJsonAsync<TblAsnData[]>(linktmpDnSAP);
 
@@ -696,6 +722,7 @@
         zDeliveryDate = listASNForGrid[0].DelivDate;
         zShiptoCustomerNumber = listASNForGrid[0].Plant;
         zSoldToCustomerNumber = listASNForGrid[0].Plant;
+        zCustomerName = listASNForGrid[0].VendorName;
 
         Console.WriteLine("Load data by asn " + zShiptoCustomerNumber);
 
@@ -713,6 +740,7 @@
         string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + DeliveryNumber.Trim();
         DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
         listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
+        zmDeliveryNumber = "00" + DeliveryNumber.Trim();
 
         zShippingPoint = listDeliverySapForGrid[0].Vstel;
         zSalesOrganization = listDeliverySapForGrid[0].Vkorg;
@@ -720,6 +748,15 @@
         zShiptoCustomerNumber = listDeliverySapForGrid[0].Kunnr;
         zSoldToCustomerNumber = listDeliverySapForGrid[0].Kunag;
         zBillOfLading = listDeliverySapForGrid[0].Bolnr;
+
+        string likCu = "/api/TblCustomers/" + listDeliverySapForGrid[0].Kunnr;
+
+        CustomerDelivery = await Http.GetFromJsonAsync<TblCustomers>(likCu);
+
+        zCustomerName = CustomerDelivery.CustomerName;
+        zCustomerAddress1 = CustomerDelivery.CustomerAddress1;
+        zCustomerAddress2 = CustomerDelivery.CustomerAddress2;
+        zCustomerCountry = CustomerDelivery.CustomerCountry;
 
         if (listDeliverySapForGrid.Count > 0)
         {
@@ -919,7 +956,7 @@
 
         saveComplain.DeliveryType = 0;
         saveComplain.DeliveryDate = dal;
-        
+
         saveComplain.ExtDelRef = "";
 
         saveComplain.ComplaintType = 0;
@@ -968,7 +1005,7 @@
         saveComplain.AmountInvoiced = 0;
         saveComplain.InvoicedCurrency = 0;
         saveComplain.RemarksFinance = "";
-        saveComplain.Status = 1;
+        saveComplain.Status = 2;
         saveComplain.CustomerCnnumber = "";
         saveComplain.CustomerCnvalue = 0;
         saveComplain.CustomerCncurrency = 0;
@@ -1008,7 +1045,8 @@
 
         saveDelivery.ComplaintId = obj.ComplaintId;
         if (indicatorASN) saveDelivery.DeliveryNumber = zmASN;
-        if (indicatorDelivery) saveDelivery.DeliveryNumber = DeliveryNumber;
+        if (indicatorDelivery) saveDelivery.DeliveryNumber = zmDeliveryNumber;
+
         saveDelivery.SalesOrder = "SO";
         string postDelink = "/api/TblDeliveries";
         var responseDel = await Http.PostAsJsonAsync<TblDeliveries>(postDelink, saveDelivery);
@@ -1025,7 +1063,12 @@
 
             dl.ComplaintId = obj.ComplaintId;
             dl.CurrencyComplaintValue = "PLN";
-            dl.DeliveryNumber = zmASN;
+
+            if (indicatorASN) dl.DeliveryNumber = zmASN;
+            if (indicatorDelivery) dl.DeliveryNumber = zmDeliveryNumber;
+
+
+
 
 
             dl.ActualGoodsIssueDate = dt;
@@ -1048,7 +1091,7 @@
             dl.FinalRcRemarksComplaintsTeam = "";
             dl.LiableParty = 0;
             dl.Rootcause = 0;
-          //  dl.SerialNumbers = "";
+            //  dl.SerialNumbers = "";
 
             #endregion zerowanie zmiennych delivery lines
 

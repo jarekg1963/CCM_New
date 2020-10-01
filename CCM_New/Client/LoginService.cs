@@ -28,7 +28,6 @@ namespace CCM_New.Client
         {
             var t = $"CCM - {title}";
             jSRuntime.InvokeVoidAsync("setTitle", new object[] { t });
-
         }
 
 
@@ -39,8 +38,6 @@ namespace CCM_New.Client
         {
             this.refresh?.Invoke();
         }
-
-        
 
         public string PrintDate(DateTime? dt)
         {

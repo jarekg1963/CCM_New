@@ -69,140 +69,157 @@
                         <div>Complain   </div>
                     </HeaderTemplate>
                     <ContentTemplate>
-                        <div class="row">
-                            <div class="col-1">
-                                <div class="row" style="height:25px">
-                                    <label>Shipment</label>
+                        <div class="form-actions no-color">
+                            <div class="row">
+                                <div class="col-2" style="margin-left: 20px">
+                                    <div class="row" style="height:25px">
+                                        <label>Shipment</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Shipping point</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Sales or.</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Pl. deliv. date</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Act. GR date</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Cust.name</label>
+                                    </div>
                                 </div>
-                                <div class="row" style="height:25px">
-                                    <label>Shipping point</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Sales or.</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Pl. deliv. date</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Act. GR date</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Cust.name</label>
-                                </div>
-                           
-                            </div>
-                            <div class="col-2">
-                                <div class="row" style="height:25px">
-                                    <SfTextBox Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zShipping_Point" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zSalesOrganization" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfDatePicker @bind-Value="@zDeliveryDate" Readonly="true"></SfDatePicker>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfDatePicker @bind-Value="@zDeliveryDate" Readonly="true"></SfDatePicker>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zCustomerName" Readonly="true"></SfTextBox>
-                                </div>
-
-                            </div>
-                            <div class="col-1" style="margin-left: 10px">
-                                <div class="row" style="height:25px">
-                                    <label>Complain id</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Contact name</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Contact Email</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Phone</label>
-                                </div>
-
-                                <div class="row" style="height:25px">
-                                    <label>Comment</label>
-                                </div>
-
-                            </div>
-                            <div class="col-2">
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@idCompain" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zCustomerContact" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zCustomerEmail" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zCustomerPhone" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zCustomerFax" Readonly="true"></SfTextBox>
-                                </div>
-
-                            </div>
-                            <div class="col-1" style="margin-left: 10px">
-                                <div class="row" style="height:25px">
-                                    <label>Cust Sh. to</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Cust So. to</label>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <label>Bill of lad.</label>
-                                </div>
-                                <div class="row" style="height:25px">
+                                <div class="col-2">
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zShipping_Point"  CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zSalesOrganization" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfDatePicker @bind-Value="@zDeliveryDate"  Readonly="true"></SfDatePicker>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfDatePicker @bind-Value="@zDeliveryDate" Readonly="true"></SfDatePicker>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zCustomerName"  CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
 
                                 </div>
-                                <div class="row" style="height:25px">
-                                    <label>Delivery number</label>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zShiptoCustomerNumber" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zSoldToCustomerNumber" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zBillOfLading" Readonly="true"></SfTextBox>
-                                </div>
-                                <div class="row" style="height:25px">
+                                <div class="col-2" style="margin-left: 10px">
+                                    <div class="row" style="height:25px">
+                                        <label>Complain id</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Contact name</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Contact Email</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Phone</label>
+                                    </div>
+
+                                    <div class="row" style="height:25px">
+                                        <label>Comment</label>
+                                    </div>
+
+                                    <div class="row" style="height:25px">
+                                        <label>Adres 1</label>
+                                    </div>
 
                                 </div>
-                                <div class="row" style="height:25px">
-                                    <SfTextBox @bind-Value="@zmDeliveryNumber" Readonly="true"></SfTextBox>
+                                <div class="col-2">
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@idCompain" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zCustomerContact" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zCustomerEmail"CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zCustomerPhone" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zCustomerFax" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zCustomerAddress1" Multiline=true CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+
+                                </div>
+                                <div class="col-1" style="margin-left: 10px">
+                                    <div class="row" style="height:25px">
+                                        <label>Cust Sh. to</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Cust So. to</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Bill of lad.</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>DN</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Country</label>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <label>Adress 2</label>
+                                    </div>
+
+                                </div>
+                                <div class="col-2">
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zShiptoCustomerNumber"CssClass="e-small"  Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zSoldToCustomerNumber" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zBillOfLading" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zmDeliveryNumber" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zCustomerCountry" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+                                    <div class="row" style="height:25px">
+                                        <SfTextBox @bind-Value="@zCustomerAddress2" Multiline="true" CssClass="e-small" Readonly="true"></SfTextBox>
+                                    </div>
+
                                 </div>
                             </div>
-                        </div>
-                        <div class="row" style="margin-top: 10px">
-                            <div class="col-2">
-                                <label>Reason code</label>
-                            </div>
-                            <div class="col-4">
-                                <SfComboBox TValue="int" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes" @bind-Value="zReasoncode">
-                                    <ComboBoxEvents TValue="string" ValueChange="onChange"></ComboBoxEvents>
-                                    <ComboBoxFieldSettings Value="ReasoncodeId" Text="ReasoncodeName"></ComboBoxFieldSettings>
-                                </SfComboBox>
-                            </div>
-                            <div class="col-4">
-                                <div class="multiline">
-                                    <SfTextBox Multiline=true Placeholder="Complain description" @bind-Value="@zCustomerComments"></SfTextBox>
+                            <div class="row" style="margin-top: 30px">
+                                <div class="col-2">
+                                    <label>Reason code</label>
+                                </div>
+                                <div class="col-4">
+                                    <SfComboBox TValue="int" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes" @bind-Value="zReasoncode">
+                                        <ComboBoxEvents TValue="string" ValueChange="onChange"></ComboBoxEvents>
+                                        <ComboBoxFieldSettings Value="ReasoncodeId" Text="ReasoncodeName"></ComboBoxFieldSettings>
+                                    </SfComboBox>
+                                </div>
+                                <div class="col-4">
+                                    <div class="multiline">
+                                        <SfTextBox Multiline=true CssClass="e-small" Placeholder="Complain description" @bind-Value="@zCustomerComments"></SfTextBox>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                            <div class="row">
+                                <div class="col-2">
+                                    <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                </div>
                             </div>
                         </div>
                     </ContentTemplate>
@@ -293,14 +310,13 @@
                             <table class="paleBlueRows">
                                 <thead>
                                     <tr>
-                                        <td>Add</td>
+                                        @*<td>Add</td>*@
                                         <th>Edit</th>
-                                        <th>Delete</th>
+                                        @*<th>Delete</th>*@
                                         <th>Line</th>
                                         <th>Material</th>
                                         <th>Description</th>
                                         <th>Ordered qty</th>
-                                        <th>Liability</th>
                                         <th>Rootcause</th>
                                         <th>Quantity</th>
                                     </tr>
@@ -309,26 +325,19 @@
                                     @foreach (var fasn in zmtblDeliveryLines)
                                     {
                                         <tr>
-                                            <td>
+                                            @*<td>
                                                 <SfButton OnClick="() => AddLspFeedBack(fasn)">Add</SfButton>
-                                            </td>
+                                            </td>*@
                                             <td>
                                                 <SfButton OnClick="() => EditLspFinalRootcause(fasn)">Edit</SfButton>
                                             </td>
-                                            <td>
+                                            @*<td>
                                                 <SfButton OnClick="() => DeleteLspfeedback(fasn)">Delete </SfButton>
-                                            </td>
+                                            </td>*@
                                             <td>@fasn.DeliveryLine</td>
                                             <td>@fasn.MaterialOrd11cn</td>
                                             <td>@fasn.MaterialOrdCtv</td>
-                                            <td>@fasn.OrderQty</td>
-                                            <td>
-                                                @if (fasn.Liable is null)
-                                                {<p> - </p>}
-                                                else
-                                                { <label> @fasn.Liable.LiablePartyName </label>}
-                                            </td>
-
+                                            <td>@fasn.OrderQty</td>                                       
                                             <td>
                                                 @if (fasn.Rootca is null)
                                                 {<p> - </p>}
@@ -336,7 +345,7 @@
                                                 { <label> @fasn.Rootca.RootCauseName </label>}
                                             </td>
                                             <td>
-                                                <SfNumericTextBox @bind-Value="@fasn.ComplaintQty" Readonly="true"></SfNumericTextBox>
+                                                <SfNumericTextBox @bind-Value="@fasn.ComplaintQty" Readonly="true" ShowSpinButton=false></SfNumericTextBox>
                                             </td>
 
                                         </tr>
@@ -735,7 +744,7 @@
 </div>
 
 
-<SfDialog Width="800px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLineLSPFeedback">
+<SfDialog Width="800px"  Height="400px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLineLSPFeedback">
     <DialogTemplates>
         <Header>
             <div id="template" title="LSP feedback" class="e-icon-settings">LSP feedback</div>
@@ -757,9 +766,10 @@
             </div>
             <hr />
             <div class="row">
-                <div class="col-5">
-                    <label>Liability</label>
-                </div>
+          
+                <div class="col-2">
+            @*<label>Liability</label>*@
+        </div>
                 <div class="col-5">
                     <label>Root cause</label>
                 </div>
@@ -769,11 +779,11 @@
 
             </div>
             <div class="row" style="height: 120px">
-                <div class="col-5">
-                    <SfComboBox TValue="int" TItem="TblLiableParties" Placeholder="Select liable" DataSource="@comboTblParties" @bind-Value="zLiableParty">
+                <div class="col-2">
+                    @*<SfComboBox TValue="int" TItem="TblLiableParties" Placeholder="Select liable" DataSource="@comboTblParties" @bind-Value="zLiableParty">
                         <ComboBoxEvents TValue="string" ValueChange="ComboLiabilityLSPFeedBack"></ComboBoxEvents>
                         <ComboBoxFieldSettings Value="LiablePartyId" Text="LiablePartyName"></ComboBoxFieldSettings>
-                    </SfComboBox>
+                    </SfComboBox>*@
                 </div>
                 <div class="col-5">
                     <SfComboBox TValue="int" TItem="TblRootCauses" Placeholder="Select rootcause" DataSource="@comboRootCause" @bind-Value="zRootcause">
@@ -783,7 +793,7 @@
                 </div>
 
                 <div class="col-2">
-                    <SfNumericTextBox @bind-Value="@zmQuatityForSplitedCoplain"></SfNumericTextBox>
+                    <SfNumericTextBox @bind-Value="@zmComplaintQty" Readonly="true" ShowSpinButton=false></SfNumericTextBox>
                 </div>
             </div>
 
@@ -951,6 +961,9 @@
     public string zRemarksFinance;
 
 
+    public string zCustomerAddress1;
+    public string zCustomerAddress2;
+    public string zCustomerCountry;
 
 
     public bool IsVisibleNewLineLSPFeedback = false;
@@ -971,8 +984,11 @@
     private string PRstringChecked;
 
     public bool BlockedChangeCarrier = true;
+
     TblAttachments tblatt = new TblAttachments();
     TblComplaints complain = new TblComplaints();
+    TblCustomers CustomerDelivery = new TblCustomers();
+
     public string zComplaintIDUF;
     public string zShipping_Point;
     public string zSalesOrganization;
@@ -1002,10 +1018,6 @@
     public DateTime? DateValue { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10);
     public DateTime MinDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 05);
     public DateTime MaxDate { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 27);
-
-
-
-
 
     public TblDeliveryLines[] deliveryLinesjson = { };
     List<TblDeliveryLines> zmtblDeliveryLines = new List<TblDeliveryLines>();
@@ -1173,6 +1185,14 @@
         string linktmpComp = "/api/TblComplaints/" + idCompain;
         complain = await Http.GetFromJsonAsync<TblComplaints>(linktmpComp);
 
+        string likCu = "/api/TblCustomers/" + complain.SoldToCustomerNumber;
+        CustomerDelivery = await Http.GetFromJsonAsync<TblCustomers>(likCu);
+
+        zCustomerName = CustomerDelivery.CustomerName;
+        zCustomerAddress1 = CustomerDelivery.CustomerAddress1;
+        zCustomerAddress2 = CustomerDelivery.CustomerAddress2;
+        zCustomerCountry = CustomerDelivery.CustomerCountry;
+
         zComplaintIDUF = complain.ComplaintIduf;
         zShipping_Point = complain.ShippingPoint;
         zSalesOrganization = complain.SalesOrganization;
@@ -1191,7 +1211,7 @@
         zCarrierID = complain.CarrierFunloc;
         zCarrier_Funloc = complain.CarrierFunloc;
         zsendPOD_Request = complain.SendPodRequest;
-       zmDeliveryNumber = zmtblDeliveryLines[0].DeliveryNumber;
+        zmDeliveryNumber = zmtblDeliveryLines[0].DeliveryNumber;
         zmDcComments = complain.DcComments;
         zmSendingDateOriginDc = complain.SendingDateOriginDc;
         zClosureRemarks = complain.ClosureRemarks;
@@ -1285,7 +1305,7 @@
         zPodComments = complain.PodComments;
         zCarrierFeedbackDate = complain.CarrierFeedbackDate;
 
-
+        Console.WriteLine("Delivery number " + zmDeliveryNumber);
 
     }
 
@@ -1485,7 +1505,8 @@
 
     private void CloseDialogLine()
     {
-
+        IsVisibleNewLineLSPFeedback = false;
+        IsVisibleNewLineFinalRootcause = false;
     }
 
     private async void SaveLineLSPFeedback()
@@ -1586,6 +1607,7 @@
         zmMaterialOrd11cn = far.MaterialOrd11cn;
         zmMaterialOrdCtv = far.MaterialOrdCtv;
         zmOrderQty = far.OrderQty;
+        zmComplaintQty = far.ComplaintQty;
 
         zmDeliveryNumber = far.DeliveryNumber;
         zmActualGoodsIssueDate = far.ActualGoodsIssueDate;
@@ -1794,6 +1816,11 @@
 
 
 <style>
+
+    .no-color {
+        font-size: 12px;
+    }
+
     #template {
         display: inline-block;
         padding: 0px 10px;

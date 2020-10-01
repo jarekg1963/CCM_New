@@ -17,9 +17,11 @@
         <div class="col-2">
             <SfTextBox @bind-Value="@ComplainDuId" Placeholder='Complain number' @onfocus='@(e=>keyReadDataDelivery=false)'></SfTextBox>
         </div>
+
         <div class="col-2">
             <SfButton @onclick="@DisplayDataDelivery" Disabled="keyReadDataDelivery">Read data </SfButton>
         </div>
+
     </div>
     <div class="row">
         <div class="col-12">

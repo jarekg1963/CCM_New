@@ -48,14 +48,19 @@ namespace CCM_New.Server.Controllers
         // get list base on date 
         [HttpGet("GetComByDate/startDate={startDate}&endDate={endDate}")]
 
-
         public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDate( DateTime startDate, DateTime endDate) 
         {
             
         return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.DeliveryDate >= startDate & c.DeliveryDate <= endDate).ToListAsync();
-    }
+        }
 
+        [HttpGet("GetComByDateStatus/startDate={startDate}&endDate={endDate}&status={mstatus}")]
 
+        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDateStatus(DateTime startDate, DateTime endDate, int mstatus)
+        {
+
+            return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.DeliveryDate >= startDate & c.DeliveryDate <= endDate & c.Status == mstatus).ToListAsync();
+        }
 
         // GET: api/TblComplaints/5
 
