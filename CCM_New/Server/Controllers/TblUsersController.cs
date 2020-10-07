@@ -129,6 +129,34 @@ namespace CCM_New.Server.Controllers
             return NoContent();
         }
 
+
+        [HttpPut("PutTblUsersPassChange/{id}")]
+       
+        public async Task<IActionResult> PutTblUsersPassChange(int id, string  newPass)
+        {
+                     
+            var uuser = await _context.TblUsers.FirstOrDefaultAsync(u => u.Id == id);
+            uuser.UserPassword = Cache.CreateMD5(newPass); ;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TblUsersExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // POST: api/TblUsers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.

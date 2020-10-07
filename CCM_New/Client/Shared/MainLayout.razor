@@ -8,8 +8,7 @@
 @using Syncfusion.Blazor.Navigations
 @using Microsoft.Extensions.Configuration
 @using CCM_New.Shared;
-
-
+@using CCM_New.Client.Tool; 
 
 @if (loginService.isLogged == true)
 {
@@ -22,13 +21,16 @@
                 <p>User: @loginService.session.user.UserName</p>
             </div>
             <div class="col-2">
-                <span class="oi oi-account-logout" aria-hidden="true" style="align-self"> </span>
+                <span class="oi oi-account-logout" aria-hidden="true" style="align-self:auto"> </span>
                 <a href="" style="cursor: pointer" @onclick="() => Wyloguj()">Logout</a>
             </div>
             <div class="col-1">
-      
+
+                <button class="btn1" @onclick="OpenPasswordChange" data-toggle="tooltip" data-placement="bottom" title="Password change">
                 
-                <SfButton CssClass="e-round" IconCss="e-icons e-plus-icon" ></SfButton>
+                    <span class="oi oi-people" aria-hidden="true"></span>
+                </button>
+
 
             </div>
         </div>
@@ -89,9 +91,6 @@ else
         <DialogEvents OnClose="@Validation"></DialogEvents>
         <DialogPositionData X="center" Y="center"></DialogPositionData>
     </SfDialog>
-    
-
-
 }
 
 <SfDialog ID="dialog" IsModal="true" Width="600px" Height="550px" @bind-Visible="@createAccount" Target="@Target">
@@ -128,12 +127,7 @@ else
                     </div>
                 </div>
             </div>
-            @*@if (!string.IsNullOrEmpty(this.ErrorMessageCreate))
-            {
-                <div class="errorCreate-container">
-                    @ErrorMessageCreate
-                </div>
-            }*@
+          
         </Content>
     </DialogTemplates>
     <DialogButtons>
@@ -150,6 +144,52 @@ else
     @*<DialogPositionData X="center" Y="center"></DialogPositionData>*@
 </SfDialog>
 
+
+<SfDialog ID="dialog" IsModal="true" Width="400px" Height="300px" @bind-Visible="@changePassword" Target="@Target">
+    <DialogTemplates>
+        <Header>
+            <nav id="navbar-example2" class="navbar navbar-light bg-light">
+                <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto"> Enter new password </div>
+            </nav>
+
+        </Header>
+        <Content>
+            <div id='input-container'>
+                <div class='form-group' style="margin-top:0px!important">
+                    <div class="e-float-input e-input-group">
+                        <input id="password" type="password" @bind="newPassword" required />
+                        <span class="e-float-line"></span>
+                        <label class="e-float-text">Password</label>
+                    </div>
+                    <div class="e-float-input e-input-group" style="margin-top:0px!important">
+                        <input id="password" type="password" @bind="newPasswordVerification" required />
+                        <span class="e-float-line"></span>
+                        <label class="e-float-text">Repeat password </label>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(this.ErrorMessagePassVerification))
+        {
+            <div class="errorCreate-container" style="margin-top:0px">
+                @ErrorMessagePassVerification
+            </div>
+        }
+            </div>
+       
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <div class="row">
+            <div class="col-2">
+                <SfButton Content="Create" OnClick="@ChangePasswordOK" />
+            </div>
+            <div class="col-2">
+                <SfButton Content="Cancel" OnClick="@ChangePasswordCance" />
+            </div>
+        </div>
+    </DialogButtons>
+    <DialogEvents OnClose="@ValidationCreateAccount"></DialogEvents>
+    @*<DialogPositionData X="center" Y="center"></DialogPositionData>*@
+</SfDialog>
 
 
 <SfToast @ref="ToastObj" Title="Error" Content="User exist . Contact with administartor" CssClass="e-toast-danger">
@@ -168,11 +208,12 @@ else
     <ToastPosition X="Right"></ToastPosition>
 </SfToast>
 
+
 @code{
     SfToast ToastObj;
     SfToast ToastObjPass;
-    SfToast ToastObjAllFields;
     SfToast ToastObjCreated;
+    SfToast ToastObjAllFields;
     private string Target { get; set; } = "body";
     private string ErrorMessage { get; set; } = "";
     private string ErrorMessageCreate { get; set; } = "";
@@ -184,18 +225,48 @@ else
     public string passwordVrification = "";
     public string zmRemarks = "";
     public string IconCss = "e-icons e-play";
-
-
+    public bool changePassword = false;
+    public string newPassword = "";
+    public string newPasswordVerification = "";
     public TblUsers[] UsersList = { };
-
-
     public bool verifyNewAccount = false;
+    public string ErrorMessagePassVerification = "";
+
+    private void OpenPasswordChange()
+    {
+        changePassword = true;
+        ErrorMessagePassVerification = "";
+        newPasswordVerification = "";
+        newPassword = "";
+    }
+
+    private async void ChangePasswordOK()
+    {
+        if (newPasswordVerification == newPassword && newPassword != "")
+        {
+            int iid = loginService.session.user.Id;
+            string linktmp = "/api/TblUsers/PutTblUsersPassChange/" + iid.ToString() + "?newPass=" + newPassword.Trim(); ;
+            var response = await httpClient.PutAsJsonAsync<TblUsers>(linktmp, NewUser);
+
+            changePassword = false;
+
+        }
+        else
+        {
+            ErrorMessagePassVerification = "Passwords not the same or empty";
+        }
+    }
+
+
+    private void ChangePasswordCance()
+    {
+        changePassword = false;
+    }
 
     private void Validation(BeforeCloseEventArgs args)
     {
         if (user.UserName == "" && user.UserPassword == "")
         {
-
             args.Cancel = true;
             this.LoginPageVisible = true;
             this.ErrorMessage = "Enter the Username and Password";
@@ -206,10 +277,8 @@ else
     {
         if (verifyNewAccount)
         {
-
             if (NewUser.UserName == "" && NewUser.UserPassword == "")
             {
-
                 args.Cancel = true;
                 // this.LoginPageVisible = true;
                 this.ErrorMessageCreate = "Enter the Username and Password";
@@ -220,7 +289,6 @@ else
     override protected void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
-
         this.IconCss = "e-icons e-pause";
         if (firstRender)
         {
@@ -300,8 +368,6 @@ else
 
                     string postclaimLink = "/api/TblUsers/";
                     var response = await httpClient.PostAsJsonAsync<TblUsers>(postclaimLink, NewUser);
-                    //var jsonString = await response.Content.ReadAsStringAsync();
-                    //Console.WriteLine("Response   -----" + jsonString);
 
                     await ToastObjCreated.Show();
                     createAccount = false;
@@ -313,8 +379,6 @@ else
 
             }
         }
-
-
     }
 
     async void Wyloguj()
@@ -363,6 +427,15 @@ else
 }
 
 <style>
+
+
+    .btn1 {
+        border: none;
+        color: black;
+        padding: 12px 16px;
+        font-size: 16px;
+        cursor: pointer;
+    }
 
     .e-plus-icon::before {
         content: '\e823';

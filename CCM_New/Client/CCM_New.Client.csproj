@@ -17,4 +17,8 @@
     <ProjectReference Include="..\Shared\CCM_New.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\buttons\" />
+  </ItemGroup>
+
 </Project>
