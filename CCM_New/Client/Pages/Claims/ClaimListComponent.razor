@@ -6,6 +6,7 @@
 @using Syncfusion.Blazor.Buttons;
 @using Syncfusion.Blazor.Inputs;
 @using System.Net.Mail;
+@using Syncfusion.Blazor.DropDowns;
 
 <div class="containerClaim">
     <div class="row">
@@ -13,6 +14,13 @@
             <SfDateRangePicker Placeholder="Choose a Range" @bind-StartDate="@StartValue" EndDate="@EndValue">
                 <DateRangePickerEvents ValueChange="ValueChangeHandler"></DateRangePickerEvents>
             </SfDateRangePicker>
+        </div>
+        <div class="col-2">
+            <SfComboBox Placeholder="Select status" @bind-Value="@ComboVal" DataSource="@combiStatusData">
+                <ComboBoxFieldSettings Value="ID" Text="StatusName"></ComboBoxFieldSettings>
+                <ComboBoxEvents TValue="string" ValueChange="onChangeComboStatus"></ComboBoxEvents>
+            </SfComboBox>
+
         </div>
         <div class="col-2">
             <SfTextBox @bind-Value="@ComplainDuId" Placeholder='Complain number' @onfocus='@(e=>keyReadDataDelivery=false)'></SfTextBox>
@@ -30,14 +38,14 @@
                 <GridColumns>
                     <GridColumn HeaderText="Select" TextAlign="TextAlign.Center" Width="60">
                         @*<Template>
-            @{ var dn = (context as TblComplaints);
-                <a style="text-underline-position:below; cursor:pointer" @onclick="(() => SelectClaim(dn))">Select</a>
-            }
-        </Template>*@
+                                @{ var dn = (context as TblComplaints);
+                                    <a style="text-underline-position:below; cursor:pointer" @onclick="(() => SelectClaim(dn))">Select</a>
+                                }
+                            </Template>*@
                         <Template>
                             @{ var dn = (context as TblComplaints);
                                 <SfButton CssClass="e-link" @onclick="(() => SelectClaim(dn))">select</SfButton>
-                                }
+                            }
                         </Template>
                     </GridColumn>
                     <GridColumn Field=@nameof(TblComplaints.Status) HeaderText="Status" TextAlign="TextAlign.Left" Width="10"></GridColumn>
@@ -58,10 +66,12 @@
             </SfGrid>
         </div>
     </div>
-  
+
 </div>
 
 @code {
+
+    public string ComboVal = "All";
 
     public TblComplaints[] ComplainList = { };
     List<TblComplaints> listComplainForGrid = new List<TblComplaints>();
@@ -71,7 +81,14 @@
     DateTime tera = DateTime.Now;
     public string ComplainDuId = "";
     public bool keyReadDataDelivery = true;
+    public int combiStatus = 1;
 
+
+    private void onChangeComboStatus(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        combiStatus = Convert.ToInt32(args.Value);
+
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -89,13 +106,26 @@
     public async void ValueChangeHandler(RangeEventArgs args)
     {
 
+        if (combiStatus == 1)
+        {
+            string linktmpDnSAP = "/api/TblComplaints/GetComByDate/startDate=" + StartValue.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValue.Value.ToString("yyyy-MM-dd");
 
-        string linktmpDnSAP = "/api/TblComplaints/GetComByDate/startDate=" + StartValue.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValue.Value.ToString("yyyy-MM-dd");
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmpDnSAP);
 
-        ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmpDnSAP);
+            Console.WriteLine("link do wyboru =>" + linktmpDnSAP);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
 
-        Console.WriteLine("link do wyboru =>" + linktmpDnSAP);
-        listComplainForGrid = new List<TblComplaints>(ComplainList);
+        if (combiStatus > 1)
+        {
+            string linktmpDnSAP = "/api/TblComplaints/GetComByDateStatus/startDate=" + StartValue.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValue.Value.ToString("yyyy-MM-dd") + "&status=" + combiStatus ;
+
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmpDnSAP);
+
+            Console.WriteLine("link do wyboru =>" + linktmpDnSAP);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+
         StateHasChanged();
     }
 
@@ -114,4 +144,18 @@
         listComplainForGrid = new List<TblComplaints>(ComplainList);
         StateHasChanged();
     }
+
+    //  klasa do combi statusy 
+
+    public class cStatus
+    {
+        public string ID { get; set; }
+        public string StatusName { get; set; }
+    }
+    List<cStatus> combiStatusData = new List<cStatus> {
+        new cStatus() { ID= "1", StatusName= "ALL" },
+    new cStatus() { ID= "2", StatusName= "Logically Active" },
+    new cStatus() { ID= "3", StatusName= "Closed" },
+    new cStatus() { ID= "4", StatusName= "Financially Active" },
+  };
 }

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using CCM_New.Server.Data;
 using CCM_New.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CCM_New.Server.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : ControllerBase
     {
         CCMContext db;
         Cache cache = Cache.instance();
@@ -46,6 +47,8 @@ namespace CCM_New.Server.Controllers
             return s;
         }
 
+
+     
         public static string CreateMD5(string input)
         {
             // Use input string to calculate MD5 hash
@@ -84,4 +87,5 @@ namespace CCM_New.Server.Controllers
         }
 
     }
+
 }

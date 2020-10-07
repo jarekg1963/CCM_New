@@ -73,6 +73,8 @@ namespace CCM_New.Server.Data
 
                 entity.Property(e => e.UserPassword).HasMaxLength(50);
 
+                entity.Property(e => e.Remarks).HasMaxLength(50);
+
                 entity.Property(e => e.UserRole)
                     .HasMaxLength(10)
                     .IsFixedLength();

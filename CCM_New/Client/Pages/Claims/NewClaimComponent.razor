@@ -17,6 +17,7 @@
 @using Syncfusion.Blazor.Notifications;
 
 
+
 <div class="containerClaim">
     <div class="containerNaglowek" style="height: 100px !important">
         <div class="row">
@@ -241,7 +242,7 @@
                                     </div>
                                 }
                             </div>
-                          
+
 
 
                             <div class="row">
@@ -350,63 +351,65 @@
                             <div>Customer data </div>
                         </HeaderTemplate>
                         <ContentTemplate>
-                            <div class='container'>
-                                <div class="row" style=" margin-top: 10px">
-                                    <div class="col-1">
-                                        <label>Name</label>
+                            <div class="form-actions no-color">
+                                <div class='container'>
+                                    <div class="row" style=" margin-top: 10px">
+                                        <div class="col-1">
+                                            <label>Name</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <SfTextBox CssClass="e-small" @bind-Value="@zCustomerName" Readonly="false"></SfTextBox>
+                                        </div>
+                                        <div class="col-1">
+                                            <label>Adres 1</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <SfTextBox CssClass="e-small" @bind-Value="@zCustomerAddress1" Readonly="false"></SfTextBox>
+                                        </div>
+                                        <div class="col-1">
+                                            <label>Adres 2</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <SfTextBox CssClass="e-small" @bind-Value="@zCustomerAddress2" Readonly="false"></SfTextBox>
+                                        </div>
+                                        <div class="col-1">
+                                            <label>Country</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <SfTextBox CssClass="e-small" @bind-Value="@zCustomerCountry" Readonly="false"></SfTextBox>
+                                        </div>
                                     </div>
-                                    <div class="col-2">
-                                        <SfTextBox @bind-Value="@zCustomerName" Readonly="false"></SfTextBox>
+                                    <div class="row" style=" margin-top: 10px">
+                                        <div class="col-1">
+                                            <label>Customer</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <SfTextBox CssClass="e-small" @bind-Value="@zCustomerContact" Readonly="false"></SfTextBox>
+                                        </div>
+                                        <div class="col-1">
+                                            <label>Phone</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <SfTextBox CssClass="e-small" @bind-Value="@zCustomerPhone" Readonly="false"></SfTextBox>
+                                        </div>
+                                        <div class="col-1">
+                                            <label>Email</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <SfTextBox CssClass="e-small" @bind-Value="@zCustomerEmail" Readonly="false"></SfTextBox>
+                                        </div>
+                                        <div class="col-1">
+                                            <label>Fax</label>
+                                        </div>
+                                        <div class="col-2">
+                                            <SfTextBox CssClass="e-small" @bind-Value="@zCustomerFax" Readonly="false"></SfTextBox>
+                                        </div>
                                     </div>
-                                    <div class="col-1">
-                                        <label>Adres 1</label>
-                                    </div>
-                                    <div class="col-2">
-                                        <SfTextBox @bind-Value="@zCustomerAddress1" Readonly="false"></SfTextBox>
-                                    </div>
-                                    <div class="col-1">
-                                        <label>Adres 2</label>
-                                    </div>
-                                    <div class="col-2">
-                                        <SfTextBox @bind-Value="@zCustomerAddress2" Readonly="false"></SfTextBox>
-                                    </div>
-                                    <div class="col-1">
-                                        <label>Country</label>
-                                    </div>
-                                    <div class="col-2">
-                                        <SfTextBox @bind-Value="@zCustomerCountry" Readonly="false"></SfTextBox>
-                                    </div>
-                                </div>
-                                <div class="row" style=" margin-top: 10px">
-                                    <div class="col-1">
-                                        <label>Customer</label>
-                                    </div>
-                                    <div class="col-2">
-                                        <SfTextBox @bind-Value="@zCustomerContact" Readonly="false"></SfTextBox>
-                                    </div>
-                                    <div class="col-1">
-                                        <label>Phone</label>
-                                    </div>
-                                    <div class="col-2">
-                                        <SfTextBox @bind-Value="@zCustomerPhone" Readonly="false"></SfTextBox>
-                                    </div>
-                                    <div class="col-1">
-                                        <label>Email</label>
-                                    </div>
-                                    <div class="col-2">
-                                        <SfTextBox @bind-Value="@zCustomerEmail" Readonly="false"></SfTextBox>
-                                    </div>
-                                    <div class="col-1">
-                                        <label>Fax</label>
-                                    </div>
-                                    <div class="col-2">
-                                        <SfTextBox @bind-Value="@zCustomerFax" Readonly="false"></SfTextBox>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <hr />
-                                        <SfButton @onclick="questionAboutSave">Save claim  </SfButton>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <hr />
+                                            <SfButton @onclick="questionAboutSave">Save claim  </SfButton>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -466,7 +469,7 @@
                 <SfButton Content="Cancel" OnClick="@CloseDialogGhostLine" />
             </div>
         </div>
-</DialogButtons>
+    </DialogButtons>
 </SfDialog>
 
 
@@ -481,6 +484,9 @@
 
 <style>
 
+    .no-color {
+        font-size: 12px;
+    }
 
     table.paleBlueRows {
         font-family: "Times New Roman",Times,serif;
@@ -541,10 +547,9 @@
 
     .e-grid .e-rowcell {
         font-size: 12px;
-       
     }
 
-  
+
     tbody tr:nth-child(odd) {
         background: #eee;
     }
@@ -590,7 +595,7 @@
     public string zCustomerPhone = "";
     public string zShippingPoint = "";
     public string zSalesOrganization = "";
-    public DateTime? zDeliveryDate ;
+    public DateTime? zDeliveryDate;
     public string zShiptoCustomerNumber = "";
     public string zSoldToCustomerNumber = "";
     public string zBillOfLading = "";
@@ -644,7 +649,7 @@
 
     TblCustomers CustomerDelivery = new TblCustomers();
 
-    string RecNo ="";
+    string RecNo = "";
 
     async Task EdycjaComplain(TblDeliveries DuComplain)
     {
@@ -851,7 +856,8 @@
             });
 
             /* */
-        }catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             Console.WriteLine("-------------------------------");
             Console.WriteLine(ex.Message);
@@ -960,7 +966,7 @@
         saveComplain.ExtDelRef = "";
 
         saveComplain.ComplaintType = 0;
-        // saveComplain.RegisteredBy =
+      //  saveComplain.RegisteredBy = 
         saveComplain.CreateCnDn = false;
         saveComplain.TotalCnDnValue = 0;
         saveComplain.CnDnCurrency = "";

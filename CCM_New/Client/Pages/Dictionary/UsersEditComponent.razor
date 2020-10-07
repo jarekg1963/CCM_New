@@ -1,0 +1,258 @@
+﻿@page "/EditUsersPage";
+@using CCM_New.Shared;
+@inject HttpClient Http
+@using Syncfusion.Blazor.Grids;
+@using Syncfusion.Blazor.Buttons;
+@using CCM_New.Client.Tool;
+@using Syncfusion.Blazor.Popups;
+@using Syncfusion.Blazor.Inputs;
+@using Syncfusion.Blazor.DropDowns;
+
+<div class="alert alert-secondary" role="alert">
+    <h3 class="h2Naglowek">Users : @recno </h3>
+</div>
+
+
+
+
+@if (TblUsersListGrid.Count() == 0)
+{
+    <p>Loading....</p>
+}
+else
+{
+    <div id="containerGrid">
+        <SfGrid DataSource="@TblUsersListGrid" @ref="UsersGrid" AllowSorting="true" AllowExcelExport="true" AllowPaging="true" AllowFiltering="true">
+            <GridPageSettings PageSizes="true"></GridPageSettings>
+
+            <GridColumns>
+
+                <GridColumn HeaderText="Edit" TextAlign="TextAlign.Center" Width="40">
+                    <Template>
+                        @{
+                            var zUser = (context as TblUsers);
+
+                            <SfButton OnClick="@(() => OpenEdit(zUser))">Edit</SfButton>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn HeaderText="Delete" TextAlign="TextAlign.Center" Width="60">
+                    <Template>
+                        @{
+                            var zUser = (context as TblUsers);
+                            <SfButton OnClick="@(() => OpenDelete(zUser))">Delete</SfButton>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Field=@nameof(TblUsers.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="20"></GridColumn>
+                <GridColumn Field=@nameof(TblUsers.UserName) HeaderText="Name" TextAlign="TextAlign.Left" Width="150"></GridColumn>
+                <GridColumn Field=@nameof(TblUsers.UserRole) HeaderText="Role" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+                <GridColumn Field=@nameof(TblUsers.Remarks) HeaderText="Remarks" TextAlign="TextAlign.Left" Width="80"></GridColumn>
+            </GridColumns>
+        </SfGrid>
+        <SfButton OnClick="ExcelExport" Content="Excel Export"></SfButton>
+    </div>
+}
+
+
+    <SfDialog Width="550px" Height="500px" IsModal="true" @bind-Visible="@EditUserVisible">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page" style="font-size:x-large">Edit user: </li>
+        </ol>
+
+        <div id='input-container'>
+            <div class="row">
+                <div class="col-2">
+                    <label style="margin-top:20px">Id:</label>
+                </div>
+                <div class="col-2">
+                    <div class="e-float-input e-input-group">
+                        <input id="id" type="text" @bind="@UserForEdit.Id" readonly />
+                        <span class="e-float-line"></span>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                
+                <div class="col-2">
+                    <label style="margin-top:20px">User name:</label>
+                </div>
+                <div class="col-9">
+                    <div class="e-float-input e-input-group">
+                        <input id="zEditUserName" type="text" @bind="@UserForEdit.UserName" />
+                        <span class="e-float-line"></span>
+
+                    </div>
+                </div>
+                </div>
+                <div class="row" style="height:30px">
+                    <div class="col-2">
+                        <label>Password</label>
+                    </div>
+                    <div class="col-5">
+                        <label style="font-size:smaller">@UserForEdit.UserPassword</label>
+                    </div>
+                    <div class="col-4 text-right">                 
+                        <button type="button" class="btn btn-secondary btn-sm" @onclick="ResetPasword" >Reset password</button>                      
+                    </div>
+                </div>
+                <div class="row" style="height:60px ;margin-top: 20px">
+                    <div class="col-2">
+                        <label>Role</label>
+                    </div>
+                    <div class="col-5">
+                        <label>@UserForEdit.UserRole</label>
+                    </div>
+                    <div class="col-4">
+                        <SfComboBox TValue="string" TItem="Games" Placeholder="Select role" DataSource="@LocalData">
+                            <ComboBoxFieldSettings Value="Text" Text="Text"></ComboBoxFieldSettings>
+                            <ComboBoxEvents TValue="string" ValueChange="ComboRuleSetting"></ComboBoxEvents>
+                        </SfComboBox>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Remarks</span>
+                    </div>
+                    <textarea class="form-control" aria-label="With textarea" @bind="@UserForEdit.Remarks"></textarea>
+                </div>
+            </div>
+
+
+            <DialogButtons>
+                <div class="row" style="margin-top: 30px">
+                    <div class="col-2">
+                        <SfButton Content="Save" IsPrimary="true" OnClick="@SaveUser" />
+                    </div>
+                    <div class="col-2">
+                        <SfButton Content="Cancel" OnClick="@CloseDialog" />
+                    </div>
+               
+                </div>
+            </DialogButtons>
+
+</SfDialog>
+
+    <Confirm ConfirmationChanged="ConfirmDeleteUser_Click" @ref="DeleteConfirmationUser"
+             ConfirmationMessage="Are You sure delete ?"
+             ConfirmationTitle="Warning"></Confirm>
+
+    @code {
+        public TblUsers[] TblUsersList = { };
+        List<TblUsers> TblUsersListGrid = new List<TblUsers>();
+        public string recno;
+        public SfGrid<TblUsers> UsersGrid;
+        public int idDoSkasowania;
+        protected ConfirmBase DeleteConfirmationUser { get; set; }
+        public bool EditUserVisible;
+        public TblUsers UserForEdit = new TblUsers();
+        public string zEditUserName { get; set; }
+        public bool passwordChange = false;
+
+        private void ResetPasword()
+        {
+            passwordChange = true;
+            UserForEdit.UserPassword = "temppass12345!";
+            Console.WriteLine("reset pass");
+        }
+
+
+        // 
+
+        async Task loadData()
+        {
+            string linktmp = "/api/TblUsers";
+            TblUsersList = await Http.GetFromJsonAsync<TblUsers[]>(linktmp);
+            TblUsersListGrid = new List<TblUsers>(TblUsersList);
+            recno = TblUsersListGrid.Count().ToString();
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await loadData();
+            StateHasChanged();
+        }
+
+        public async Task ExcelExport()
+        {
+            ExcelExportProperties ExportProperties = new ExcelExportProperties();
+            ExportProperties.ExportType = ExportType.AllPages;
+
+            await this.UsersGrid.ExcelExport(ExportProperties);
+        }
+
+        private void OpenEdit(TblUsers uz)
+        {
+            UserForEdit.Id = uz.Id;
+            UserForEdit.UserPassword = uz.UserPassword;
+            UserForEdit.UserName = uz.UserName;
+            UserForEdit.Remarks = uz.Remarks;
+            UserForEdit.UserRole = uz.UserRole;
+
+            EditUserVisible = true;
+        }
+
+        private void CloseDialog()
+        {
+            this.EditUserVisible = false;
+        }
+
+        private async void SaveUser()
+        {
+            if (passwordChange)
+            {
+                this.EditUserVisible = false;
+                string linktmp = "/api/TblUsers/" + UserForEdit.Id.ToString();
+                var response = await Http.PutAsJsonAsync<TblUsers>(linktmp, UserForEdit);
+                await loadData();
+                StateHasChanged();
+            } else
+            { 
+                 this.EditUserVisible = false;
+                string linktmp = "/api/TblUsers/PutTblUsersNoEncript/" + UserForEdit.Id.ToString();
+                var response = await Http.PutAsJsonAsync<TblUsers>(linktmp, UserForEdit);
+                await loadData();
+                StateHasChanged();
+            }
+        }
+
+
+
+        private void OpenDelete(TblUsers uz)
+        {
+            idDoSkasowania = uz.Id;
+
+            DeleteConfirmationUser.Show();
+        }
+
+        private async void ConfirmDeleteUser_Click(bool deleteConfirmed)
+        {
+            if (deleteConfirmed)
+            {
+                string linkKasowania = "/api/TblUsers/" + idDoSkasowania.ToString();
+                var d = await Http.DeleteAsync(linkKasowania);
+                await loadData();
+                StateHasChanged();
+            }
+        }
+
+        private void ComboRuleSetting(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+        {
+
+            UserForEdit.UserRole = args.Value;
+            Console.WriteLine("Rola z pola combi " + UserForEdit.UserRole);
+        }
+
+        public class Games
+        {
+            public string ID { get; set; }
+            public string Text { get; set; }
+        }
+        List<Games> LocalData = new List<Games> {
+    new Games() { ID= "1", Text= "Not active" },
+    new Games() { ID= "2", Text= "Admin" },
+    new Games() { ID= "3", Text= "Claimer" },
+     new Games() { ID= "4", Text= "Operator" },
+  };
+    }
