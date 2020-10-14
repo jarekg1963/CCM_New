@@ -1,0 +1,56 @@
+﻿@page "/sapDNDataPage"
+@using CCM_New.Shared;
+@inject HttpClient Http
+@using Syncfusion.Blazor.Grids;
+
+<div class="alert alert-secondary" role="alert">
+    <h3 class="h2Naglowek">SAP DN data : @recno </h3>
+</div>
+
+@if (SAPdnListGrid.Count() == 0)
+{
+    <p>Loading....</p>
+}
+else
+{
+    <div id="containerGrid">
+        <SfGrid Width="1200px" DataSource="@SAPdnListGrid" @ref="DefaultGrid" AllowSorting="true" AllowExcelExport="true" AllowPaging="true" AllowFiltering="true">
+            <GridPageSettings PageSizes="true"></GridPageSettings>
+            <GridColumns>        
+                <GridColumn Field=@nameof(TblSapData.Vbeln) HeaderText="Id" TextAlign="TextAlign.Left" Width="140"></GridColumn>
+                <GridColumn Field=@nameof(TblSapData.Posnr) HeaderText="Id2" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(TblSapData.Matnr) HeaderText="Carrier name" Format="d" TextAlign="TextAlign.Left" Width="180"></GridColumn>
+                <GridColumn Field=@nameof(TblSapData.Lgmng) HeaderText="Address" TextAlign="TextAlign.Left" Width="180"></GridColumn>
+                <GridColumn Field=@nameof(TblSapData.Artkx) HeaderText="Address 2" TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                <GridColumn Field=@nameof(TblSapData.Wadat) HeaderText="Country" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(TblSapData.Kunnr) HeaderText="Contact " TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                <GridColumn Field=@nameof(TblSapData.Erdat) HeaderText="Mail" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(TblSapData.Kunag) HeaderText="Active" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+            </GridColumns>
+        </SfGrid>
+       
+    </div>
+}
+
+@code {
+    public TblSapData[] SAPdnList = { };
+    List<TblSapData> SAPdnListGrid = new List<TblSapData>();
+    public string recno = "0";
+
+    public SfGrid<TblSapData> DefaultGrid;
+
+
+    async Task loadData()
+    {
+        string linktmp = "/api/TblSapDatas";
+        SAPdnList = await Http.GetFromJsonAsync<TblSapData[]>(linktmp);
+        SAPdnListGrid = new List<TblSapData>(SAPdnList);
+        recno = SAPdnListGrid.Count().ToString();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await loadData();
+        StateHasChanged();
+    }
+}

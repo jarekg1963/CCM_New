@@ -33,8 +33,44 @@ namespace CCM_New.Server.Data
 
         public virtual DbSet<TblComplaintTypes> TblComplaintTypes { get; set; }
 
+        public virtual DbSet<TblDc> TblDc { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<TblDc>(entity =>
+            {
+                entity.HasKey(e => e.DcId);
+
+                entity.ToTable("Tbl_DC");
+
+                entity.Property(e => e.Country)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(2);
+
+                entity.Property(e => e.Dc)
+                    .IsRequired()
+                    .HasColumnName("DC")
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.DcActive)
+                    .IsRequired()
+                    .HasColumnName("DC_Active")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.DcId)
+                    .HasColumnName("DC_ID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.DcName)
+                    .IsRequired()
+                    .HasColumnName("DC_Name")
+                    .HasMaxLength(10);
+            });
 
             modelBuilder.Entity<TblComplaintTypes>(entity =>
             {

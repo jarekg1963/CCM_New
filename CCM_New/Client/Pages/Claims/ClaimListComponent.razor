@@ -37,22 +37,18 @@
                 <GridPageSettings PageSizes="true"></GridPageSettings>
                 <GridColumns>
                     <GridColumn HeaderText="Select" TextAlign="TextAlign.Center" Width="60">
-                        @*<Template>
-                                @{ var dn = (context as TblComplaints);
-                                    <a style="text-underline-position:below; cursor:pointer" @onclick="(() => SelectClaim(dn))">Select</a>
-                                }
-                            </Template>*@
+                    
                         <Template>
                             @{ var dn = (context as TblComplaints);
                                 <SfButton CssClass="e-link" @onclick="(() => SelectClaim(dn))">select</SfButton>
                             }
                         </Template>
                     </GridColumn>
-                    <GridColumn Field=@nameof(TblComplaints.Status) HeaderText="Status" TextAlign="TextAlign.Left" Width="10"></GridColumn>
+                    <GridColumn Field=@nameof(TblComplaints.Status) HeaderText="Stat" TextAlign="TextAlign.Left" Width="20"></GridColumn>
                     <GridColumn Field=@nameof(TblComplaints.ComplaintIduf) HeaderText="Complain nr" TextAlign="TextAlign.Left" Width="80"></GridColumn>
                     <GridColumn Field=@nameof(TblComplaints.DeliveryDate) HeaderText="Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
                     <GridColumn Field=@nameof(TblComplaints.ShiptoCustomerNumber) HeaderText="Customer nr" TextAlign="TextAlign.Left" Width="60"></GridColumn>
-                    <GridColumn Field=@nameof(TblComplaints.Status) HeaderText="Status" TextAlign="TextAlign.Left" Width="20"></GridColumn>
+                   
 
                     <GridColumn HeaderText="Reason code" TextAlign="TextAlign.Center" Width="100">
                         <Template>

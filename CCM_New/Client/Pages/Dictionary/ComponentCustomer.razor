@@ -1,0 +1,56 @@
+﻿@page "/CustomerPage"
+@using CCM_New.Shared;
+@inject HttpClient Http
+@using Syncfusion.Blazor.Grids;
+
+
+<div class="alert alert-secondary" role="alert">
+    <h3 class="h2Naglowek">Customers : @recno </h3>
+</div>
+
+@if (CustomerListGrid.Count() == 0)
+{
+    <p>Loading....</p>
+}
+else
+{
+    <div id="containerGrid">
+        <SfGrid Width="1200px" DataSource="@CustomerListGrid" @ref="DefaultGrid" AllowSorting="true" AllowExcelExport="true" AllowPaging="true" AllowFiltering="true">
+            <GridPageSettings PageSizes="true"></GridPageSettings>
+            <GridColumns>
+                <GridColumn Field=@nameof(TblCustomers.CustomerId) HeaderText="Id" TextAlign="TextAlign.Left" Width="60"></GridColumn>
+                <GridColumn Field=@nameof(TblCustomers.CustomerName) HeaderText="Name" TextAlign="TextAlign.Left" Width="200"></GridColumn>
+                <GridColumn Field=@nameof(TblCustomers.CustomerAddress1) HeaderText="Address 1" Format="d" TextAlign="TextAlign.Left" Width="180"></GridColumn>
+                <GridColumn Field=@nameof(TblCustomers.CustomerAddress2) HeaderText="Address 2" TextAlign="TextAlign.Left" Width="180"></GridColumn>
+                <GridColumn Field=@nameof(TblCustomers.CustomerCountry) HeaderText="Country" TextAlign="TextAlign.Right" Width="40"></GridColumn>
+                <GridColumn Field=@nameof(TblCustomers.CustomerContact) HeaderText="Contact" TextAlign="TextAlign.Right" Width="40"></GridColumn>
+                <GridColumn Field=@nameof(TblCustomers.CustomerEmail) HeaderText="Email" TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                <GridColumn Field=@nameof(TblCustomers.CustomerKeyAccount) HeaderText="Key account" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                <GridColumn Field=@nameof(TblCustomers.CustomerSo) HeaderText="Customer So" TextAlign="TextAlign.Right" Width="120"></GridColumn>
+            </GridColumns>
+        </SfGrid>
+
+    </div>
+}
+    @code {
+        public TblCustomers[] CustometList = { };
+        List<TblCustomers> CustomerListGrid = new List<TblCustomers>();
+        public string recno = "0";
+
+        public SfGrid<TblCustomers> DefaultGrid;
+
+        async Task loadData()
+        {
+            string linktmp = "/api/TblCustomers";
+            CustometList = await Http.GetFromJsonAsync<TblCustomers[]>(linktmp);
+            CustomerListGrid = new List<TblCustomers>(CustometList);
+            recno = CustomerListGrid.Count().ToString();
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await loadData();
+            StateHasChanged();
+        }
+
+    }

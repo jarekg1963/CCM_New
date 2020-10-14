@@ -424,8 +424,6 @@
 
 </div>
 
-
-
 <SfDialog Width="1200px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@ghostlinevisible">
     <DialogTemplates>
         <Header> Ghost lines </Header>
@@ -471,6 +469,7 @@
         </div>
     </DialogButtons>
 </SfDialog>
+
 
 
 <Confirm ConfirmationChanged="ConfirmDelete_Click" @ref="DeleteConfirmation" ButtonYes="Save" ButtonNo="Cancel"
@@ -636,8 +635,7 @@
     public string zmDN11CN;
     public double? zmDnQty;
     public string zmDeliveryNumber;
-
-
+  
     public int zmComplainID;
     public string zmComplianCustomerComments;
     public int ZmComplainReasonCode;
@@ -966,7 +964,7 @@
         saveComplain.ExtDelRef = "";
 
         saveComplain.ComplaintType = 0;
-      //  saveComplain.RegisteredBy = 
+        //  saveComplain.RegisteredBy = 
         saveComplain.CreateCnDn = false;
         saveComplain.TotalCnDnValue = 0;
         saveComplain.CnDnCurrency = "";

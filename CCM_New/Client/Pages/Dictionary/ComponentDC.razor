@@ -1,0 +1,54 @@
+﻿@page "/Dcpage";
+@using CCM_New.Shared;
+@inject HttpClient Http
+@using Syncfusion.Blazor.Grids;
+
+<div class="alert alert-secondary" role="alert">
+    <h3 class="h2Naglowek">DC list : @recno </h3>
+</div>
+
+@if (DcListGrid.Count() == 0)
+{
+    <p>Loading....</p>
+}
+else
+{
+<div id="containerGrid">
+    <SfGrid Width="1200px" DataSource="@DcListGrid" @ref="DefaultGrid" AllowSorting="true" AllowExcelExport="true" AllowPaging="true" AllowFiltering="true">
+        <GridPageSettings PageSizes="true"></GridPageSettings>
+        <GridColumns>
+            <GridColumn Field=@nameof(TblDc.DcId) HeaderText="Id" TextAlign="TextAlign.Left" Width="40"></GridColumn>
+            <GridColumn Field=@nameof(TblDc.DcName) HeaderText="Name" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+            <GridColumn Field=@nameof(TblDc.Dc) HeaderText="DC" Format="d" TextAlign="TextAlign.Left" Width="180"></GridColumn>
+            <GridColumn Field=@nameof(TblDc.Country) HeaderText="Country" TextAlign="TextAlign.Left" Width="180"></GridColumn>
+            <GridColumn Field=@nameof(TblDc.Threshold) HeaderText="Treshold" TextAlign="TextAlign.Right" Width="60"></GridColumn>
+            <GridColumn Field=@nameof(TblDc.CountryCode) HeaderText="Country" TextAlign="TextAlign.Right" Width="60"></GridColumn>
+            <GridColumn Field=@nameof(TblDc.DcActive) HeaderText="Active " TextAlign="TextAlign.Right" Width="100"></GridColumn>
+            
+        </GridColumns>
+    </SfGrid>
+</div>
+        }
+
+
+        @code {
+        public TblDc[] DcList = { };
+        List<TblDc> DcListGrid = new List<TblDc>();
+        public string recno = "0";
+
+        public SfGrid<TblDc> DefaultGrid;
+
+        async Task loadData()
+        {
+            string linktmp = "/api/TblDcs";
+            DcList = await Http.GetFromJsonAsync<TblDc[]>(linktmp);
+            DcListGrid = new List<TblDc>(DcList);
+            recno = DcListGrid.Count().ToString();
+        }
+        protected override async Task OnInitializedAsync()
+        {
+            await loadData();
+            StateHasChanged();
+        }
+
+        }

@@ -8,7 +8,8 @@
 @using Syncfusion.Blazor.Navigations
 @using Microsoft.Extensions.Configuration
 @using CCM_New.Shared;
-@using CCM_New.Client.Tool; 
+@using CCM_New.Client.Tool;
+@using System.ComponentModel.DataAnnotations
 
 @if (loginService.isLogged == true)
 {
@@ -27,11 +28,9 @@
             <div class="col-1">
 
                 <button class="btn1" @onclick="OpenPasswordChange" data-toggle="tooltip" data-placement="bottom" title="Password change">
-                
+
                     <span class="oi oi-people" aria-hidden="true"></span>
                 </button>
-
-
             </div>
         </div>
         <div class="content px-4">
@@ -41,56 +40,103 @@
 }
 else
 {
-    <SfDialog ID="dialog" IsModal="true" Width="500px" Height="450px" @bind-Visible="@LoginPageVisible">
-        <DialogTemplates>
-            <Header>
-                <nav id="navbar-example2" class="navbar navbar-light bg-light">
-                    <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto">Sign In</div>
-                </nav>
-            </Header>
-            <Content>
-                <div id='input-container'>
-                    <div class="e-float-input e-input-group">
-                        <input id="username" type="text" @bind="user.UserName" required />
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">User name</label>
-                    </div>
-                </div>
-                <div class='form-group'>
-                    <div class="e-float-input e-input-group">
-                        <input id="password" type="password" @bind="user.UserPassword" required />
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">Password</label>
-                    </div>
-                </div>
-                @if (!string.IsNullOrEmpty(this.ErrorMessage))
-                {
 
-                    <div class="error-container">
-                        @ErrorMessage
+    <div class="col-md-6 offset-md-3 mt-5">
+        @*<div class="alert alert-info">
+            Username:???<br />
+            Password:???
+        </div>*@
+        <div class="card">
+            <h4 class="card-header">CCM Claim system </h4>
+            <div class="card-body">
+                <EditForm Model="@user" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="form-group">
+                        <label>Username</label>
+                        <InputText @bind-Value="user.UserName" class="form-control" />
+                        <ValidationMessage For="@(() => user.UserName)" />
                     </div>
-                }
-            </Content>
-        </DialogTemplates>
-        <DialogButtons>
-            <div class="row" style="margin-top:50px">
-                <div class="col-2">
-                    <SfButton Content="Log In" OnClick="@login" />
-                </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <InputText @bind-Value="user.UserPassword" type="password" class="form-control" />
+                        <ValidationMessage For="@(() => user.UserPassword)" />
+                    </div>
+                    <button class="btn btn-primary">
+                        Login
+                    </button>
+                    <div class="row" style="margin-top:20px">
+                        <div class="col-8">
+                            <p>Ver: @loginService.softVersion</p>
+                        </div>
+                        <div class="col-4">
+                            @*<SfButton CssClass="e-link" OnClick="createNewUserRequest">Request for account</SfButton>*@
+                            <button class="btn btn-link" @onclick="() => Modal.Open()">Request for account</button>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(ErrorMessage))
+                    {
+                        <div class="alert alert-danger mt-3 mb-0">@ErrorMessage</div>
+                    }
+                </EditForm>
+            </div>
+        </div>
+    </div>
 
-            </div>
-            <div class="row" style="margin-top:20px">
-                <div class="col-8">
-                    <p>Ver: @loginService.softVersion</p>
+
+
+
+
+    @*<SfDialog ID="dialog" IsModal="true" Width="500px" Height="450px" @bind-Visible="@LoginPageVisible">
+            <DialogTemplates>
+                <Header>
+                    <nav id="navbar-example2" class="navbar navbar-light bg-light">
+                        <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto">Sign In</div>
+                    </nav>
+                </Header>
+                <Content>
+                    <div id='input-container'>
+                        <div class="e-float-input e-input-group">
+                            <input id="username" type="text" @bind="user.UserName" required />
+                            <span class="e-float-line"></span>
+                            <label class="e-float-text">User name</label>
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        <div class="e-float-input e-input-group">
+                            <input id="password" type="password" @bind="user.UserPassword" required />
+                            <span class="e-float-line"></span>
+                            <label class="e-float-text">Password</label>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(this.ErrorMessage))
+                    {
+
+                        <div class="error-container">
+                            @ErrorMessage
+                        </div>
+                    }
+                </Content>
+            </DialogTemplates>
+            <DialogButtons>
+                <div class="row" style="margin-top:50px">
+                    <div class="col-2">
+                        <SfButton Content="Log In" OnClick="@login" />
+                    </div>
+
                 </div>
-                <div class="col-4">
-                    <SfButton CssClass="e-link" OnClick="createNewUserRequest">Request for account</SfButton>
+                <div class="row" style="margin-top:20px">
+                    <div class="col-8">
+                        <p>Ver: @loginService.softVersion</p>
+                    </div>
+                    <div class="col-4">
+                        <SfButton CssClass="e-link" OnClick="createNewUserRequest">Request for account</SfButton>
+                    </div>
                 </div>
-            </div>
-        </DialogButtons>
-        <DialogEvents OnClose="@Validation"></DialogEvents>
-        <DialogPositionData X="center" Y="center"></DialogPositionData>
-    </SfDialog>
+            </DialogButtons>
+            <DialogEvents OnClose="@Validation"></DialogEvents>
+            <DialogPositionData X="center" Y="center"></DialogPositionData>
+        </SfDialog>*@
+
 }
 
 <SfDialog ID="dialog" IsModal="true" Width="600px" Height="550px" @bind-Visible="@createAccount" Target="@Target">
@@ -127,7 +173,7 @@ else
                     </div>
                 </div>
             </div>
-          
+
         </Content>
     </DialogTemplates>
     <DialogButtons>
@@ -168,13 +214,13 @@ else
                     </div>
                 </div>
                 @if (!string.IsNullOrEmpty(this.ErrorMessagePassVerification))
-        {
-            <div class="errorCreate-container" style="margin-top:0px">
-                @ErrorMessagePassVerification
+                {
+                    <div class="errorCreate-container" style="margin-top:0px">
+                        @ErrorMessagePassVerification
+                    </div>
+                }
             </div>
-        }
-            </div>
-       
+
         </Content>
     </DialogTemplates>
     <DialogButtons>
@@ -191,6 +237,8 @@ else
     @*<DialogPositionData X="center" Y="center"></DialogPositionData>*@
 </SfDialog>
 
+
+<CreateUserRequestComponent @ref="Modal"></CreateUserRequestComponent>
 
 <SfToast @ref="ToastObj" Title="Error" Content="User exist . Contact with administartor" CssClass="e-toast-danger">
     <ToastPosition X="Right"></ToastPosition>
@@ -209,7 +257,13 @@ else
 </SfToast>
 
 
+
+
+
+
 @code{
+
+    private CreateUserRequestComponent Modal { get; set; }
     SfToast ToastObj;
     SfToast ToastObjPass;
     SfToast ToastObjCreated;
@@ -217,8 +271,8 @@ else
     private string Target { get; set; } = "body";
     private string ErrorMessage { get; set; } = "";
     private string ErrorMessageCreate { get; set; } = "";
-    CCM_New.Shared.TblUsers user = new CCM_New.Shared.TblUsers() { UserName = "", UserPassword = "", Remarks = "" };
-    CCM_New.Shared.TblUsers NewUser = new CCM_New.Shared.TblUsers() { UserName = "", UserPassword = "", Remarks = "" };
+    TblUsers user = new TblUsers() { UserName = "", UserPassword = "", Remarks = "" };
+    TblUsers NewUser = new TblUsers() { UserName = "", UserPassword = "", Remarks = "" };
     public bool LoginPageVisible = true;
     public bool createAccount = false;
     public string ToastMessageTxT = "";
@@ -324,7 +378,9 @@ else
         loginService.CallRefresh();
     }
 
-    async void login()
+    async void HandleValidSubmit()
+
+    // async void login()
     {
         var resp = await httpClient.PostAsJsonAsync<LoginService.Session>("./api/login", new LoginService.Session { user = this.user });
         LoginService.Session s = await resp.Content.ReadFromJsonAsync<LoginService.Session>();
@@ -345,9 +401,9 @@ else
         }
     }
 
-    public  async void  loginCreate()
+    public async void loginCreate()
     {
-        if (NewUser.UserPassword.Trim().Length == 0 && passwordVrification.Trim().Length == 0 &&  NewUser.UserPassword.Trim().Length == 0)
+        if (NewUser.UserPassword.Trim().Length == 0 && passwordVrification.Trim().Length == 0 && NewUser.UserPassword.Trim().Length == 0)
         {
             await ToastObjAllFields.Show();
         }
@@ -357,12 +413,12 @@ else
             UsersList = await httpClient.GetFromJsonAsync<TblUsers[]>(linkRC);
             if (UsersList.Length > 0)
             {
-                // Usytkownik istnieje 
+                // Usytkownik istnieje
                 await ToastObj.Show();
             }
             else
             {
-                // Uzytkownik nie istnije spradz haslo 
+                // Uzytkownik nie istnije spradz haslo
                 if (NewUser.UserPassword == passwordVrification & NewUser.UserPassword.Trim().Length != 0)
                 {
 
@@ -424,7 +480,7 @@ else
         createAccount = false;
     }
 
-}
+    }
 
 <style>
 

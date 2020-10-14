@@ -1,14 +1,64 @@
 ﻿@page "/"
-@using CCM_New.Client.Tool; 
+@using CCM_New.Client.Pages.Claims;
+@using Syncfusion.Blazor.Layouts;
 
 <div class="jumbotron jumbotron-fluid">
     <div class="container">
         <h1 class="display-4">CCM TOOL</h1>
         <p class="lead">Claim system  </p>
     </div>
-    
+
 </div>
 
+<div class="container">
+    <SfDashboardLayout CellSpacing="@(new double[]{20 ,20 })" Columns="5">
+        <DashboardLayoutPanels>
+            <DashboardLayoutPanel>
+                <HeaderTemplate> <h6>Total claims</h6></HeaderTemplate>
+                <ContentTemplate>
+                    <h2>3675</h2>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+            <DashboardLayoutPanel Col=1>
+                <HeaderTemplate> <h6>Logistic active</h6></HeaderTemplate>
+                <ContentTemplate>
+                    <h2>31</h2>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+            <DashboardLayoutPanel Col=2>
+                <HeaderTemplate> <h6>Finanacial active</h6></HeaderTemplate>
+                <ContentTemplate>
+                    <h2>34</h2>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+            <DashboardLayoutPanel Col="3">
+                <HeaderTemplate> <h6>Users for activation</h6></HeaderTemplate>
+                <ContentTemplate>
+                    <h2>12</h2>
+                </ContentTemplate>
+            </DashboardLayoutPanel>
+        </DashboardLayoutPanels>
+    </SfDashboardLayout>
+</div>
+
+
 @code {
- 
+
 }
+
+<style>
+    .e-panel-content {
+        text-align: center;
+        margin-top: 10px;
+        background-color: #c9e2f7;
+        padding: 50px;
+    }
+
+   .e-panel-header {
+        color: #754131;
+        background-color: #c9e2f7;
+        text-align: center;
+    }
+
+ 
+</style>

@@ -1,0 +1,147 @@
+﻿@using CCM_New.Shared;
+@inject HttpClient httpClient;
+@using Syncfusion.Blazor.Notifications;
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="margin-left:auto ; margin-right:auto">Account creation</h5>
+              
+            </div>
+            <div class="modal-body">
+                <div id='input-container'>
+                    <EditForm Model="@NewUser">
+                        <div class="e-float-input e-input-group">
+                            <input id="username" type="text" @bind="NewUser.UserName" required />
+                            <span class="e-float-line"></span>
+                            <label class="e-float-text">User name/email</label>
+
+                        </div>
+
+                        <div class='form-group' style="margin-top:20px!important">
+                            <div class="e-float-input e-input-group">
+                                <input id="password" type="password" @bind="NewUser.UserPassword" required />
+                                <span class="e-float-line"></span>
+                                <label class="e-float-text">Password</label>
+
+                            </div>
+                            <div class="e-float-input e-input-group" style="margin-top:20px!important">
+                                <input id="password" type="password" @bind="passwordVrification" required />
+                                <span class="e-float-line"></span>
+                                <label class="e-float-text">Repeat password </label>
+
+                            </div>
+                            <div class="e-float-input e-input-group" style="margin-top:20px!important">
+                                <textarea class="form-control" @bind="NewUser.Remarks" aria-label="With textarea"></textarea>
+                                <span class="e-float-line"></span>
+                                <label class="e-float-text">Remarks </label>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(ErrorMessage))
+                        {
+                            <div class="alert alert-danger mt-3 mb-0">@ErrorMessage</div>
+                        }
+                    </EditForm>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top:0px!important">
+                <button type="button" class="btn btn-primary" @onclick="() => SaveUserRequest()">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+<SfToast @ref="ToastObjCreated" Title="Error" Content="User created ask administrator about activation  " CssClass="e-toast-danger">
+    <ToastPosition X="Right"></ToastPosition>
+</SfToast>
+
+@code {
+    TblUsers NewUser = new TblUsers() { UserName = "", UserPassword = "", Remarks = "" };
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+    public string newPassword = "";
+    public string newPasswordVerification = "";
+    public string passwordVrification = "";
+    private string ErrorMessage { get; set; } = "";
+    private string ErrorMessageCreate { get; set; } = "";
+    public TblUsers[] UsersList = { };
+    SfToast ToastObjCreated;
+
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    async void SaveUserRequest()
+    {
+
+        if (CheckError())
+        {
+            this.ErrorMessage = "Wrong Username or Password try again";
+        }
+        else
+        {
+            this.ErrorMessage = "";
+            string linkRC = "/api/TblUsers/FindUserByName/" + NewUser.UserName;
+            UsersList = await httpClient.GetFromJsonAsync<TblUsers[]>(linkRC);
+
+            if (UsersList.Length > 0)
+            {
+                // Usytkownik istnieje
+                this.ErrorMessage = "User already exist , please contact with admin";
+            }
+            else
+            {
+                string postclaimLink = "/api/TblUsers/";
+                var response = await httpClient.PostAsJsonAsync<TblUsers>(postclaimLink, NewUser);
+                await ToastObjCreated.Show();
+                Close();
+            }
+
+
+        }
+    }
+
+    public bool CheckError()
+    {
+        if (NewUser.UserPassword != passwordVrification)
+        { return true; }
+
+        if (NewUser.UserName.Trim() == "")
+        { return true; }
+
+        if (NewUser.UserPassword.Trim() == "")
+        { return true; }
+
+
+        if (passwordVrification.Trim() == "")
+        { return true; }
+
+
+        return false;
+
+
+
+    }
+}
