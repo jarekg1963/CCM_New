@@ -21,7 +21,11 @@
             <AccordionItems>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Documents  </div>
+                        <div class="flexContainer">
+                            <div>Documents</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[1]"></SfCheckBox>
+
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
 
@@ -63,10 +67,12 @@
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
-
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Complain   </div>
+                            <div class="flexContainer">
+                                <div >Complain</div>
+                                <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[2]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="form-actions no-color">
@@ -96,19 +102,19 @@
                                         <SfTextBox Readonly="true"></SfTextBox>
                                     </div>
                                     <div class="row" style="height:25px">
-                                        <SfTextBox @bind-Value="@zShipping_Point"  CssClass="e-small" Readonly="true"></SfTextBox>
+                                        <SfTextBox @bind-Value="@zShipping_Point" CssClass="e-small" Readonly="true"></SfTextBox>
                                     </div>
                                     <div class="row" style="height:25px">
                                         <SfTextBox @bind-Value="@zSalesOrganization" CssClass="e-small" Readonly="true"></SfTextBox>
                                     </div>
                                     <div class="row" style="height:25px">
-                                        <SfDatePicker @bind-Value="@zDeliveryDate"  Readonly="true"></SfDatePicker>
+                                        <SfDatePicker @bind-Value="@zDeliveryDate" Readonly="true"></SfDatePicker>
                                     </div>
                                     <div class="row" style="height:25px">
                                         <SfDatePicker @bind-Value="@zDeliveryDate" Readonly="true"></SfDatePicker>
                                     </div>
                                     <div class="row" style="height:25px">
-                                        <SfTextBox @bind-Value="@zCustomerName"  CssClass="e-small" Readonly="true"></SfTextBox>
+                                        <SfTextBox @bind-Value="@zCustomerName" CssClass="e-small" Readonly="true"></SfTextBox>
                                     </div>
 
                                 </div>
@@ -143,7 +149,7 @@
                                         <SfTextBox @bind-Value="@zCustomerContact" CssClass="e-small" Readonly="true"></SfTextBox>
                                     </div>
                                     <div class="row" style="height:25px">
-                                        <SfTextBox @bind-Value="@zCustomerEmail"CssClass="e-small" Readonly="true"></SfTextBox>
+                                        <SfTextBox @bind-Value="@zCustomerEmail" CssClass="e-small" Readonly="true"></SfTextBox>
                                     </div>
                                     <div class="row" style="height:25px">
                                         <SfTextBox @bind-Value="@zCustomerPhone" CssClass="e-small" Readonly="true"></SfTextBox>
@@ -179,7 +185,7 @@
                                 </div>
                                 <div class="col-2">
                                     <div class="row" style="height:25px">
-                                        <SfTextBox @bind-Value="@zShiptoCustomerNumber"CssClass="e-small"  Readonly="true"></SfTextBox>
+                                        <SfTextBox @bind-Value="@zShiptoCustomerNumber" CssClass="e-small" Readonly="true"></SfTextBox>
                                     </div>
                                     <div class="row" style="height:25px">
                                         <SfTextBox @bind-Value="@zSoldToCustomerNumber" CssClass="e-small" Readonly="true"></SfTextBox>
@@ -226,7 +232,10 @@
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Complain details  </div>
+                        <div class="flexContainer">
+                            <div>Complain details</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[3]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <table class="paleBlueRows">
@@ -266,7 +275,10 @@
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Sent LSP request  </div>
+                        <div class="flexContainer">
+                            <div>Sent LSP request</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[4]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -296,14 +308,19 @@
                         </div>
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain4">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>LSP feedback  </div>
+                    
+                        <div class="flexContainer">
+                            <div>LSP feedback</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[5]"></SfCheckBox>
+                        </div>
+
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -326,18 +343,18 @@
                                     {
                                         <tr>
                                             @*<td>
-                                                <SfButton OnClick="() => AddLspFeedBack(fasn)">Add</SfButton>
-                                            </td>*@
+                                                    <SfButton OnClick="() => AddLspFeedBack(fasn)">Add</SfButton>
+                                                </td>*@
                                             <td>
                                                 <SfButton OnClick="() => EditLspFinalRootcause(fasn)">Edit</SfButton>
                                             </td>
                                             @*<td>
-                                                <SfButton OnClick="() => DeleteLspfeedback(fasn)">Delete </SfButton>
-                                            </td>*@
+                                                    <SfButton OnClick="() => DeleteLspfeedback(fasn)">Delete </SfButton>
+                                                </td>*@
                                             <td>@fasn.DeliveryLine</td>
                                             <td>@fasn.MaterialOrd11cn</td>
                                             <td>@fasn.MaterialOrdCtv</td>
-                                            <td>@fasn.OrderQty</td>                                       
+                                            <td>@fasn.OrderQty</td>
                                             <td>
                                                 @if (fasn.Rootca is null)
                                                 {<p> - </p>}
@@ -357,7 +374,11 @@
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Send POD request  </div>
+                        <div class="flexContainer">
+                            <div>Send POD request</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[6]"></SfCheckBox>
+
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -397,14 +418,19 @@
                         </div>
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain6">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>POD details feedback  </div>
+             
+                        <div class="flexContainer">
+                            <div>POD details feedback</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[7]"></SfCheckBox>
+                        </div>
+
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -436,7 +462,7 @@
 
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain7">Save</SfButton>
                             </div>
                         </div>
 
@@ -444,7 +470,10 @@
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Final rootcause  </div>
+                        <div class="flexContainer">
+                            <div>Final rootcause</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[8]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -507,7 +536,10 @@
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Logistical disclouse  </div>
+                        <div class="flexContainer">
+                            <div>Logistical disclouse</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[9]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -543,14 +575,17 @@
                         </div>
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain9">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Start recording task CN towards customer </div>
+                        <div class="flexContainer">
+                            <div>Start recording task CN towards customer</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[10]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -567,14 +602,17 @@
                         </div>
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain10">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Claim carrier details </div>
+                        <div class="flexContainer">
+                            <div>Claim carrier details</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[11]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -600,14 +638,17 @@
                         </div>
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain11">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Record carrier invoice </div>
+                        <div class="flexContainer">
+                            <div>Record carrier invoice</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[12]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -646,14 +687,17 @@
                         </div>
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain12">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Claim insurance detail </div>
+                        <div class="flexContainer">
+                            <div>Claim insurance detail</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[13]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -692,14 +736,17 @@
                         </div>
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain13">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
                 </AccordionItem>
                 <AccordionItem Expanded="false">
                     <HeaderTemplate>
-                        <div>Financial closure </div>
+                        <div class="flexContainer">
+                            <div>Financial closure</div>
+                            <SfCheckBox CssClass="e-customsize" @bind-Checked="@DisplayStatus[14]"></SfCheckBox>
+                        </div>
                     </HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
@@ -732,7 +779,7 @@
                         </div>
                         <div class="row">
                             <div class="col-2">
-                                <SfButton OnClick="ClickWarningSaveComplain">Save</SfButton>
+                                <SfButton OnClick="ClickWarningSaveComplain14">Save</SfButton>
                             </div>
                         </div>
                     </ContentTemplate>
@@ -744,7 +791,7 @@
 </div>
 
 
-<SfDialog Width="800px"  Height="400px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLineLSPFeedback">
+<SfDialog Width="800px" Height="400px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleNewLineLSPFeedback">
     <DialogTemplates>
         <Header>
             <div id="template" title="LSP feedback" class="e-icon-settings">LSP feedback</div>
@@ -766,10 +813,10 @@
             </div>
             <hr />
             <div class="row">
-          
+
                 <div class="col-2">
-            @*<label>Liability</label>*@
-        </div>
+                    @*<label>Liability</label>*@
+                </div>
                 <div class="col-5">
                     <label>Root cause</label>
                 </div>
@@ -781,9 +828,9 @@
             <div class="row" style="height: 120px">
                 <div class="col-2">
                     @*<SfComboBox TValue="int" TItem="TblLiableParties" Placeholder="Select liable" DataSource="@comboTblParties" @bind-Value="zLiableParty">
-                        <ComboBoxEvents TValue="string" ValueChange="ComboLiabilityLSPFeedBack"></ComboBoxEvents>
-                        <ComboBoxFieldSettings Value="LiablePartyId" Text="LiablePartyName"></ComboBoxFieldSettings>
-                    </SfComboBox>*@
+                            <ComboBoxEvents TValue="string" ValueChange="ComboLiabilityLSPFeedBack"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="LiablePartyId" Text="LiablePartyName"></ComboBoxFieldSettings>
+                        </SfComboBox>*@
                 </div>
                 <div class="col-5">
                     <SfComboBox TValue="int" TItem="TblRootCauses" Placeholder="Select rootcause" DataSource="@comboRootCause" @bind-Value="zRootcause">
@@ -883,7 +930,7 @@
             </div>
         </div>
     </DialogButtons>
-  
+
 </SfDialog>
 
 
@@ -892,7 +939,7 @@
          ConfirmationTitle="Warning"></Confirm>
 
 
-<Confirm ConfirmationChanged="ConfirmSaveComplain_Click" @ref="SaveConfirmationComplain"  ButtonYes="Save" ButtonNo="Cancel"
+<Confirm ConfirmationChanged="ConfirmSaveComplain_Click" @ref="SaveConfirmationComplain" ButtonYes="Save" ButtonNo="Cancel"
          ConfirmationMessage="Are You sure save ?"
          ConfirmationTitle="Warning"></Confirm>
 
@@ -907,6 +954,10 @@
 @code {
     [Parameter]
     public string idCompain { get; set; }
+
+    public int statusComplain;
+
+    bool[] DisplayStatus = new bool[15];
 
     protected ConfirmBase DeleteConfirmationLSP { get; set; }
     protected ConfirmBase DeleteConfirmationFR { get; set; }
@@ -1040,6 +1091,8 @@
 
     public TblLiableParties[] comboTblParties = { };
 
+    public JgComplainStatus[] jgCompstatus = { };
+
 
 
     public TblCarriers[] comboCarriers = { };
@@ -1052,9 +1105,11 @@
     List<TblSapData> listDeliverySapForGrid = new List<TblSapData>();
 
 
+
+
     private async void ConfirmSaveComplain_Click(bool SaveConfirmed)
     {
-        Console.WriteLine("Radio button " + stringCheckedPodFeed);
+      
 
         if (SaveConfirmed)
         {
@@ -1133,7 +1188,7 @@
             complain.AmountReceivedInvoice = zAmountReceivedInvoice;
             complain.RemarksFinance = zRemarksFinance;
 
-            // Tabela Complain 
+            // Tabela Complain
             complain.CustomerComments = zCustomerComments;
             string postclaimLink = "/api/TblComplaints/" + idCompain;
             var response = await Http.PutAsJsonAsync<TblComplaints>(postclaimLink, complain);
@@ -1143,7 +1198,80 @@
                 string postDellinelink = "/api/TblDeliveryLines/" + dl.DeliveryLineId.ToString();
                 var responseDelLine = await Http.PutAsJsonAsync<TblDeliveryLines>(postDellinelink, dl);
             }
+
+            // Sprawdzenie czy istnieje status complain jezeli nie to dopisanie 
+
+
+            if (jgCompstatus.Where(c => c.Status == statusComplain).Count() == 0)
+            {
+                JgComplainStatus compStatus = new JgComplainStatus();
+                string linkStatus = "/api/JgComplainStatus";
+                compStatus.IdCoplain = Convert.ToInt32(idCompain);
+                compStatus.Status = statusComplain;
+
+                var res = await Http.PostAsJsonAsync<JgComplainStatus>(linkStatus, compStatus);
+            }
+
+            await LoadData();
+            StateHasChanged();
         }
+    }
+
+
+    private void ClickWarningSaveComplain14()
+    {
+        statusComplain = 14;
+        SaveConfirmationComplain.Show();
+    }
+    private  void ClickWarningSaveComplain13()
+    {
+        statusComplain = 13;
+        SaveConfirmationComplain.Show();
+     
+    }
+
+    private  void ClickWarningSaveComplain12()
+    {
+        statusComplain = 12;
+        SaveConfirmationComplain.Show();
+     
+    }
+
+    private  void ClickWarningSaveComplain11()
+    {
+        statusComplain = 11;
+        SaveConfirmationComplain.Show();
+      
+    }
+
+    private void ClickWarningSaveComplain10()
+    {
+        statusComplain = 10;
+        SaveConfirmationComplain.Show();
+    }
+
+    private void ClickWarningSaveComplain9()
+    {
+        statusComplain = 9;
+        SaveConfirmationComplain.Show();
+    }
+
+    private void ClickWarningSaveComplain4()
+    {
+        statusComplain = 4;
+        SaveConfirmationComplain.Show();
+    }
+
+    private void ClickWarningSaveComplain6()
+    {
+        statusComplain = 6;
+        SaveConfirmationComplain.Show();
+    }
+
+    private void ClickWarningSaveComplain7()
+    {
+        statusComplain = 7;
+        SaveConfirmationComplain.Show();
     }
 
     private void ClickWarningSaveComplain()
@@ -1154,6 +1282,24 @@
 
     private async Task LoadData()
     {
+
+
+        string stringLoadStatus = "/api/JgComplainStatus/GetJgComplainStatusForComplain /" + idCompain;
+
+        jgCompstatus = await Http.GetFromJsonAsync<JgComplainStatus[]>(stringLoadStatus);
+
+        for ( int i = 1; i < 15; i++)
+        {
+
+            if (jgCompstatus.Where(c => c.Status == i).Count() > 0)
+            {
+                DisplayStatus[i] = true;
+            } else
+            {
+                DisplayStatus[i] = false;
+            }
+        }
+
         string linktmpAttach = "/api/TblAttachments/GetTblAttachmentsbyId/" + idCompain;
         attachmentList = await Http.GetFromJsonAsync<TblAttachments[]>(linktmpAttach);
         attachmentListForGrid = new List<TblAttachments>(attachmentList);
@@ -1248,7 +1394,7 @@
             LNAstringChecked = "LNANo";
         }
 
-        if (Convert.ToBoolean(complain.SendToOriginDc)  )
+        if (Convert.ToBoolean(complain.SendToOriginDc))
         {
             stringChecked = "PodYes";
         }
@@ -1425,7 +1571,7 @@
         public string responseMessage { get; set; }
     }
 
-    private  void onChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    private void onChange(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
     {
         complain.Reasoncode = Convert.ToInt32(args.Value);
     }
@@ -1497,10 +1643,6 @@
     {
         idDoSkasowania = tt.DeliveryLineId;
         DeleteConfirmationLSP.Show();
-
-
-
-
     }
 
     private void CloseDialogLine()
@@ -1807,6 +1949,17 @@
 
 
 
+        if (jgCompstatus.Where(c => c.Status == 8).Count() == 0)
+        {
+            JgComplainStatus compStatus = new JgComplainStatus();
+            string linkStatus = "/api/JgComplainStatus";
+            compStatus.IdCoplain = Convert.ToInt32(idCompain);
+            compStatus.Status = 8;
+
+            var res = await Http.PostAsJsonAsync<JgComplainStatus>(linkStatus, compStatus);
+        }
+
+
         await LoadData();
         newLinLSPfeedback = false;
         IsVisibleNewLineFinalRootcause = false;
@@ -1816,6 +1969,29 @@
 
 
 <style>
+
+
+    .e-customsize.e-checkbox-wrapper .e-frame {
+        height: 30px;
+        width: 30px;
+        padding: 8px 0;
+    }
+
+    .e-customsize.e-checkbox-wrapper .e-check {
+        font-size: 20px;
+    }
+
+    .e-customsize.e-checkbox-wrapper .e-ripple-container {
+        height: 52px;
+        top: -11px;
+        width: 47px;
+    }
+
+    .e-customsize.e-checkbox-wrapper .e-label {
+        line-height: 30px;
+        font-size: 20px;
+    }
+
 
     .no-color {
         font-size: 12px;
@@ -1827,7 +2003,7 @@
         vertical-align: middle;
         height: 40px;
         line-height: 40px;
-        font-size:x-large;
+        font-size: x-large;
     }
 
     .e-dialog .e-dlg-header-content {

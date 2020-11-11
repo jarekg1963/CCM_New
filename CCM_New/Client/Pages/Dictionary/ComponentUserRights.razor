@@ -1,0 +1,595 @@
+﻿@page "/UserRightPage/{UserId}"
+@using Syncfusion.Blazor.DropDowns;
+@using Syncfusion.Blazor.Buttons;
+@using Syncfusion.Blazor.Grids;
+@using CCM_New.Shared;
+@inject HttpClient Http;
+@using Syncfusion.Blazor.Popups;
+@using CCM_New.Client.Tool; 
+
+<h3>ComponentUserRights   @UserId</h3>
+
+@if (comboDc.Count() == 0 || GridTblDcUser.Count() == 0)
+{
+    <p>Loading....</p>
+}
+else
+{
+    <div class="containerClaim">
+        <div class="row" style="height:450px">
+            <div class="col-4">
+                <SfGrid DataSource="@GridTblDcUser" Height="100%" Width="100%" RowHeight="22" AllowSorting="true" AllowPaging="true">
+                    <GridColumns>
+
+                        <GridColumn HeaderText="DC Name" TextAlign="TextAlign.Center" Width="100">
+                            <Template>
+                                @{ var dn = (context as TblDcUser);
+                                    <a style="text-underline-position:below">@dn.DC.DcName</a>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="DC Name" TextAlign="TextAlign.Center" Width="100">
+                            <Template>
+                                @{ var dn = (context as TblDcUser);
+                                    <a style="text-underline-position:below">@dn.DC.Country</a>
+                                }
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                </SfGrid>
+
+            </div>
+            <div class="col-4">
+
+                <SfGrid DataSource="@GridTblSoUser" Height="100%" Width="100%" RowHeight="22" AllowSorting="true" AllowPaging="true">
+                    <GridColumns>
+
+
+                        <GridColumn HeaderText="DC Name" TextAlign="TextAlign.Center" Width="100">
+                            <Template>
+                                @{ var dn = (context as TblSoUser);
+                                    <a style="text-underline-position:below">@dn.Sorg.So</a>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="DC Name" TextAlign="TextAlign.Center" Width="100">
+                            <Template>
+                                @{ var dn = (context as TblSoUser);
+                                    <a style="text-underline-position:below">@dn.Sorg.Nso</a>
+                                }
+                            </Template>
+                        </GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </div>
+            <div class="col-4">
+
+                <SfGrid DataSource="@GridUserTask" Height="100%" Width="100%" RowHeight="22" AllowSorting="true" AllowPaging="true">
+                    <GridColumns>
+                        <GridColumn HeaderText="Select" TextAlign="TextAlign.Center" Width="20">
+                            <Template>
+                                @{ var dn = (context as TblTaskUser);
+                                    <SfButton CssClass="e-small" @onclick="(() => SelectTaskForEdit(dn))">--</SfButton>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="DC Name" TextAlign="TextAlign.Center" Width="100">
+                            <Template>
+                                @{ var dn = (context as TblTaskUser);
+                                    <a style="text-underline-position:below">@dn.Ta.Task</a>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="V" TextAlign="TextAlign.Center" Width="20">
+                            <Template>
+                                @{var dn = (context as TblTaskUser);
+                                    <div class="template_checkbox">
+                                        @if (Convert.ToBoolean(dn.ViewTask))
+                                        {
+                                            <input type="checkbox" checked>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox">
+                                        }
+                                    </div>
+                                }
+                            </Template>
+                        </GridColumn>
+
+                        <GridColumn HeaderText="V" TextAlign="TextAlign.Center" Width="20">
+                            <Template>
+                                @{var dn = (context as TblTaskUser);
+                                    <div class="template_checkbox">
+                                        @if (Convert.ToBoolean(dn.ChangeTask))
+                                        {
+                                            <input type="checkbox" checked>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox">
+                                        }
+                                    </div>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn HeaderText="V" TextAlign="TextAlign.Center" Width="20">
+                            <Template>
+                                @{var dn = (context as TblTaskUser);
+                                    <div class="template_checkbox">
+                                        @if (Convert.ToBoolean(dn.UpdateTask))
+                                        {
+                                            <input type="checkbox" checked>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox">
+                                        }
+                                    </div>
+                                }
+                            </Template>
+                        </GridColumn>
+
+
+                    </GridColumns>
+                </SfGrid>
+
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-4">
+                        <SfComboBox TValue="int" TItem="TblDc" Placeholder="DC" DataSource="@comboDc" @bind-Value="ZmComboDC">
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeCbDC"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="DcId" Text="DcName"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    </div>
+                    <div class="col-4">
+                        <SfButton style="width:90%" OnClick="AddDC">Add DC</SfButton>
+                    </div>
+                    <div class="col-4">
+                        <SfButton style="width:90%">Add All</SfButton>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <SfComboBox TValue="int" TItem="TblDc" Placeholder="DC" DataSource="@comboDc" @bind-Value="ZmComboDC">
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeCbDC"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="DcId" Text="DcName"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    </div>
+                    <div class="col-4">
+                        <SfButton style="width:90%" OnClick="deleteDC">Remove DC</SfButton>
+                    </div>
+                    <div class="col-4">
+                        <SfButton style="width:90%">Remove All</SfButton>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-4">
+                        <SfComboBox TValue="int" TItem="TblSo" Placeholder="DC" DataSource="@comboSo" @bind-Value="ZmComboSO">
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeCbSO"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="Id" Text="So"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    </div>
+                    <div class="col-4">
+                        <SfButton style="width:90%" OnClick="AddSo">Add SO</SfButton>
+                    </div>
+                    <div class="col-4">
+                        <SfButton style="width:90%">Add all</SfButton>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <SfComboBox TValue="int" TItem="TblSo" Placeholder="DC" DataSource="@comboSo" @bind-Value="ZmComboSO">
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeCbSO"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="Id" Text="So"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    </div>
+                    <div class="col-4">
+                        <SfButton style="width:90%" OnClick="deleteSO">Remove SO</SfButton>
+                    </div>
+                    <div class="col-4">
+                        <SfButton style="width:90%">Remove All</SfButton>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-6">
+                        <SfComboBox TValue="int" TItem="TblTasks" Placeholder="DC" DataSource="@comboTask" @bind-Value="ZmComboTASK">
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeCbTask"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="TaskId" Text="Task"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    </div>
+                    <div class="col-2">
+                        <SfButton style="width:100%" OnClick="AddTask">Add</SfButton>
+                    </div>
+                    <div class="col-2">
+                        <SfButton style="width:100%">All</SfButton>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <SfComboBox TValue="int" TItem="TblTasks" Placeholder="DC" DataSource="@comboTask" @bind-Value="ZmComboTASK">
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeCbTask"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="TaskId" Text="Task"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    </div>
+                    <div class="col-2">
+                        <SfButton style="width:100%" OnClick="DeleteTask">Rem</SfButton>
+                    </div>
+                    <div class="col-2">
+                        <SfButton style="width:100%">All</SfButton>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+    </div>
+}
+
+
+
+<SfDialog Width="500px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@IsVisibleEditTask">
+    <DialogTemplates>
+        <Header>
+            <div id="template" title="Final rootcause" class="e-icon-settings">Edit rights</div>
+        </Header>
+        <Content>
+            <div class="row">
+                <div class="col-4">
+                    <p>View</p>
+                </div>
+                <div class="col-4">
+                    <p>Change</p>
+                </div>
+                <div class="col-4">
+                    <p>Update</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4">
+                    <SfCheckBox Label="Default" @bind-Checked=" zmForUpdate.ViewTask"></SfCheckBox>
+                </div>
+                <div class="col-4">
+                    <SfCheckBox Label="Default" @bind-Checked=" zmForUpdate.ChangeTask"></SfCheckBox>
+                </div>
+                <div class="col-4">
+                    <SfCheckBox Label="Default" @bind-Checked=" zmForUpdate.UpdateTask"></SfCheckBox>
+                </div>
+            </div>
+
+        </Content>
+    </DialogTemplates>
+    <DialogPositionData X="center" Y="center"></DialogPositionData>
+    <DialogButtons>
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <SfButton  Content="Save" IsPrimary="true" OnClick="CloseAndSave" />
+            </div>
+            <div class="col-2">
+                <SfButton  Content="Cancel" OnClick="@Close" />
+            </div>
+        </div>
+    </DialogButtons>
+
+</SfDialog>
+
+<WarningWindow ConfirmationChanged="ConfirmDeleteLSP_Click" @ref="DeleteConfirmationLSP"
+         ConfirmationMessage="Please select item from combi ?"
+         ConfirmationTitle="Warning"></WarningWindow>
+
+
+
+@code {
+    [Parameter]
+    public string UserId { get; set; }
+
+    protected WarningWindow DeleteConfirmationLSP { get; set; }
+
+    TblTaskUser zmForUpdate = new TblTaskUser();
+    TblDcUser tmpDCUser = new TblDcUser();
+    TblSoUser tmpSOUser = new TblSoUser();
+    TblTaskUser tmpTaskUser = new TblTaskUser();
+
+    public bool IsVisibleEditTask = false;
+
+    public int ZmComboDC;
+    public int ZmComboSO;
+    public int ZmComboTASK;
+    public int ZmComboTASKUSERS;
+
+    public int iloscDCdoSprawdz = 0;
+
+    public int iloscSOdoSprawdz = 0;
+
+    public int iloscTaskdoSprawdz = 0;
+
+
+
+    TblDc[] comboDc = { };
+
+    TblSo[] comboSo = { };
+    TblTasks[] comboTask = { };
+    TblTasks[] comboTaskUsers = { };
+
+    TblDcUser[] GridTblDcUser = { };
+
+    TblSoUser[] GridTblSoUser = { };
+
+    TblTaskUser[] GridUserTask = { };
+
+
+    private void ConfirmDeleteLSP_Click()
+    {
+
+    }
+
+
+    private async void DeleteTask()
+    {
+        if (ZmComboTASK == 0)
+        {
+            DeleteConfirmationLSP.Show();
+        } else
+        {
+            iloscTaskdoSprawdz = GridUserTask.Count(c => c.TaskId == ZmComboTASK);
+            if (iloscTaskdoSprawdz >0 )
+            {
+                // delete 
+                TblTaskUser ttTask = GridUserTask.FirstOrDefault(z => z.TaskId == ZmComboTASK);
+                string linkKasuSOCTask = "/api/TblTaskUsers/" + ttTask.Id.ToString();
+                var d = await Http.DeleteAsync(linkKasuSOCTask);
+                await loadData();
+                StateHasChanged();
+
+            } else
+            {
+                Console.WriteLine("Brak DC na liscie ");
+            }
+        }
+    }
+
+
+    private async void deleteSO()
+    {
+
+        if (ZmComboSO == 0)
+        {
+
+            DeleteConfirmationLSP.Show();
+        }
+        else
+        {
+            iloscSOdoSprawdz = GridTblSoUser.Count(c => c.So == ZmComboSO);
+            if (iloscSOdoSprawdz > 0)
+            {
+
+
+                TblSoUser ttSo = GridTblSoUser.FirstOrDefault(z => z.So == ZmComboSO);
+
+                string linkKasuSOCUser = "/api/TblSoUsers/" + ttSo.Id.ToString();
+                var d = await Http.DeleteAsync(linkKasuSOCUser);
+                await loadData();
+                StateHasChanged();
+
+            }
+            else
+            {
+                Console.WriteLine("Brak DC na liscie ");
+            }
+        }
+    }
+
+
+
+    private async void deleteDC()
+    {
+        if (ZmComboDC == 0)
+        {
+            DeleteConfirmationLSP.Show();
+        }
+        else
+        {
+            iloscDCdoSprawdz = GridTblDcUser.Count(c => c.DcId == ZmComboDC);
+            if (iloscDCdoSprawdz > 0)
+            {
+
+
+                TblDcUser tt = GridTblDcUser.FirstOrDefault(z => z.DcId == ZmComboDC);
+
+                string linkKasujDCUser = "/api/TblDcUsers/" +  tt.Id.ToString();
+                var d = await Http.DeleteAsync(linkKasujDCUser);
+                await loadData();
+                StateHasChanged();
+
+            } else
+            {
+                Console.WriteLine("Brak DC na liscie ");
+            }
+        }
+    }
+
+    private async void AddTask()
+    {
+        if (ZmComboTASK == 0)
+        {
+            DeleteConfirmationLSP.Show();
+        }
+        else
+        {
+            iloscTaskdoSprawdz = GridUserTask.Count(c => c.TaskId == ZmComboTASK);
+            Console.WriteLine("Task id" + ZmComboTASK);
+            Console.WriteLine("Ilosc" + iloscTaskdoSprawdz.ToString());
+
+            if (iloscTaskdoSprawdz == 0)
+            {
+
+                string linkDodajTask = "/api/TblTaskUsers";
+
+                tmpTaskUser.TaskId = ZmComboTASK;
+                tmpTaskUser.UserId = Convert.ToInt32(UserId);
+                tmpTaskUser.ViewTask = false;
+                tmpTaskUser.UpdateTask = false;
+                tmpTaskUser.ChangeTask = false;
+
+
+                var response = await Http.PostAsJsonAsync<TblTaskUser>(linkDodajTask, tmpTaskUser);
+                await loadData();
+                StateHasChanged();
+
+            }
+            else
+            {
+                DeleteConfirmationLSP.Show();
+            }
+
+        }
+    }
+
+    private async void AddSo()
+    {
+        if (ZmComboSO == 0)
+        {
+            DeleteConfirmationLSP.Show();
+        }
+        else
+        {
+            // sprawdz czy jest na liscie 
+
+            iloscSOdoSprawdz = GridTblSoUser.Count(c => c.So == ZmComboSO);
+
+            if (iloscSOdoSprawdz == 0)
+            {
+                string linkDodajSo = "/api/TblSoUsers";
+
+                tmpSOUser.So = ZmComboSO;
+                tmpSOUser.UserId = Convert.ToInt32(UserId);
+
+
+                var response = await Http.PostAsJsonAsync<TblSoUser>(linkDodajSo, tmpSOUser);
+                await loadData();
+                StateHasChanged();
+            }
+            else
+            {
+                DeleteConfirmationLSP.Show();
+            }
+
+        }
+    }
+
+    private async void AddDC()
+    {
+
+        if (ZmComboDC == 0)
+        {
+            DeleteConfirmationLSP.Show();
+        } else
+        {
+            // sprawdz czy jest na liscie 
+
+            iloscDCdoSprawdz = GridTblDcUser.Count(c => c.DcId == ZmComboDC);
+
+            if (iloscDCdoSprawdz == 0)
+            {
+                string linkDodaj = "/api/TblDcUsers";
+
+                tmpDCUser.DcId = ZmComboDC;
+                tmpDCUser.UserId = Convert.ToInt32(UserId);
+
+
+                var response = await Http.PostAsJsonAsync<TblDcUser>(linkDodaj, tmpDCUser);
+                await loadData();
+                StateHasChanged();
+            }
+            else
+            {
+                DeleteConfirmationLSP.Show();
+            }
+
+
+        }
+    }
+
+
+    private void CloseAndSave()
+    {
+        IsVisibleEditTask = false;
+    }
+
+    private void Close()
+    {
+        IsVisibleEditTask = false;
+    }
+
+    private void SelectTaskForEdit(TblTaskUser zz)
+    {
+        IsVisibleEditTask = true;
+
+
+
+        zmForUpdate.ViewTask = zz.ViewTask;
+        zmForUpdate.ChangeTask = zz.ChangeTask;
+        zmForUpdate.UpdateTask = zz.UpdateTask;
+
+    }
+
+    async Task loadData()
+    {
+        string linktmp = "/api/TblDcs";
+        comboDc = await Http.GetFromJsonAsync<TblDc[]>(linktmp);
+        string linkSo = "/api/TblSoes";
+        comboSo = await Http.GetFromJsonAsync<TblSo[]>(linkSo);
+        string linkTask = "/api/TblTasks";
+        comboTask = await Http.GetFromJsonAsync<TblTasks[]>(linkTask);
+        string linktblDCUser = "/api/TblDcUsers/GetTblDcUserByUser/" + UserId.ToString();
+        GridTblDcUser = await Http.GetFromJsonAsync<TblDcUser[]>(linktblDCUser);
+        string linkSoUser = "/api/TblSoUsers/GetTblSoUserByUser/" + UserId.ToString();
+        GridTblSoUser = await Http.GetFromJsonAsync<TblSoUser[]>(linkSoUser);
+        string linkfullUsersTask = "/api/TblTaskUsers/GetTblFullTaskUser/" + UserId.ToString();
+        GridUserTask = await Http.GetFromJsonAsync<TblTaskUser[]>(linkfullUsersTask);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await loadData();
+        StateHasChanged();
+    }
+
+    private void onChangeCbTask(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    { }
+
+    private void onChangeCbSO(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    { }
+
+    private void onChangeCbDC(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        ZmComboDC = Convert.ToInt32(args.Value);
+    }
+
+    private void onChangeCbTASKUSERS(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        ZmComboTASKUSERS = Convert.ToInt32(args.Value);
+    }
+
+
+
+}
+
+<style>
+    .col-4 {
+        border: solid 2px #c0c2c1;
+    }
+</style>

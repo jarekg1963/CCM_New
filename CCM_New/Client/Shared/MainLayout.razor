@@ -26,11 +26,11 @@
                 <a href="" style="cursor: pointer" @onclick="() => Wyloguj()">Logout</a>
             </div>
             <div class="col-1">
+         
+                <button class="btn1" @onclick="() => ModalPassChange.Open()" data-toggle="tooltip" data-placement="bottom" title="Password change">
+            <span class="oi oi-people" aria-hidden="true"></span>
+        </button>
 
-                <button class="btn1" @onclick="OpenPasswordChange" data-toggle="tooltip" data-placement="bottom" title="Password change">
-
-                    <span class="oi oi-people" aria-hidden="true"></span>
-                </button>
             </div>
         </div>
         <div class="content px-4">
@@ -40,26 +40,18 @@
 }
 else
 {
-
-    <div class="col-md-6 offset-md-3 mt-5">
-        @*<div class="alert alert-info">
-            Username:???<br />
-            Password:???
-        </div>*@
-        <div class="card">
+    <div class="col-md-6 offset-md-3 mt-5"  >
+        <div class="card" >
             <h4 class="card-header">CCM Claim system </h4>
             <div class="card-body">
-                <EditForm Model="@user" OnValidSubmit="HandleValidSubmit">
-                    <DataAnnotationsValidator />
+                <EditForm Model="@user" OnValidSubmit="HandleValidSubmit">      
                     <div class="form-group">
                         <label>Username</label>
-                        <InputText @bind-Value="user.UserName" class="form-control" />
-                        <ValidationMessage For="@(() => user.UserName)" />
+                        <InputText @bind-Value="user.UserName" class="form-control" />                      
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <InputText @bind-Value="user.UserPassword" type="password" class="form-control" />
-                        <ValidationMessage For="@(() => user.UserPassword)" />
+                        <InputText @bind-Value="user.UserPassword" type="password" class="form-control" />                      
                     </div>
                     <button class="btn btn-primary">
                         Login
@@ -68,8 +60,7 @@ else
                         <div class="col-8">
                             <p>Ver: @loginService.softVersion</p>
                         </div>
-                        <div class="col-4">
-                            @*<SfButton CssClass="e-link" OnClick="createNewUserRequest">Request for account</SfButton>*@
+                        <div class="col-4">                        
                             <button class="btn btn-link" @onclick="() => Modal.Open()">Request for account</button>
                         </div>
                     </div>
@@ -83,162 +74,12 @@ else
     </div>
 
 
-
-
-
-    @*<SfDialog ID="dialog" IsModal="true" Width="500px" Height="450px" @bind-Visible="@LoginPageVisible">
-            <DialogTemplates>
-                <Header>
-                    <nav id="navbar-example2" class="navbar navbar-light bg-light">
-                        <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto">Sign In</div>
-                    </nav>
-                </Header>
-                <Content>
-                    <div id='input-container'>
-                        <div class="e-float-input e-input-group">
-                            <input id="username" type="text" @bind="user.UserName" required />
-                            <span class="e-float-line"></span>
-                            <label class="e-float-text">User name</label>
-                        </div>
-                    </div>
-                    <div class='form-group'>
-                        <div class="e-float-input e-input-group">
-                            <input id="password" type="password" @bind="user.UserPassword" required />
-                            <span class="e-float-line"></span>
-                            <label class="e-float-text">Password</label>
-                        </div>
-                    </div>
-                    @if (!string.IsNullOrEmpty(this.ErrorMessage))
-                    {
-
-                        <div class="error-container">
-                            @ErrorMessage
-                        </div>
-                    }
-                </Content>
-            </DialogTemplates>
-            <DialogButtons>
-                <div class="row" style="margin-top:50px">
-                    <div class="col-2">
-                        <SfButton Content="Log In" OnClick="@login" />
-                    </div>
-
-                </div>
-                <div class="row" style="margin-top:20px">
-                    <div class="col-8">
-                        <p>Ver: @loginService.softVersion</p>
-                    </div>
-                    <div class="col-4">
-                        <SfButton CssClass="e-link" OnClick="createNewUserRequest">Request for account</SfButton>
-                    </div>
-                </div>
-            </DialogButtons>
-            <DialogEvents OnClose="@Validation"></DialogEvents>
-            <DialogPositionData X="center" Y="center"></DialogPositionData>
-        </SfDialog>*@
-
 }
 
-<SfDialog ID="dialog" IsModal="true" Width="600px" Height="550px" @bind-Visible="@createAccount" Target="@Target">
-    <DialogTemplates>
-        <Header>
-            <nav id="navbar-example2" class="navbar navbar-light bg-light">
-                <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto">Account creation </div>
-            </nav>
-
-        </Header>
-        <Content>
-            <div id='input-container'>
-                <div class="e-float-input e-input-group">
-                    <input id="username" type="text" @bind="NewUser.UserName" required />
-                    <span class="e-float-line"></span>
-                    <label class="e-float-text">User name/email</label>
-                </div>
-
-                <div class='form-group' style="margin-top:0px!important">
-                    <div class="e-float-input e-input-group">
-                        <input id="password" type="password" @bind="NewUser.UserPassword" required />
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">Password</label>
-                    </div>
-                    <div class="e-float-input e-input-group" style="margin-top:0px!important">
-                        <input id="password" type="password" @bind="passwordVrification" required />
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">Repeat password </label>
-                    </div>
-                    <div class="e-float-input e-input-group">
-                        <textarea class="form-control" @bind="NewUser.Remarks" aria-label="With textarea"></textarea>
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">Remarks </label>
-                    </div>
-                </div>
-            </div>
-
-        </Content>
-    </DialogTemplates>
-    <DialogButtons>
-        <div class="row">
-            <div class="col-2">
-                <SfButton Content="Create" OnClick="@loginCreate" />
-            </div>
-            <div class="col-2">
-                <SfButton Content="Cancel" OnClick="@CloseCreateAccountWindows" />
-            </div>
-        </div>
-    </DialogButtons>
-    <DialogEvents OnClose="@ValidationCreateAccount"></DialogEvents>
-    @*<DialogPositionData X="center" Y="center"></DialogPositionData>*@
-</SfDialog>
-
-
-<SfDialog ID="dialog" IsModal="true" Width="400px" Height="300px" @bind-Visible="@changePassword" Target="@Target">
-    <DialogTemplates>
-        <Header>
-            <nav id="navbar-example2" class="navbar navbar-light bg-light">
-                <div id="heading" style="margin-top:5px ;margin-left: auto ; margin-right:auto"> Enter new password </div>
-            </nav>
-
-        </Header>
-        <Content>
-            <div id='input-container'>
-                <div class='form-group' style="margin-top:0px!important">
-                    <div class="e-float-input e-input-group">
-                        <input id="password" type="password" @bind="newPassword" required />
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">Password</label>
-                    </div>
-                    <div class="e-float-input e-input-group" style="margin-top:0px!important">
-                        <input id="password" type="password" @bind="newPasswordVerification" required />
-                        <span class="e-float-line"></span>
-                        <label class="e-float-text">Repeat password </label>
-                    </div>
-                </div>
-                @if (!string.IsNullOrEmpty(this.ErrorMessagePassVerification))
-                {
-                    <div class="errorCreate-container" style="margin-top:0px">
-                        @ErrorMessagePassVerification
-                    </div>
-                }
-            </div>
-
-        </Content>
-    </DialogTemplates>
-    <DialogButtons>
-        <div class="row">
-            <div class="col-2">
-                <SfButton Content="Create" OnClick="@ChangePasswordOK" />
-            </div>
-            <div class="col-2">
-                <SfButton Content="Cancel" OnClick="@ChangePasswordCance" />
-            </div>
-        </div>
-    </DialogButtons>
-    <DialogEvents OnClose="@ValidationCreateAccount"></DialogEvents>
-    @*<DialogPositionData X="center" Y="center"></DialogPositionData>*@
-</SfDialog>
 
 
 <CreateUserRequestComponent @ref="Modal"></CreateUserRequestComponent>
+<PasswordChangeComponent @ref="ModalPassChange"></PasswordChangeComponent>
 
 <SfToast @ref="ToastObj" Title="Error" Content="User exist . Contact with administartor" CssClass="e-toast-danger">
     <ToastPosition X="Right"></ToastPosition>
@@ -258,12 +99,12 @@ else
 
 
 
-
-
-
 @code{
 
     private CreateUserRequestComponent Modal { get; set; }
+    private PasswordChangeComponent ModalPassChange { get; set; }
+
+
     SfToast ToastObj;
     SfToast ToastObjPass;
     SfToast ToastObjCreated;
@@ -286,46 +127,6 @@ else
     public bool verifyNewAccount = false;
     public string ErrorMessagePassVerification = "";
 
-    private void OpenPasswordChange()
-    {
-        changePassword = true;
-        ErrorMessagePassVerification = "";
-        newPasswordVerification = "";
-        newPassword = "";
-    }
-
-    private async void ChangePasswordOK()
-    {
-        if (newPasswordVerification == newPassword && newPassword != "")
-        {
-            int iid = loginService.session.user.Id;
-            string linktmp = "/api/TblUsers/PutTblUsersPassChange/" + iid.ToString() + "?newPass=" + newPassword.Trim(); ;
-            var response = await httpClient.PutAsJsonAsync<TblUsers>(linktmp, NewUser);
-
-            changePassword = false;
-
-        }
-        else
-        {
-            ErrorMessagePassVerification = "Passwords not the same or empty";
-        }
-    }
-
-
-    private void ChangePasswordCance()
-    {
-        changePassword = false;
-    }
-
-    private void Validation(BeforeCloseEventArgs args)
-    {
-        if (user.UserName == "" && user.UserPassword == "")
-        {
-            args.Cancel = true;
-            this.LoginPageVisible = true;
-            this.ErrorMessage = "Enter the Username and Password";
-        }
-    }
 
     private void ValidationCreateAccount(BeforeCloseEventArgs args)
     {
@@ -384,57 +185,30 @@ else
     {
         var resp = await httpClient.PostAsJsonAsync<LoginService.Session>("./api/login", new LoginService.Session { user = this.user });
         LoginService.Session s = await resp.Content.ReadFromJsonAsync<LoginService.Session>();
+
         if (s.ok == true)
         {
-            this.loginService.session = s;
-            this.loginService.sessionID = s.sessionID;
-            this.loginService.isLogged = true;
-            await loginService.jSRuntime.InvokeVoidAsync("WriteLocalStorage", new object[] { this.loginService.sessionKey, this.loginService.sessionID });
-            LoginPageVisible = false;
-            this.VerifySecurityLevel();
-            loginService.CallRefresh();
+            if (s.user.UserRole == null)
+            {
+                this.ErrorMessage = "User not activated contact with admin.";
+            }
+            else
+            {
+                this.loginService.session = s;
+                this.loginService.sessionID = s.sessionID;
+                this.loginService.isLogged = true;
+                await loginService.jSRuntime.InvokeVoidAsync("WriteLocalStorage", new object[] { this.loginService.sessionKey, this.loginService.sessionID });
+                LoginPageVisible = false;
+                this.VerifySecurityLevel();
+                loginService.CallRefresh();
+            }
         }
         else
         {
             this.LoginPageVisible = true;
             this.ErrorMessage = "Wrong Username or Password try again";
         }
-    }
 
-    public async void loginCreate()
-    {
-        if (NewUser.UserPassword.Trim().Length == 0 && passwordVrification.Trim().Length == 0 && NewUser.UserPassword.Trim().Length == 0)
-        {
-            await ToastObjAllFields.Show();
-        }
-        else
-        {
-            string linkRC = "/api/TblUsers/FindUserByName/" + NewUser.UserName;
-            UsersList = await httpClient.GetFromJsonAsync<TblUsers[]>(linkRC);
-            if (UsersList.Length > 0)
-            {
-                // Usytkownik istnieje
-                await ToastObj.Show();
-            }
-            else
-            {
-                // Uzytkownik nie istnije spradz haslo
-                if (NewUser.UserPassword == passwordVrification & NewUser.UserPassword.Trim().Length != 0)
-                {
-
-                    string postclaimLink = "/api/TblUsers/";
-                    var response = await httpClient.PostAsJsonAsync<TblUsers>(postclaimLink, NewUser);
-
-                    await ToastObjCreated.Show();
-                    createAccount = false;
-                }
-                else
-                {
-                    await ToastObjPass.Show();
-                }
-
-            }
-        }
     }
 
     async void Wyloguj()
@@ -468,19 +242,14 @@ else
 
     }
 
-    private void createNewUserRequest()
-    {
-
-        this.Target = "#dialog.e-dialog";
-        createAccount = true;
-    }
+ 
 
     private void CloseCreateAccountWindows()
     {
         createAccount = false;
     }
 
-    }
+}
 
 <style>
 

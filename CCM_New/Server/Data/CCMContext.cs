@@ -16,6 +16,15 @@ namespace CCM_New.Server.Data
         {
         }
 
+
+        public virtual DbSet<JgComplainStatus> JgComplainStatus { get; set; }
+        public virtual DbSet<TblDcUser> TblDcUser { get; set; }
+
+        public virtual DbSet<TblSoUser> TblSoUser { get; set; }
+        public virtual DbSet<TblTaskUser> TblTaskUser { get; set; }
+
+        public virtual DbSet<TblTasks> TblTasks { get; set; }
+
         public virtual DbSet<TblCarriers> TblCarriers { get; set; }
         public virtual DbSet<TblComplaints> Tbl_Complaints { get; set; }
         public virtual DbSet<TblDeliveries> Tbl_Deliveries { get; set; }
@@ -35,8 +44,91 @@ namespace CCM_New.Server.Data
 
         public virtual DbSet<TblDc> TblDc { get; set; }
 
+        public virtual DbSet<TblSo> TblSo { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+           
+            
+            
+            
+            modelBuilder.Entity<TblSoUser>(entity =>
+            {
+               
+
+                entity.ToTable("Tbl_SO_User");
+
+                entity.Property(e => e.So).HasColumnName("SO");
+
+                entity.Property(e => e.UserId).HasColumnName("User_ID");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+                   
+            });
+
+            modelBuilder.Entity<TblDcUser>(entity =>
+            {
+                entity.ToTable("Tbl_DC_User");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DcId).HasColumnName("DC_ID");
+
+                entity.Property(e => e.UserId).HasColumnName("User_ID");
+            });
+
+
+            modelBuilder.Entity<TblTaskUser>(entity =>
+            {
+               
+
+                entity.ToTable("Tbl_Task_User");
+
+                entity.Property(e => e.TaskId).HasColumnName("TaskID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.Property(e => e.ChangeTask).HasColumnName("changeTask");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+                
+
+                entity.Property(e => e.UpdateTask).HasColumnName("updateTask");
+
+                entity.Property(e => e.ViewTask).HasColumnName("viewTask");
+            });
+
+            modelBuilder.Entity<TblTasks>(entity =>
+            {
+                entity.HasKey(e => e.TaskId);
+
+                entity.ToTable("Tbl_Tasks");
+
+                entity.Property(e => e.TaskId).HasColumnName("TaskID");
+
+                entity.Property(e => e.Task)
+                    .IsRequired()
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<TblSo>(entity =>
+            {
+                entity.ToTable("Tbl_SO");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Nso)
+                    .HasColumnName("NSO")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.So)
+                    .IsRequired()
+                    .HasColumnName("SO")
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+            });
+
 
             modelBuilder.Entity<TblDc>(entity =>
             {

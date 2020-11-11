@@ -24,7 +24,7 @@ else
             <GridPageSettings PageSizes="true"></GridPageSettings>
 
             <GridColumns>
-                <GridColumn HeaderText="User profile" TextAlign="TextAlign.Center" Width="80">
+                @*<GridColumn HeaderText="User profile" TextAlign="TextAlign.Center" Width="80">
                     <Template>
                         @{
                             var currier = (context as TblCarriers);
@@ -41,7 +41,7 @@ else
                             <SfButton OnClick="@(() => OpenDelete(currier))">Delete</SfButton>
                         }
                     </Template>
-                </GridColumn>
+                </GridColumn>*@
                 <GridColumn Field=@nameof(TblCarriers.CarrierId) HeaderText="Id" TextAlign="TextAlign.Left" Width="140"></GridColumn>
                 <GridColumn Field=@nameof(TblCarriers.CarrierId2) HeaderText="Id2" TextAlign="TextAlign.Left" Width="120"></GridColumn>
                 <GridColumn Field=@nameof(TblCarriers.CarrierName) HeaderText="Carrier name" Format="d" TextAlign="TextAlign.Left" Width="180"></GridColumn>

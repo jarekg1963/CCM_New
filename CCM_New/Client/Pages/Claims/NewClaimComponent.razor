@@ -242,15 +242,10 @@
                                     </div>
                                 }
                             </div>
-
-
-
                             <div class="row">
                                 <div class="col-12">
-
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-12">
                                     <SfUploader ID="UploadFiles" SequentialUpload=true AutoUpload=false Multiple=true>
@@ -260,7 +255,6 @@
                             </div>
                             <div class="row">
                                 <div class="col-12">
-
                                 </div>
                             </div>
                         </ContentTemplate>
@@ -1071,10 +1065,6 @@
             if (indicatorASN) dl.DeliveryNumber = zmASN;
             if (indicatorDelivery) dl.DeliveryNumber = zmDeliveryNumber;
 
-
-
-
-
             dl.ActualGoodsIssueDate = dt;
             dl.PlannedGoodsIssueDate = dt;
             //dl.DeliveryLine =
@@ -1102,6 +1092,24 @@
 
             var responseDelLine = await Http.PostAsJsonAsync<TblDeliveryLines>(postDellinelink, dl);
         }
+
+        // zapisanie statusow 
+        JgComplainStatus compStatus = new JgComplainStatus();
+        string linkStatus = "/api/JgComplainStatus";
+
+        for (int i = 1; i <= 3; i ++)
+        {
+            compStatus.IdCoplain = Convert.ToInt32(maxIDNowyCaim);
+            compStatus.Status = i;
+
+
+            var res = await Http.PostAsJsonAsync<JgComplainStatus>(linkStatus, compStatus);
+        }
+
+
+
+
+
 
         CloseDialog();
 

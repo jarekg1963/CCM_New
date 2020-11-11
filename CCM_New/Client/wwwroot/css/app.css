@@ -1,13 +1,23 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: url(/images/LoginBackground.JPG) center center fixed;
+
 }
 
 a, .btn-link {
     color: #0366d6;
 }
-
+.e-acrdn-header-content{
+    width:100%;
+}
+.flexContainer{
+   display:flex;
+   justify-content:space-between;
+   padding-right:10px;
+}
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
