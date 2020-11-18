@@ -11,6 +11,7 @@
 @using Syncfusion.Blazor.Data;
 @inject HttpClient Http;
 @inject NavigationManager NavigationManager
+@inject LoginService loginService
 @using CCM_New.Shared;
 @using Newtonsoft.Json;
 @using CCM_New.Client.Tool;
@@ -33,7 +34,7 @@
                 <div class="row">
                 </div>
                 <div class="row">
-                    <SfCheckBox Label="Mainstream" LabelPosition="LabelPosition.After" @bind-Checked="isMainstream" CssClass="e-large"></SfCheckBox>
+                    <SfCheckBox Label="Mainstream" LabelPosition="LabelPosition.After" @bind-Checked="zDeliveryTypes" CssClass="e-large"></SfCheckBox>
                 </div>
                 <hr />
             </div>
@@ -471,7 +472,15 @@
          ConfirmationTitle="Confirmation"></Confirm>
 
 
-<SfToast @ref="ToastObj" Title="Error" Content="No reason code" CssClass="e-toast-danger">
+<SfToast @ref="ToastObj" Title="Error" Content="Select reason code" CssClass="e-toast-danger">
+    <ToastPosition X="Right"></ToastPosition>
+</SfToast>
+
+<SfToast @ref="ToastObjDn" Title="Error" Content="Wrong DN number" CssClass="e-toast-danger">
+    <ToastPosition X="Right"></ToastPosition>
+</SfToast>
+
+<SfToast @ref="ToastObjAsn" Title="Error" Content="Wrong ASN number" CssClass="e-toast-danger">
     <ToastPosition X="Right"></ToastPosition>
 </SfToast>
 
@@ -557,7 +566,9 @@
 
 @code {
     SfToast ToastObj;
-    public string ToastMessageTxT = "";
+    SfToast ToastObjDn;
+    SfToast ToastObjAsn;
+
 
     protected ConfirmBase DeleteConfirmation { get; set; }
 
@@ -575,7 +586,7 @@
     public string maxIDNowyCaim;
 
     SfAccordion AcrdnObj;
-    public bool isMainstream = false;
+    public bool zDeliveryTypes = false;
     public bool indicatorASN = false;
     public bool indicatorDelivery = false;
     public bool indicatorComplain = false;
@@ -596,6 +607,8 @@
     public string zCustomerAddress1;
     public string zCustomerAddress2;
     public string zCustomerCountry;
+    public int zComplaintType = 0;
+
 
     public string zmSzuk = "";
 
@@ -629,7 +642,7 @@
     public string zmDN11CN;
     public double? zmDnQty;
     public string zmDeliveryNumber;
-  
+
     public int zmComplainID;
     public string zmComplianCustomerComments;
     public int ZmComplainReasonCode;
@@ -706,6 +719,8 @@
     async Task LoadDataForASN()
     {
 
+
+
         await AcrdnObj.EnableItem(0, true);
         await AcrdnObj.ExpandItem(true, 0);
 
@@ -714,14 +729,23 @@
         string linktmpDnSAP = "/api/TblAsnDatas/GetTblAsnDatabyAsnNr/" + "0" + zmASN.Trim();
         ASNList = await Http.GetFromJsonAsync<TblAsnData[]>(linktmpDnSAP);
 
-        listASNForGrid = new List<TblAsnData>(ASNList);
-        zShippingPoint = listASNForGrid[0].Vendor;
-        zDeliveryDate = listASNForGrid[0].DelivDate;
-        zShiptoCustomerNumber = listASNForGrid[0].Plant;
-        zSoldToCustomerNumber = listASNForGrid[0].Plant;
-        zCustomerName = listASNForGrid[0].VendorName;
+        if (ASNList.Count() == 0)
+        {
 
-        Console.WriteLine("Load data by asn " + zShiptoCustomerNumber);
+            await ToastObjAsn.Show();
+        }
+        else
+        {
+
+
+            listASNForGrid = new List<TblAsnData>(ASNList);
+            zShippingPoint = listASNForGrid[0].Vendor;
+            zDeliveryDate = listASNForGrid[0].DelivDate;
+            zShiptoCustomerNumber = listASNForGrid[0].Plant;
+            zSoldToCustomerNumber = listASNForGrid[0].Plant;
+            zCustomerName = listASNForGrid[0].VendorName;
+        }
+
 
     }
 
@@ -737,30 +761,40 @@
         string linktmpDnSAP = "api/TblSapDatas/GetByDn/" + "00" + DeliveryNumber.Trim();
         DeliveryListSap = await Http.GetFromJsonAsync<TblSapData[]>(linktmpDnSAP);
         listDeliverySapForGrid = new List<TblSapData>(DeliveryListSap);
-        zmDeliveryNumber = "00" + DeliveryNumber.Trim();
 
-        zShippingPoint = listDeliverySapForGrid[0].Vstel;
-        zSalesOrganization = listDeliverySapForGrid[0].Vkorg;
-        zDeliveryDate = listDeliverySapForGrid[0].Wadat;
-        zShiptoCustomerNumber = listDeliverySapForGrid[0].Kunnr;
-        zSoldToCustomerNumber = listDeliverySapForGrid[0].Kunag;
-        zBillOfLading = listDeliverySapForGrid[0].Bolnr;
-
-        string likCu = "/api/TblCustomers/" + listDeliverySapForGrid[0].Kunnr;
-
-        CustomerDelivery = await Http.GetFromJsonAsync<TblCustomers>(likCu);
-
-        zCustomerName = CustomerDelivery.CustomerName;
-        zCustomerAddress1 = CustomerDelivery.CustomerAddress1;
-        zCustomerAddress2 = CustomerDelivery.CustomerAddress2;
-        zCustomerCountry = CustomerDelivery.CustomerCountry;
-
-        if (listDeliverySapForGrid.Count > 0)
+        if (DeliveryListSap.Count() == 0)
         {
-            await AcrdnObj.EnableItem(0, true);
-            await AcrdnObj.ExpandItem(true, 0);
+
+            await ToastObjDn.Show();
         }
-        StateHasChanged();
+        else
+        {
+
+            zmDeliveryNumber = "00" + DeliveryNumber.Trim();
+
+            zShippingPoint = listDeliverySapForGrid[0].Vstel;
+            zSalesOrganization = listDeliverySapForGrid[0].Vkorg;
+            zDeliveryDate = listDeliverySapForGrid[0].Wadat;
+            zShiptoCustomerNumber = listDeliverySapForGrid[0].Kunnr;
+            zSoldToCustomerNumber = listDeliverySapForGrid[0].Kunag;
+            zBillOfLading = listDeliverySapForGrid[0].Bolnr;
+
+            string likCu = "/api/TblCustomers/" + listDeliverySapForGrid[0].Kunnr;
+
+            CustomerDelivery = await Http.GetFromJsonAsync<TblCustomers>(likCu);
+
+            zCustomerName = CustomerDelivery.CustomerName;
+            zCustomerAddress1 = CustomerDelivery.CustomerAddress1;
+            zCustomerAddress2 = CustomerDelivery.CustomerAddress2;
+            zCustomerCountry = CustomerDelivery.CustomerCountry;
+
+            if (listDeliverySapForGrid.Count > 0)
+            {
+                await AcrdnObj.EnableItem(0, true);
+                await AcrdnObj.ExpandItem(true, 0);
+            }
+            StateHasChanged();
+        }
     }
 
     async Task DisplayDataDelivery()
@@ -768,6 +802,8 @@
         indicatorDelivery = true;
         indicatorASN = false;
         await DisplayClaimsByDnAndAsn();
+        // spradwzić czy istnieje DN Lun ASN
+
         await LoadDataForDN();
         StateHasChanged();
     }
@@ -913,7 +949,7 @@
         if (saveComplain.Reasoncode == 0)
         {
 
-            ToastMessageTxT = "Select reason code ";
+
             ToastObj.Show();
         }
         else
@@ -924,20 +960,6 @@
 
     private async Task SaveClaimAsn()
     {
-
-
-        if (indicatorComplain)
-        {
-            //    //zmComplainID
-            //    string Linkfordel = "/api/TblDeliveryLines/DeleteTblDeliveryLinesByComplain/" + zmComplainID.ToString();
-            //    var response0 = await Http.DeleteAsync(Linkfordel);
-            //    string Linkfordel1 = "/api/TblDeliveries/DeleteTblDeliveriesIdComp/" + zmComplainID.ToString();
-            //    var response1 = await Http.DeleteAsync(Linkfordel1);
-            //    string Linkfordel2 = "/api/TblComplaints/" + zmComplainID.ToString();
-            //    var response2 = await Http.DeleteAsync(Linkfordel2);
-
-            //    saveComplain.Reasoncode = ZmComplainReasonCode;
-        }
 
 
         #region zerowanie zmiennych przed zapisem do dopracowania TblCompains
@@ -952,13 +974,16 @@
         saveComplain.SoldToCustomerNumber = zSoldToCustomerNumber;
         saveComplain.BillOfLading = zBillOfLading;
 
-        saveComplain.DeliveryType = 0;
+        if (zDeliveryTypes) saveComplain.DeliveryType = 1;
+        if (!zDeliveryTypes) saveComplain.DeliveryType = 0;
+
         saveComplain.DeliveryDate = dal;
 
         saveComplain.ExtDelRef = "";
 
-        saveComplain.ComplaintType = 0;
-        //  saveComplain.RegisteredBy = 
+
+        saveComplain.ComplaintType = zComplaintType;
+        //  saveComplain.RegisteredBy =
         saveComplain.CreateCnDn = false;
         saveComplain.TotalCnDnValue = 0;
         saveComplain.CnDnCurrency = "";
@@ -1003,7 +1028,7 @@
         saveComplain.AmountInvoiced = 0;
         saveComplain.InvoicedCurrency = 0;
         saveComplain.RemarksFinance = "";
-        saveComplain.Status = 2;
+
         saveComplain.CustomerCnnumber = "";
         saveComplain.CustomerCnvalue = 0;
         saveComplain.CustomerCncurrency = 0;
@@ -1023,16 +1048,26 @@
         saveComplain.RemarksPodnotReceived = "";
         saveComplain.CreateCncustRemarks = "";
         saveComplain.BillOfLading = "";
-
-
         saveComplain.CustomerComments = zmComplianCustomerComments;
         saveComplain.ComplaintIduf = zmNrClaim;
-
-
-
+        saveComplain.RegisteredByInt = loginService.session.user.Id;
         saveComplain.Cust = null;
 
+        if (zComplaintType == 2)
+        {
+            saveComplain.Status = 2;
+        }
+
+        if (zComplaintType == 1)
+        {
+            saveComplain.Status = 4;
+        }
+
         #endregion zerowanie zmiennych przed zapisem do dopracowania TblCompains
+
+
+
+
 
         string postclaimLink = "/api/TblComplaints/";
 
@@ -1093,18 +1128,40 @@
             var responseDelLine = await Http.PostAsJsonAsync<TblDeliveryLines>(postDellinelink, dl);
         }
 
-        // zapisanie statusow 
-        JgComplainStatus compStatus = new JgComplainStatus();
-        string linkStatus = "/api/JgComplainStatus";
+        // zapisanie statusow
 
-        for (int i = 1; i <= 3; i ++)
+
+        if (zComplaintType == 2)
         {
-            compStatus.IdCoplain = Convert.ToInt32(maxIDNowyCaim);
-            compStatus.Status = i;
+            JgComplainStatus compStatus = new JgComplainStatus();
+            string linkStatus = "/api/JgComplainStatus";
+
+            for (int i = 1; i <= 3; i++)
+            {
+                compStatus.IdCoplain = Convert.ToInt32(maxIDNowyCaim);
+                compStatus.Status = i;
 
 
-            var res = await Http.PostAsJsonAsync<JgComplainStatus>(linkStatus, compStatus);
+                var res = await Http.PostAsJsonAsync<JgComplainStatus>(linkStatus, compStatus);
+            }
         }
+
+        if (zComplaintType == 1)
+        {
+            JgComplainStatus compStatus = new JgComplainStatus();
+            string linkStatus = "/api/JgComplainStatus";
+
+            for (int i = 1; i <= 14; i++)
+            {
+                compStatus.IdCoplain = Convert.ToInt32(maxIDNowyCaim);
+                compStatus.Status = i;
+
+
+                var res = await Http.PostAsJsonAsync<JgComplainStatus>(linkStatus, compStatus);
+            }
+        }
+
+
 
 
 
@@ -1120,6 +1177,17 @@
     {
 
         saveComplain.Reasoncode = Convert.ToInt32(args.Value);
+        // zahardocodujemy typComplain (Soft - Hard )
+
+        int par = Convert.ToInt32(args.Value);
+
+        if (par == 5 || par == 6 || par == 7 || par == 8 || par == 9 || par ==10 || par == 17 || par == 22 || par == 25 || par ==29)
+            zComplaintType = 2;
+
+        if (par == 11 || par == 12 || par == 13 || par == 14 || par == 15 || par == 23 || par == 24 )
+            zComplaintType = 1;
+
+
         switch (saveComplain.Reasoncode)
         {
             case 17:

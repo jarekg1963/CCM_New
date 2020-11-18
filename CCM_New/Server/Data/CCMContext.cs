@@ -755,6 +755,8 @@ namespace CCM_New.Server.Data
                     .HasColumnName("TotalCN_DN_Value")
                     .HasColumnType("money")
                     .HasDefaultValueSql("((0.00))");
+
+                // RegisteredByInt
             });
 
 

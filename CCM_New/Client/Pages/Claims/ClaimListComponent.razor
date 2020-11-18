@@ -7,6 +7,7 @@
 @using Syncfusion.Blazor.Inputs;
 @using System.Net.Mail;
 @using Syncfusion.Blazor.DropDowns;
+@using Syncfusion.Blazor.Popups;
 
 <div class="containerClaim">
     <div class="row">
@@ -26,8 +27,11 @@
             <SfTextBox @bind-Value="@ComplainDuId" Placeholder='Complain number' @onfocus='@(e=>keyReadDataDelivery=false)'></SfTextBox>
         </div>
 
-        <div class="col-2">
-            <SfButton @onclick="@DisplayDataDelivery" Disabled="keyReadDataDelivery">Read data </SfButton>
+        <div class="col-4">
+            <div class="flexContainer">
+                <SfButton @onclick="@DisplayDataDelivery" Disabled="keyReadDataDelivery">Read data </SfButton>
+                <SfButton @onclick="@ShowMoreFiletrs">More filters </SfButton>
+            </div>
         </div>
 
     </div>
@@ -37,7 +41,7 @@
                 <GridPageSettings PageSizes="true"></GridPageSettings>
                 <GridColumns>
                     <GridColumn HeaderText="Select" TextAlign="TextAlign.Center" Width="60">
-                    
+
                         <Template>
                             @{ var dn = (context as TblComplaints);
                                 <SfButton CssClass="e-link" @onclick="(() => SelectClaim(dn))">select</SfButton>
@@ -48,7 +52,7 @@
                     <GridColumn Field=@nameof(TblComplaints.ComplaintIduf) HeaderText="Complain nr" TextAlign="TextAlign.Left" Width="80"></GridColumn>
                     <GridColumn Field=@nameof(TblComplaints.DeliveryDate) HeaderText="Date" TextAlign="TextAlign.Left" Width="60"></GridColumn>
                     <GridColumn Field=@nameof(TblComplaints.ShiptoCustomerNumber) HeaderText="Customer nr" TextAlign="TextAlign.Left" Width="60"></GridColumn>
-                   
+
 
                     <GridColumn HeaderText="Reason code" TextAlign="TextAlign.Center" Width="100">
                         <Template>
@@ -65,30 +69,273 @@
 
 </div>
 
+<SfDialog Width="600px" Height="500px" ShowCloseIcon="true" CloseOnEscape="true" @bind-Visible="@showfilers">
+    <DialogTemplates>
+        <Header>
+            <div id="template" title="Filters" class="e-icon-settings">Filters</div>
+        </Header>
+        <Content>
+
+            <div class="row">
+                <div class="col-1">
+                 
+                </div>
+                <div class="col-3">
+                    Select date range
+                </div>
+                <div class="col-6">
+                    <SfDateRangePicker Placeholder="Choose a Range" @bind-StartDate="@StartValuefilter" EndDate="@EndValuefilter">
+                        <DateRangePickerEvents ValueChange="ValueChangeHandler"></DateRangePickerEvents>
+                    </SfDateRangePicker>
+                </div>
+            </div>
+            <div class="row" style="margin-top:20px">
+                <div class="col-3">
+               
+                </div>
+                <div class="col-3">
+                    <SfRadioButton Label="All " Name="MainStr" Value="AllMS" @bind-Checked="CheckedMainStream" ></SfRadioButton><br />
+                    <SfRadioButton Label="Mainstream " Name="MainStr" Value="MainStream" @bind-Checked="CheckedMainStream"></SfRadioButton><br />
+                    <SfRadioButton Label="Downstream" Name="MainStr" Value="NoMainstream" @bind-Checked="CheckedMainStream"></SfRadioButton>
+                </div>
+                <div class="col-3">
+                    <SfRadioButton Label="All HardSoft " Name="HardSoft" Value="AllHS" @bind-Checked="CheckedHS"></SfRadioButton><br />
+                    <SfRadioButton Label="Hard" Name="HardSoft" Value="HardClaim" @bind-Checked="CheckedHS"></SfRadioButton><br />
+                    <SfRadioButton Label="Soft" Name="HardSoft" Value="SoftClaim" @bind-Checked="CheckedHS"></SfRadioButton>
+                </div>
+            </div>
+            <div class="row" style="margin-top:20px">
+                <div class="col-1">
+
+                </div>
+                <div class="col-3">Reason code</div>
+                <div class="col-6">
+
+                    @if (comboReasonCodes.Count() == 0)
+                    { }
+                    else
+                    {
+                        <SfComboBox TValue="int" TItem="TblReasoncodes" Placeholder="Select reason code" DataSource="@comboReasonCodes" @bind-Value="ComboValReasonCode">
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeComboStatusReasonCode"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="ReasoncodeId" Text="ReasoncodeName"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    }
+                </div>
+            </div>
+            <div class="row" style="margin-top:20px">
+                <div class="col-1">
+
+                </div>
+                <div class="col-3">Select by Status</div>
+                <div class="col-6">
+
+                    @if (combiStatusData is null)
+                    { }
+                    else
+                    {
+                        <SfComboBox Placeholder="Select status" @bind-Value="@ComboVal" DataSource="@combiStatusData">
+                            <ComboBoxFieldSettings Value="ID" Text="StatusName"></ComboBoxFieldSettings>
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeComboStatus"></ComboBoxEvents>
+                        </SfComboBox>
+                    }
+                </div>
+            </div>
+
+            <div class="row" style="margin-top:20px">
+                <div class="col-1">
+
+                </div>
+                <div class="col-3">
+                    <label> Select by user</label>
+                </div>
+                <div class="col-6">
+
+                    @if (comboUsers is null)
+                    { }
+                    else
+                    {
+                        <SfComboBox PopupHeight="350px" PopupWidth="350px" Placeholder="Select a game" DataSource="@comboUsers" @bind-Value="ZmComboUser">
+                            <ComboBoxEvents TValue="string" ValueChange="onChangeCbUser"></ComboBoxEvents>
+                            <ComboBoxFieldSettings Value="Id" Text="UserName"></ComboBoxFieldSettings>
+                        </SfComboBox>
+                    }
+                </div>
+            </div>
+
+        </Content>
+    </DialogTemplates>
+    <DialogPositionData X="center" Y="center"></DialogPositionData>
+    <DialogButtons>
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <SfButton style="width: 90px" Content="OK" IsPrimary="true" OnClick="@DoneFilter" />
+            </div>
+            <div class="col-2">
+                <SfButton style="width: 90px" Content="Cancel" OnClick="@CancelFilter" />
+            </div>
+        </div>
+    </DialogButtons>
+
+</SfDialog>
+
 @code {
 
+    private string CheckedMainStream = "AllMS";
+    private string CheckedHS = "AllHS";
+
     public string ComboVal = "All";
+    public TblUsers[] comboUsers = { };
+    public TblReasoncodes[] comboReasonCodes = { };
+
+    public int ZmComboUser = 0;
+    public int ComboValReasonCode = 0;
 
     public TblComplaints[] ComplainList = { };
     List<TblComplaints> listComplainForGrid = new List<TblComplaints>();
 
-    public DateTime? StartValue { get; set; } = DateTime.Now;
+    public DateTime? StartValue { get; set; } = DateTime.Now.AddDays(-30);
     public DateTime? EndValue { get; set; } = DateTime.Now;
+
+
+    public DateTime? StartValuefilter { get; set; } = DateTime.Now.AddDays(-30) ;
+    public DateTime? EndValuefilter { get; set; } = DateTime.Now ;
+
+
     DateTime tera = DateTime.Now;
     public string ComplainDuId = "";
     public bool keyReadDataDelivery = true;
-    public int combiStatus = 1;
+    public int combiStatus = 0;
+    public bool showfilers = false;
+
+    private bool isCheckedMainStream = true;
+
+    private void onChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        //onChange Event triggered
+    }
 
 
-    private void onChangeComboStatus(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    private async void DoneFilter()
+    {
+        showfilers = false;
+
+        if (CheckedMainStream == "AllMS")
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByDate/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd");
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+        if (CheckedMainStream == "MainStream")
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByDateDeliveryType/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd") + "&DeliveryType=2";
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+        if (CheckedMainStream == "NoMainstream")
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByDateDeliveryType/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd") + "&DeliveryType=1";
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+
+
+        if (CheckedMainStream == "AllHS")
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByDate/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd");
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+
+        if (CheckedMainStream == "HardClaim")
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByDateComplaintType/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd") + "&ComplaintType=2";
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+
+        if (CheckedMainStream == "SoftClaim")
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByDateComplaintType/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd") + "&ComplaintType=1";
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+
+        if (ZmComboUser != 0 )
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByDateCreatedBy/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd") + "&RegisteredByInt=" + ZmComboUser.ToString();
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+
+
+        if (combiStatus != 0)
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByDateStatus/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd") + "&status=" + combiStatus.ToString();
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+
+        if (ComboValReasonCode != 0)
+        {
+            string linktmp1 = "/api/TblComplaints/GetComByReasonCode/startDate=" + StartValuefilter.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValuefilter.Value.ToString("yyyy-MM-dd") + "&Reasoncode=" + ComboValReasonCode.ToString();
+            ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmp1);
+            listComplainForGrid = new List<TblComplaints>(ComplainList);
+        }
+
+
+        StateHasChanged();
+    }
+
+    private void CancelFilter()
+    {
+        showfilers = true;
+    }
+
+    private void ShowMoreFiletrs()
+    {
+        showfilers = true;
+    }
+
+
+    private void onChangeComboStatusReasonCode(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        ComboValReasonCode = Convert.ToInt32(args.Value);
+    }
+
+    private  void onChangeComboStatus(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
     {
         combiStatus = Convert.ToInt32(args.Value);
+    }
 
+    private void onChangeCbUser(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string> args)
+    {
+        // podstawienie pod zmienna usera 
+        ZmComboUser = Convert.ToInt32(args.Value);
+        Console.WriteLine(" Wybrany pracownik " + ZmComboUser);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        DateTime terazMcWczesniej = tera.AddDays(-60);
+
+
+
+        // pobranie do filtrow 
+
+        // reason cody  
+        string linkRC = "/api/TblReasoncodes/GetTblReasoncodesType";
+        comboReasonCodes = await Http.GetFromJsonAsync<TblReasoncodes[]>(linkRC);
+
+
+        // uzytkownicy
+        string linktmp = "/api/TblUsers";
+        comboUsers = await Http.GetFromJsonAsync<TblUsers[]>(linktmp);
+
+
+        // koniec pobrania do filtrow 
+
+
+        DateTime terazMcWczesniej = tera.AddDays(-30);
 
         string Start = terazMcWczesniej.ToString("yyyy-MM-dd");
         string End = tera.ToString("yyyy-MM-dd");
@@ -114,7 +361,7 @@
 
         if (combiStatus > 1)
         {
-            string linktmpDnSAP = "/api/TblComplaints/GetComByDateStatus/startDate=" + StartValue.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValue.Value.ToString("yyyy-MM-dd") + "&status=" + combiStatus ;
+            string linktmpDnSAP = "/api/TblComplaints/GetComByDateStatus/startDate=" + StartValue.Value.ToString("yyyy-MM-dd") + "&endDate=" + EndValue.Value.ToString("yyyy-MM-dd") + "&status=" + combiStatus;
 
             ComplainList = await Http.GetFromJsonAsync<TblComplaints[]>(linktmpDnSAP);
 
@@ -141,7 +388,7 @@
         StateHasChanged();
     }
 
-    //  klasa do combi statusy 
+    //  klasa do combi statusy
 
     public class cStatus
     {

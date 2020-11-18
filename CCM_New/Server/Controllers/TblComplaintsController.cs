@@ -45,6 +45,41 @@ namespace CCM_New.Server.Controllers
             return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.ComplaintIduf.Contains(nr)).ToListAsync();
         }
 
+
+
+        [HttpGet("GetComByDateComplaintType/startDate={startDate}&endDate={endDate}&ComplaintType={ComplaintType}")]
+
+        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDateComplaintType(DateTime startDate, DateTime endDate, int ComplaintType)
+        {
+
+            return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.DeliveryDate >= startDate & c.DeliveryDate <= endDate & c.ComplaintType == ComplaintType).ToListAsync();
+        }
+
+
+        [HttpGet("GetComByReasonCode/startDate={startDate}&endDate={endDate}&Reasoncode={ReasonCode}")]
+
+        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDateReasonCode(DateTime startDate, DateTime endDate, int ReasonCode)
+        {
+
+            return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.DeliveryDate >= startDate & c.DeliveryDate <= endDate & c.Reasoncode == ReasonCode).ToListAsync();
+        }
+
+        [HttpGet("GetComByDateCreatedBy/startDate={startDate}&endDate={endDate}&RegisteredByInt={registerBy}")]
+
+        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDateCreatedBy(DateTime startDate, DateTime endDate, int registerBy)
+        {
+
+            return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.DeliveryDate >= startDate & c.DeliveryDate <= endDate & c.RegisteredByInt == registerBy).ToListAsync();
+        }
+
+        [HttpGet("GetComByDateDeliveryType/startDate={startDate}&endDate={endDate}&DeliveryType={DeliveryType}")]
+
+        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByDateDeliveryType(DateTime startDate, DateTime endDate, int DeliveryType)
+        {
+
+            return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.DeliveryDate >= startDate & c.DeliveryDate <= endDate & c.DeliveryType == DeliveryType).ToListAsync();
+        }
+
         // get list base on date 
         [HttpGet("GetComByDate/startDate={startDate}&endDate={endDate}")]
 
@@ -52,6 +87,12 @@ namespace CCM_New.Server.Controllers
         {
             
         return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.DeliveryDate >= startDate & c.DeliveryDate <= endDate).ToListAsync();
+        }
+        [HttpGet("GetComByPracId/{PracId}")]
+        public async Task<ActionResult<IEnumerable<TblComplaints>>> GetComByPracId(int PracId)
+        {
+
+            return await _context.Tbl_Complaints.Include(r => r.ReasonCd).Where(c => c.RegisteredByInt == PracId).ToListAsync();
         }
 
         [HttpGet("GetComByDateStatus/startDate={startDate}&endDate={endDate}&status={mstatus}")]
@@ -67,7 +108,7 @@ namespace CCM_New.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TblComplaints>> GetTblComplaints(int id)
         {
-            var tblComplaints = await _context.Tbl_Complaints.Include(c => c.Cust).Where(d => d.ComplaintId == id).FirstOrDefaultAsync();
+            var tblComplaints = await _context.Tbl_Complaints.Include(u => u.Us).Include(c => c.Cust).Where(d => d.ComplaintId == id).FirstOrDefaultAsync();
 
             if (tblComplaints == null)
             {

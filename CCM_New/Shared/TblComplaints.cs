@@ -87,11 +87,14 @@ namespace CCM_New.Shared
         public bool CncustCreated { get; set; }
         public string RemarksPodnotReceived { get; set; }
         public string CreateCncustRemarks { get; set; }
-    
+        [ForeignKey("Us")]
+        public int? RegisteredByInt { get; set; }
 
         public TblCustomers Cust { get; set; }
 
         public TblReasoncodes ReasonCd { get; set; }
+
+        public TblUsers Us { get; set; }
 
     }
 }
