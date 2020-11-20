@@ -17,6 +17,7 @@ namespace CCM_New.Server.Controllers
     {
         private IHostingEnvironment hostingEnv;
 
+     
         public UploadController(IHostingEnvironment env)
         {
             this.hostingEnv = env;
@@ -28,7 +29,7 @@ namespace CCM_New.Server.Controllers
 
             string sciezkaDoZapisu = System.IO.Path.Combine(this.hostingEnv.ContentRootPath, "Documents", req.id);
 
-
+            Console.WriteLine("Sciezka do zapisu pliku " + sciezkaDoZapisu);
 
            if ( !System.IO.Directory.Exists(sciezkaDoZapisu))
                  System.IO.Directory.CreateDirectory(sciezkaDoZapisu); 

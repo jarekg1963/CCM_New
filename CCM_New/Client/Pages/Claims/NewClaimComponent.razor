@@ -711,6 +711,7 @@
     {
         indicatorASN = true;
         indicatorDelivery = false;
+        zDeliveryTypes = true;
         await DisplayClaimsByDnAndAsn();
         await LoadDataForASN();
         StateHasChanged();
@@ -801,6 +802,7 @@
     {
         indicatorDelivery = true;
         indicatorASN = false;
+        zDeliveryTypes = false;
         await DisplayClaimsByDnAndAsn();
         // spradwzić czy istnieje DN Lun ASN
 
@@ -974,8 +976,8 @@
         saveComplain.SoldToCustomerNumber = zSoldToCustomerNumber;
         saveComplain.BillOfLading = zBillOfLading;
 
-        if (zDeliveryTypes) saveComplain.DeliveryType = 1;
-        if (!zDeliveryTypes) saveComplain.DeliveryType = 0;
+        if (zDeliveryTypes) saveComplain.DeliveryType = 2;
+        if (!zDeliveryTypes) saveComplain.DeliveryType = 1;
 
         saveComplain.DeliveryDate = dal;
 
